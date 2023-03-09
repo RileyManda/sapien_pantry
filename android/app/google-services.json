@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1054933483047",
+    "firebase_url": "https://sapienpantry-default-rtdb.firebaseio.com",
+    "project_id": "sapienpantry",
+    "storage_bucket": "sapienpantry.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054933483047:android:37a45bf706c7efdcb51802",
+        "android_client_info": {
+          "package_name": "com.cixhub.sapienpantry"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1054933483047-vak1vndkeer4kl91ttefadfpjm94svlo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cixhub.sapienpantry",
+            "certificate_hash": "289ca02e8896f695f50d337c4e5ffdd9a62fa968"
+          }
+        },
+        {
+          "client_id": "1054933483047-meu9rddl4h6jj6crih7gqe1v00k34ood.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHlOQCoK1rIWVtN_SZeuuka33OTWXVz1M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1054933483047-meu9rddl4h6jj6crih7gqe1v00k34ood.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
