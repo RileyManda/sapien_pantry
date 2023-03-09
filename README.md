@@ -1,6 +1,6 @@
 # sapienpantry
 
-A new Flutter project.
+Sapien Pantry Flutter application for managing kitchen food pantry,diet and menus
 
 ## Getting Started
 

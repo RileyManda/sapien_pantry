@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "1054933483047-vak1vndkeer4kl91ttefadfpjm94svlo.apps.googleusercontent.com",
+          "client_id": "1054933483047-38ravenaa1pcbc9gibos4veeheoslh8m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.cixhub.sapienpantry",
@@ -38,6 +38,13 @@
             {
               "client_id": "1054933483047-meu9rddl4h6jj6crih7gqe1v00k34ood.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1054933483047-un5p8nhthfkhptd9do14rboep11id34l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cixhub.sapienpantry"
+              }
             }
           ]
         }
