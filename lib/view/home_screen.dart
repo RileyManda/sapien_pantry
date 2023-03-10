@@ -13,14 +13,63 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   String time = '';
   @override
   void dispose() {
     textController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
+
+  // Animation controller
+  late AnimationController _animationController;
+
+  // This is used to animate the icon of the main FAB
+  late Animation<double> _buttonAnimatedIcon;
+
+  // This is used for the child FABs
+  late Animation<double> _translateButton;
+
+  // This variable determnies whether the child FABs are visible or not
+  bool _isExpanded = false;
+
+  @override
+  initState() {
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600))
+      ..addListener(() {
+        setState(() {});
+      });
+
+    _buttonAnimatedIcon =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+
+    _translateButton = Tween<double>(
+      begin: 100,
+      end: -20,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    super.initState();
+  }
+
+
+
+  // This function is used to expand/collapse the children floating buttons
+  // It will be called when the primary FAB (with menu icon) is pressed
+  _toggle() {
+    if (_isExpanded) {
+      _animationController.reverse();
+    } else {
+      _animationController.forward();
+    }
+
+    _isExpanded = !_isExpanded;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +190,48 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }),
       ),
-      floatingActionButton: FloatingActionButton(
+
+      //animated float
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+      Transform(
+      transform: Matrix4.translationValues(
+      0.0,
+        _translateButton.value * 4,
+        0.0,
+      ),
+        child: FloatingActionButton(
+          backgroundColor: Colors.amber,
+          onPressed: () {comingSoon();},
+          child: const Icon(Icons.message),
+        ),
+    ),
+    Transform(
+    transform: Matrix4.translationValues(
+    0,
+    _translateButton.value * 3,
+    0,
+    ),
+    child: FloatingActionButton(
+    backgroundColor: Colors.red,
+    onPressed: () {comingSoon();},
+    child: const Icon(
+    Icons.call,
+    ),
+    ),
+    ),
+    Transform(
+    transform: Matrix4.translationValues(
+    0,
+    _translateButton.value * 2,
+    0,
+    ),
+
+
+      child: FloatingActionButton(
+        backgroundColor: Colors.green,
+
         onPressed: () async {
           setState(() {
             time = TimeOfDay.now().format(context);
@@ -150,8 +240,42 @@ class _HomeScreenState extends State<HomeScreen> {
             textController.clear();
           });
         },
-        child: const Icon(Icons.shopping_basket),
+
+        child: const Icon(
+            Icons.shopping_basket
+        ),
       ),
+
+
+    ),
+    // This is the primary F
+
+    FloatingActionButton(
+    onPressed: _toggle,
+    child: AnimatedIcon(
+    icon: AnimatedIcons.menu_close,
+    progress: _buttonAnimatedIcon,
+    ),
+    // FloatingActionButton(
+    // onPressed: () async {
+    // setState(() {
+    // time = TimeOfDay.now().format(context);
+    // });
+    // await showItemInput(context).then((value) {
+    // textController.clear();
+    // });
+    // },
+    // child: const Icon(Icons.shopping_basket),
+    // ),
+    ),
+  ]
+    ),
+
+      // animated float end
+
+
+
+
     );
   }
 
@@ -219,6 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     } else {
                       itemController.addItem(textController.text, time,
                           getDateTimestamp(DateTime.now()));
+                      showIsAdded();
                     }
                     Navigator.pop(context);
                   },
@@ -249,6 +374,14 @@ class _HomeScreenState extends State<HomeScreen> {
         .showSnackBar(const SnackBar(
       content: Text('Something went wrong: Our server is sleepy,'),
       backgroundColor: Colors.amberAccent,
+    ));
+  }
+
+  comingSoon() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(
+      content: Text('Feature coming soon'),
+      backgroundColor: Colors.grey,
     ));
   }
 }
