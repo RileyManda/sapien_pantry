@@ -21,11 +21,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Item List',
+      title: 'Sapien Pantry',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primarySwatch: kPrimayColor,
-          iconTheme: const IconThemeData(color: kPrimayColor),
+          primarySwatch: pPrimaryColor,
+          iconTheme: const IconThemeData(color: pPrimaryColor),
           appBarTheme: const AppBarTheme(
             centerTitle: true,
           )),

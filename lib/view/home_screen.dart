@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Item List'),
+        title: const Text('Sapien Pantry'),
       ),
       endDrawer: const EndDrawer(),
       body: Container(
@@ -45,8 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   snapshot.data!.docs.map((e) => Item.fromMap(e)).toList();
 
               return GroupedListView(
-                order: GroupedListOrder.DESC,
+                order: GroupedListOrder.ASC,
                 elements: itemList,
+                useStickyGroupSeparators: true,
                 groupBy: (Item item) => item.date,
                 groupHeaderBuilder: (Item item) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border(
-                              left: BorderSide(
+                              right: BorderSide(
                             color: getLabelColor(item.date),
                             width: 10,
                           )),
@@ -107,18 +108,28 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                    itemController.updateItem(item.id,
-                                        item.copyWith(isDone: !item.isDone));
+                                      itemController.updateItem(item.id,
+                                          item.copyWith(isDone: !item.isDone));
+
+                                        if (!item.isDone){
+                                          showIsDone();
+                                        }else{
+                                          showIsAdded();
+                                        }
+
+
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
+
                                       item.isDone
-                                          ? Icons.check_circle
-                                          : Icons.circle_outlined,
+                                      ? Icons.check_circle
+                                      : Icons.circle_outlined,
                                       size: 28,
                                     ),
+
                                   )),
                             ],
                           ),
@@ -139,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
             textController.clear();
           });
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.shopping_basket),
       ),
     );
   }
@@ -186,11 +197,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       icon: const Icon(
                         Icons.delete,
-                        color: Colors.red,
+                        color: Colors.redAccent,
                       ),
                       label: const Text(
                         'Delete',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.black54),
                       )),
                 TextButton(
                     onPressed: () {
@@ -211,9 +222,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(item == null ? 'Add Item' : 'Update Item'),
+                  child: Text(item == null ? 'Add Item' : 'Update'),
                 )
               ],
             ));
+  }
+
+  showIsDone() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(
+      content: Text('Item has run out'),
+      backgroundColor: Colors.orangeAccent,
+    ));
+  }
+
+  showIsAdded() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(
+      content: Text('Item added to Pantry'),
+      backgroundColor: Colors.green,
+    ));
+  }
+
+  showOurFault() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(
+      content: Text('Something went wrong: Our server is sleepy,'),
+      backgroundColor: Colors.amberAccent,
+    ));
   }
 }

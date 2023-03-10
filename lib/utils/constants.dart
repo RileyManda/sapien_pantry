@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sapienpantry/controller/auth_controller.dart';
 import 'package:sapienpantry/controller/item_controller.dart';
 
-const kPrimayColor = Colors.teal;
+const pPrimaryColor = Colors.green;
 
 final firebaseAuth = FirebaseAuth.instance;
 final firestore = FirebaseFirestore.instance;
@@ -16,11 +16,10 @@ final RegExp regExForEmail = RegExp(
 final RegExp regExForName = RegExp(r'^[A-Za-z ]+$');
 
 const labelColors = [
-  Colors.red,
   Colors.brown,
   Colors.cyan,
   Colors.green,
   Colors.indigo,
-  Colors.orange,
-  Colors.yellow,
+  Colors.blueGrey,
+  Colors.orange
 ];

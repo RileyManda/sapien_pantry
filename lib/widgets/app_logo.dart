@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TodoLogo extends StatelessWidget {
-  const TodoLogo({Key? key}) : super(key: key);
-
+class AppLogo extends StatelessWidget {
+  const AppLogo({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(

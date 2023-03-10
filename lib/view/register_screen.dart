@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/login_screen.dart';
-import 'package:sapienpantry/widgets/todo_logo.dart';
+import 'package:sapienpantry/widgets/app_logo.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -38,14 +38,14 @@ class _RegisterSceenState extends State<RegisterScreen> {
             key: formKey,
             child: Column(
               children: [
-                const TodoLogo(),
+                const AppLogo(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     controller: emailController,
                     validator: (value) {
                       if (!regExForEmail.hasMatch(value!)) {
-                        return 'Please enter valid email';
+                        return 'Please enter a valid email';
                       }
                       return null;
                     },
@@ -79,8 +79,8 @@ class _RegisterSceenState extends State<RegisterScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       color: authController.isAuthenticating
-                          ? kPrimayColor.shade200
-                          : kPrimayColor,
+                          ? pPrimaryColor.shade200
+                          : pPrimaryColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: authController.isAuthenticating
@@ -119,7 +119,7 @@ class _RegisterSceenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(
                     children: [
-                      const Text('Alreay have an account?'),
+                      const Text('Already have an account?'),
                       TextButton(
                           onPressed: () {
                             Get.off(() => const LoginScreen());

@@ -15,14 +15,14 @@ class EndDrawer extends StatelessWidget {
             width: double.infinity,
             height: 150,
             alignment: Alignment.bottomLeft,
-            color: kPrimayColor.shade400,
+            color: pPrimaryColor.shade400,
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const Icon(
-                  Icons.check_circle,
+                  Icons.person,
                   size: 60,
                   color: Colors.white,
                 ),
@@ -39,8 +39,9 @@ class EndDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+
             leading: const Icon(Icons.delete_sweep),
-            title: const Text('Delete Completed Items'),
+            title: const Text('Delete Finished Items'),
             onTap: () {
               itemController.deleteCompleted();
               Scaffold.of(context).closeEndDrawer();
@@ -52,7 +53,7 @@ class EndDrawer extends StatelessWidget {
               authController.signOut();
             },
             leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
+            title: const Text('SignOut'),
           ),
         ],
       ),

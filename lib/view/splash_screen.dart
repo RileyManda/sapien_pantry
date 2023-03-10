@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/controller/auth_controller.dart';
-import 'package:sapienpantry/widgets/todo_logo.dart';
+import 'package:sapienpantry/widgets/app_logo.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -26,7 +26,7 @@ class _SplashState extends State<Splash> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            TodoLogo(),
+            AppLogo(),
             Padding(
               padding: EdgeInsets.all(8.0),
               child: SizedBox(

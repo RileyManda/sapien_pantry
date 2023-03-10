@@ -9,7 +9,7 @@ int getDateTimestamp(DateTime dateTime) {
 
 String getFormattedDate(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  return DateFormat('MMM d yyyy').format(date);
+  return DateFormat('d MMM yyyy').format(date);
 }
 
 Color getLabelColor(int timestamp) {
@@ -17,3 +17,4 @@ Color getLabelColor(int timestamp) {
 
   return labelColors[date.weekday % labelColors.length];
 }
+
