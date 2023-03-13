@@ -5,27 +5,18 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:sapienpantry/model/item.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
-import 'package:sapienpantry/view/end_drawer.dart';
+import 'package:sapienpantry/view/app_drawer.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+class PantryScreen extends StatefulWidget {
+  const PantryScreen({Key? key}) : super(key: key);
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<PantryScreen> createState() => _PantryScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
+class _PantryScreenState extends State<PantryScreen>
     with SingleTickerProviderStateMixin {
-
   final textController = TextEditingController();
   String time = '';
-  @override
-  void dispose() {
-    textController.dispose();
-    _animationController.dispose();
-    super.dispose();
-  }
-
   // Animation controller
   late AnimationController _animationController;
 
@@ -56,6 +47,13 @@ class _HomeScreenState extends State<HomeScreen>
     ));
     super.initState();
   }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
   // function: expand/collapse the children of floating buttons
   _toggle() {
     if (_isExpanded) {
@@ -70,9 +68,8 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sapien Pantry'),
+        title: const Text('Pantry'),
       ),
-      drawer: const AppDrawer(),
       body: Container(
         color: Colors.grey.shade100,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
