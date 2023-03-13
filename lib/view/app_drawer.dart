@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
 
-class EndDrawer extends StatelessWidget {
-  const EndDrawer({
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({
     Key? key,
   }) : super(key: key);
 
@@ -16,7 +16,8 @@ class EndDrawer extends StatelessWidget {
             height: 150,
             alignment: Alignment.bottomLeft,
             color: pPrimaryColor.shade400,
-            padding: const EdgeInsets.all(16.0),
+            // padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -39,7 +40,15 @@ class EndDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-
+            leading: const Icon(Icons.add_shopping_cart_outlined),
+            iconColor: Colors.lightGreen,
+            title: const Text('Add items to ShoppingList'),
+            onTap: () {
+              itemController.deleteCompleted();
+              Scaffold.of(context).closeEndDrawer();
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.delete_sweep),
             title: const Text('Delete Finished Items'),
             onTap: () {
@@ -52,9 +61,18 @@ class EndDrawer extends StatelessWidget {
             onTap: () {
               authController.signOut();
             },
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+          ),
+          ListTile(
+            onTap: () {
+              authController.signOut();
+            },
             leading: const Icon(Icons.logout),
             title: const Text('SignOut'),
           ),
+
+
         ],
       ),
     );

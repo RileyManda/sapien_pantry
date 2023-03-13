@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/home_screen.dart';
+import 'package:sapienpantry/view/dashboard.dart';
+import 'package:sapienpantry/view/pantry_screen.dart';
 import 'package:sapienpantry/view/login_screen.dart';
 
 class AuthController extends GetxController {
@@ -54,7 +55,7 @@ class AuthController extends GetxController {
     if (userx == null) {
       Get.offAll(() => const LoginScreen());
     } else {
-      Get.offAll(() => const HomeScreen());
+      Get.offAll(() => const Dashboard());
     }
   }
 }
