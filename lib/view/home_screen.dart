@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:sapienpantry/model/item.dart';
 import 'package:sapienpantry/utils/constants.dart';
@@ -13,7 +14,9 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+
   final textController = TextEditingController();
   String time = '';
   @override
@@ -26,13 +29,11 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
   // Animation controller
   late AnimationController _animationController;
 
-  // This is used to animate the icon of the main FAB
+  // animate the icon of the main FAB
   late Animation<double> _buttonAnimatedIcon;
 
-  // This is used for the child FABs
+  // child FABs
   late Animation<double> _translateButton;
-
-  // This variable determnies whether the child FABs are visible or not
   bool _isExpanded = false;
 
   @override
@@ -55,21 +56,15 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
     ));
     super.initState();
   }
-
-
-
-  // This function is used to expand/collapse the children floating buttons
-  // It will be called when the primary FAB (with menu icon) is pressed
+  // function: expand/collapse the children of floating buttons
   _toggle() {
     if (_isExpanded) {
       _animationController.reverse();
     } else {
       _animationController.forward();
     }
-
     _isExpanded = !_isExpanded;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
       appBar: AppBar(
         title: const Text('Sapien Pantry'),
       ),
-      endDrawer: const EndDrawer(),
+      drawer: const AppDrawer(),
       body: Container(
         color: Colors.grey.shade100,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -157,28 +152,27 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                      itemController.updateItem(item.id,
-                                          item.copyWith(isDone: !item.isDone));
+                                    itemController.updateItem(item.id,
+                                        item.copyWith(isDone: !item.isDone));
 
-                                        if (!item.isDone){
-                                          showIsDone();
-                                        }else{
-                                          showIsAdded();
-                                        }
+                                    if (!item.isDone) {
+                                      showIsDone();
+                                      itemController.addToShoppingList(textController.text, time,
+                                          getDateTimestamp(DateTime.now()));
 
-
+                                    } else {
+                                      showIsAdded();
+                                    }
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
-
                                       item.isDone
-                                      ? Icons.check_circle
-                                      : Icons.circle_outlined,
+                                          ? Icons.check_circle
+                                          : Icons.circle_outlined,
                                       size: 28,
                                     ),
-
                                   )),
                             ],
                           ),
@@ -192,90 +186,80 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
       ),
 
       //animated float
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-      Transform(
-      transform: Matrix4.translationValues(
-      0.0,
-        _translateButton.value * 4,
-        0.0,
-      ),
-        child: FloatingActionButton(
-          backgroundColor: Colors.amber,
-          onPressed: () {comingSoon();},
-          child: const Icon(Icons.message),
+      floatingActionButton:
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        Transform(
+          transform: Matrix4.translationValues(
+            0.0,
+            _translateButton.value * 4,
+            0.0,
+          ),
+          child: FloatingActionButton(
+            backgroundColor: Colors.amber,
+            onPressed: () {
+              comingSoon();
+            },
+            child: const Icon(Icons.message),
+          ),
         ),
-    ),
-    Transform(
-    transform: Matrix4.translationValues(
-    0,
-    _translateButton.value * 3,
-    0,
-    ),
-    child: FloatingActionButton(
-    backgroundColor: Colors.red,
-    onPressed: () {comingSoon();},
-    child: const Icon(
-    Icons.call,
-    ),
-    ),
-    ),
-    Transform(
-    transform: Matrix4.translationValues(
-    0,
-    _translateButton.value * 2,
-    0,
-    ),
-
-
-      child: FloatingActionButton(
-        backgroundColor: Colors.green,
-
-        onPressed: () async {
-          setState(() {
-            time = TimeOfDay.now().format(context);
-          });
-          await showItemInput(context).then((value) {
-            textController.clear();
-          });
-        },
-
-        child: const Icon(
-            Icons.shopping_basket
+        Transform(
+          transform: Matrix4.translationValues(
+            0,
+            _translateButton.value * 3,
+            0,
+          ),
+          child: FloatingActionButton(
+            backgroundColor: Colors.red,
+            onPressed: () {
+              comingSoon();
+            },
+            child: const Icon(
+              Icons.call,
+            ),
+          ),
         ),
-      ),
+        Transform(
+          transform: Matrix4.translationValues(
+            0,
+            _translateButton.value * 2,
+            0,
+          ),
+          child: FloatingActionButton(
+            backgroundColor: Colors.green,
+            onPressed: () async {
+              setState(() {
+                time = TimeOfDay.now().format(context);
+              });
+              await showItemInput(context).then((value) {
+                textController.clear();
+              });
+            },
+            child: const Icon(Icons.shopping_basket),
+          ),
+        ),
+        // This is the primary F
 
-
-    ),
-    // This is the primary F
-
-    FloatingActionButton(
-    onPressed: _toggle,
-    child: AnimatedIcon(
-    icon: AnimatedIcons.menu_close,
-    progress: _buttonAnimatedIcon,
-    ),
-    // FloatingActionButton(
-    // onPressed: () async {
-    // setState(() {
-    // time = TimeOfDay.now().format(context);
-    // });
-    // await showItemInput(context).then((value) {
-    // textController.clear();
-    // });
-    // },
-    // child: const Icon(Icons.shopping_basket),
-    // ),
-    ),
-  ]
-    ),
+        FloatingActionButton(
+          onPressed: _toggle,
+          child: AnimatedIcon(
+            icon: AnimatedIcons.menu_close,
+            progress: _buttonAnimatedIcon,
+          ),
+          // FloatingActionButton(
+          // onPressed: () async {
+          // setState(() {
+          // time = TimeOfDay.now().format(context);
+          // });
+          // await showItemInput(context).then((value) {
+          // textController.clear();
+          // });
+          // },
+          // child: const Icon(Icons.shopping_basket),
+          // ),
+        ),
+      ]),
 
       // animated float end
-
-
-
-
     );
   }
 
@@ -354,32 +338,28 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
   }
 
   showIsDone() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Item has run out'),
       backgroundColor: Colors.orangeAccent,
     ));
   }
 
   showIsAdded() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Item added to Pantry'),
       backgroundColor: Colors.green,
     ));
   }
 
   showOurFault() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Something went wrong: Our server is sleepy,'),
       backgroundColor: Colors.amberAccent,
     ));
   }
 
   comingSoon() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Feature coming soon'),
       backgroundColor: Colors.grey,
     ));

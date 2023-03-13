@@ -66,4 +66,20 @@ class ItemController extends GetxController {
       debugPrint('Something went wrong(Batch Delete): $e');
     }
   }
+
+  addToShoppingList(String itemText, String time, int date) async {
+    try {
+      final ref = firestore
+          .collection('users')
+          .doc(authController.user!.uid)
+          .collection('shopping_list')
+          .doc();
+      final item = Item(
+          id: ref.id, text: itemText, isDone: false, time: time, date: date);
+      await ref.set(item.toMap());
+    } catch (e) {
+      debugPrint('Something went wrong(Add): $e');
+    }
+  }
+
 }
