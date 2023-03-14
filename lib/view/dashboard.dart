@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:sapienpantry/model/item.dart';
+import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
@@ -89,7 +89,10 @@ class _DashboardState extends State<Dashboard>
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
-                color: pPrimaryColor,
+                decoration: BoxDecoration(
+                  color: pPrimaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: const Center(
                   child: Text('Pantry'),
                 ),
@@ -105,7 +108,12 @@ class _DashboardState extends State<Dashboard>
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
-                color: Colors.blueAccent,
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+
+
                 child: const Center(
                   child: Text('Shopping'),
                 ),
@@ -169,7 +177,6 @@ class _DashboardState extends State<Dashboard>
             child: const Icon(Icons.shopping_basket),
           ),
         ),
-        // This is the primary F
 
         FloatingActionButton(
           heroTag: null,
@@ -178,17 +185,6 @@ class _DashboardState extends State<Dashboard>
             icon: AnimatedIcons.menu_close,
             progress: _buttonAnimatedIcon,
           ),
-          // FloatingActionButton(
-          // onPressed: () async {
-          // setState(() {
-          // time = TimeOfDay.now().format(context);
-          // });
-          // await showItemInput(context).then((value) {
-          // textController.clear();
-          // });
-          // },
-          // child: const Icon(Icons.shopping_basket),
-          // ),
         ),
       ]),
 
@@ -196,11 +192,11 @@ class _DashboardState extends State<Dashboard>
     );
   }
 
-  showItemInput(BuildContext context, {Item? item}) async {
+  showItemInput(BuildContext context, {Pantry? pantry}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(item == null ? 'Add Item' : 'Update Item'),
+              title: Text(pantry == null ? 'Add Item' : 'Update Item'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -230,10 +226,10 @@ class _DashboardState extends State<Dashboard>
                 ],
               ),
               actions: [
-                if (item != null)
+                if (pantry != null)
                   TextButton.icon(
                       onPressed: () {
-                        itemController.deleteItem(item.id);
+                        pantryController.deleteFromPantry(pantry.id);
                         Navigator.pop(context);
                       },
                       icon: const Icon(
@@ -254,17 +250,17 @@ class _DashboardState extends State<Dashboard>
                     if (textController.text.isEmpty) {
                       return;
                     }
-                    if (item != null) {
-                      itemController.updateItem(item.id,
-                          item.copyWith(text: textController.text, time: time));
+                    if (pantry != null) {
+                      pantryController.updatePantry(pantry.id,
+                          pantry.copyWith(text: textController.text, time: time));
                     } else {
-                      itemController.addItem(textController.text, time,
+                      pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showIsAdded();
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(item == null ? 'Add Item' : 'Update'),
+                  child: Text(pantry == null ? 'Add Item' : 'Update'),
                 )
               ],
             ));

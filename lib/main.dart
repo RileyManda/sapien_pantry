@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:sapienpantry/controller/item_controller.dart';
+import 'package:sapienpantry/controller/pantry_controller.dart';
 import 'package:sapienpantry/firebase_options.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/splash_screen.dart';
@@ -10,7 +10,7 @@ import 'package:sapienpantry/view/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
-  Get.put(ItemController());
+  Get.put(PantryController());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }

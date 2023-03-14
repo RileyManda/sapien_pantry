@@ -44,7 +44,7 @@ class AppDrawer extends StatelessWidget {
             iconColor: Colors.lightGreen,
             title: const Text('Add items to ShoppingList'),
             onTap: () {
-              itemController.deleteCompleted();
+              pantryController.deleteCompleted();
               Scaffold.of(context).closeEndDrawer();
             },
           ),
@@ -52,7 +52,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.delete_sweep),
             title: const Text('Delete Finished Items'),
             onTap: () {
-              itemController.deleteCompleted();
+              pantryController.deleteCompleted();
               Scaffold.of(context).closeEndDrawer();
             },
           ),

@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Item {
+class Shopping {
   final String id;
   final String text;
   final bool isDone;
   final String time;
   final int date;
 
-  Item({
+  Shopping({
     required this.id,
     required this.text,
     required this.isDone,
@@ -15,7 +15,7 @@ class Item {
     required this.date,
   });
 
-  Item copyWith({String? text, bool? isDone, String? time, int? date}) => Item(
+  Shopping copyWith({String? text, bool? isDone, String? time, int? date}) => Shopping(
         id: id,
         text: text ?? this.text,
         isDone: isDone ?? this.isDone,
@@ -23,9 +23,9 @@ class Item {
         date: date ?? this.date,
       );
 
-  factory Item.fromMap(
+  factory Shopping.fromMap(
           DocumentSnapshot<Map<String, dynamic>> documentSnapshot) =>
-      Item(
+      Shopping(
         id: documentSnapshot.id,
         text: documentSnapshot.data()!['text'],
         isDone: documentSnapshot.data()!['isDone'],

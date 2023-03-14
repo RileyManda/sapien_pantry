@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:sapienpantry/model/item.dart';
+import 'package:sapienpantry/model/shopping.dart';
+import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
-import 'package:sapienpantry/view/app_drawer.dart';
+import 'package:sapienpantry/view/search_view.dart';
 
 class ShoppingScreen extends StatefulWidget {
   const ShoppingScreen({Key? key}) : super(key: key);
@@ -17,51 +18,11 @@ class _ShoppingScreenState extends State<ShoppingScreen>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   String time = '';
-  // Animation controller
-  late AnimationController _animationController;
-
-  // animate the icon of the main FAB
-  late Animation<double> _buttonAnimatedIcon;
-
-  // child FABs
-  late Animation<double> _translateButton;
-  bool _isExpanded = false;
-
-  @override
-  initState() {
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600))
-      ..addListener(() {
-        setState(() {});
-      });
-
-    _buttonAnimatedIcon =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
-    _translateButton = Tween<double>(
-      begin: 100,
-      end: -20,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    super.initState();
-  }
 
   @override
   void dispose() {
     textController.dispose();
-    _animationController.dispose();
     super.dispose();
-  }
-  // function: expand/collapse the children of floating buttons
-  _toggle() {
-    if (_isExpanded) {
-      _animationController.reverse();
-    } else {
-      _animationController.forward();
-    }
-    _isExpanded = !_isExpanded;
   }
 
   @override
@@ -69,31 +30,39 @@ class _ShoppingScreenState extends State<ShoppingScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping List'),
+        actions: [
+          // Navigate to the Search Screen
+          IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const SearchPage())),
+              icon: const Icon(Icons.search))
+        ],
       ),
+
       body: Container(
         color: Colors.grey.shade100,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: firestore
                 .collection('users')
                 .doc(authController.user!.uid)
-                .collection('items')
+                .collection('shoppinglist')
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              final itemList =
-                  snapshot.data!.docs.map((e) => Item.fromMap(e)).toList();
+              final shoppingList =
+                  snapshot.data!.docs.map((e) => Shopping.fromMap(e)).toList();
 
               return GroupedListView(
                 order: GroupedListOrder.ASC,
-                elements: itemList,
+                elements: shoppingList,
                 useStickyGroupSeparators: true,
-                groupBy: (Item item) => item.text,
-                groupHeaderBuilder: (Item item) => Padding(
+                groupBy: (Shopping shopping) => shopping.text,
+                groupHeaderBuilder: (Shopping shopping) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
-                    getFormattedDate(item.date).toUpperCase(),
+                    getFormattedDate(shopping.date).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -101,21 +70,21 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                     ),
                   ),
                 ),
-                itemBuilder: (context, Item item) {
+                itemBuilder: (context, Shopping shopping) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: InkWell(
                       onTap: () {
-                        textController.text = item.text;
-                        time = item.time;
-                        showItemInput(context, item: item);
+                        textController.text = shopping.text;
+                        time = shopping.time;
+                        showItemInput(context, shopping: shopping);
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getLabelColor(item.date),
+                            color: getLabelColor(shopping.date),
                             width: 10,
                           )),
                           boxShadow: const [
@@ -127,7 +96,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                           ],
                         ),
                         child: AnimatedOpacity(
-                          opacity: item.isDone ? 0.4 : 1.0,
+                          opacity: shopping.isDone ? 0.4 : 1.0,
                           duration: const Duration(milliseconds: 100),
                           child: Row(
                             children: [
@@ -135,12 +104,12 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                   child: Padding(
                                 padding: const EdgeInsets.all(14.0),
                                 child: Text(
-                                  item.text,
+                                  shopping.text,
                                   style: const TextStyle(fontSize: 18),
                                 ),
                               )),
                               Text(
-                                item.time,
+                                shopping.time,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -149,14 +118,13 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                    itemController.updateItem(item.id,
-                                        item.copyWith(isDone: !item.isDone));
+                                    pantryController.updateShoppingList(
+                                        shopping.id,
+                                        shopping.copyWith(
+                                            isDone: !shopping.isDone));
 
-                                    if (!item.isDone) {
+                                    if (!shopping.isDone) {
                                       showIsDone();
-                                      itemController.addToShoppingList(textController.text, time,
-                                          getDateTimestamp(DateTime.now()));
-
                                     } else {
                                       showIsAdded();
                                     }
@@ -165,9 +133,9 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
-                                      item.isDone
-                                          ? Icons.check_circle
-                                          : Icons.circle_outlined,
+                                      shopping.isDone
+                                          ? Icons.shopping_cart
+                                          : Icons.remove_shopping_cart_outlined,
                                       size: 28,
                                     ),
                                   )),
@@ -182,16 +150,15 @@ class _ShoppingScreenState extends State<ShoppingScreen>
             }),
       ),
 
-
       // animated float end
     );
   }
 
-  showItemInput(BuildContext context, {Item? item}) async {
+  showItemInput(BuildContext context, {Shopping? shopping}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(item == null ? 'Add Item' : 'Update Item'),
+              title: Text(shopping == null ? 'Add Item' : 'Update Item'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -221,10 +188,10 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                 ],
               ),
               actions: [
-                if (item != null)
+                if (shopping != null)
                   TextButton.icon(
                       onPressed: () {
-                        itemController.deleteItem(item.id);
+                        pantryController.deleteFromShopping(shopping.id);
                         Navigator.pop(context);
                       },
                       icon: const Icon(
@@ -245,17 +212,19 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                     if (textController.text.isEmpty) {
                       return;
                     }
-                    if (item != null) {
-                      itemController.updateItem(item.id,
-                          item.copyWith(text: textController.text, time: time));
+                    if (shopping != null) {
+                      pantryController.updateShoppingList(
+                          shopping.id,
+                          shopping.copyWith(
+                              text: textController.text, time: time));
                     } else {
-                      itemController.addItem(textController.text, time,
+                      pantryController.addToShopping(textController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showIsAdded();
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(item == null ? 'Add Item' : 'Update'),
+                  child: Text(shopping == null ? 'Add Item' : 'Update'),
                 )
               ],
             ));
@@ -263,8 +232,8 @@ class _ShoppingScreenState extends State<ShoppingScreen>
 
   showIsDone() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item has run out'),
-      backgroundColor: Colors.orangeAccent,
+      content: Text('Item purchased'),
+      backgroundColor: Colors.lightGreen,
     ));
   }
 
@@ -277,7 +246,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
 
   showOurFault() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Something went wrong: Our server is sleepy,'),
+      content: Text('Something went wrong:Its our fault,'),
       backgroundColor: Colors.amberAccent,
     ));
   }
