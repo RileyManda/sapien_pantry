@@ -42,6 +42,8 @@ dependencies:
   grouped_list: ^5.1.2
   cloud_firestore: ^4.4.4
   firebase_auth: ^4.2.2
+  badges: ^3.0.2
+  flutter_automation: ^2.0.0
 
 
 dev_dependencies:
