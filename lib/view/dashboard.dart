@@ -7,8 +7,7 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
 import 'package:sapienpantry/view/shopping_screen.dart';
-
-import 'pantry_screen.dart';
+import 'package:sapienpantry/view/pantry_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -20,12 +19,9 @@ class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   String time = '';
-  // Animation controller
   late AnimationController _animationController;
-
   // animate the icon of the main FAB
   late Animation<double> _buttonAnimatedIcon;
-
   // child FABs
   late Animation<double> _translateButton;
   bool _isExpanded = false;
@@ -57,6 +53,7 @@ class _DashboardState extends State<Dashboard>
     _animationController.dispose();
     super.dispose();
   }
+
   // function: expand/collapse the children of floating buttons
   _toggle() {
     if (_isExpanded) {
@@ -77,51 +74,49 @@ class _DashboardState extends State<Dashboard>
       body: Container(
         color: Colors.grey.shade100,
         child: GridView.count(
-    primary: false,
-    padding: const EdgeInsets.all(4),
-    crossAxisSpacing: 4,
-    mainAxisSpacing: 4,
-    crossAxisCount: 3,
-    children: [
-    GestureDetector(
-    onTap: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const PantryScreen()),
-    );
-    },
-    child: Container(
-    padding: const EdgeInsets.all(20),
-
-    child: Center(
-    child: const Text('Pantry'),
-    ),
-    color: Colors.redAccent,
-    ),
-    ),
-
-      GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ShoppingScreen()),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.all(20),
-
-          child: Center(
-            child: const Text('Shopping'),
-          ),
-          color: Colors.blueAccent,
-        ),
-      ),
-    ],
+          primary: false,
+          padding: const EdgeInsets.all(4),
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          crossAxisCount: 3,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PantryScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                color: pPrimaryColor,
+                child: const Center(
+                  child: Text('Pantry'),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ShoppingScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                color: Colors.blueAccent,
+                child: const Center(
+                  child: Text('Shopping'),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       //animated float
       floatingActionButton:
-      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         Transform(
           transform: Matrix4.translationValues(
             0.0,
@@ -129,7 +124,8 @@ class _DashboardState extends State<Dashboard>
             0.0,
           ),
           child: FloatingActionButton(
-            backgroundColor: Colors.amber,
+            heroTag: null,
+            backgroundColor: buttonColors.elementAt(2),
             onPressed: () {
               comingSoon();
             },
@@ -143,7 +139,8 @@ class _DashboardState extends State<Dashboard>
             0,
           ),
           child: FloatingActionButton(
-            backgroundColor: Colors.red,
+            heroTag: null,
+            backgroundColor: buttonColors.elementAt(1),
             onPressed: () {
               comingSoon();
             },
@@ -159,7 +156,8 @@ class _DashboardState extends State<Dashboard>
             0,
           ),
           child: FloatingActionButton(
-            backgroundColor: Colors.green,
+            heroTag: null,
+            backgroundColor: buttonColors.elementAt(0),
             onPressed: () async {
               setState(() {
                 time = TimeOfDay.now().format(context);
@@ -174,6 +172,7 @@ class _DashboardState extends State<Dashboard>
         // This is the primary F
 
         FloatingActionButton(
+          heroTag: null,
           onPressed: _toggle,
           child: AnimatedIcon(
             icon: AnimatedIcons.menu_close,
@@ -201,74 +200,74 @@ class _DashboardState extends State<Dashboard>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(item == null ? 'Add Item' : 'Update Item'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: textController,
-                autofocus: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5))),
+              title: Text(item == null ? 'Add Item' : 'Update Item'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    controller: textController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  OutlinedButton(
+                    onPressed: () async {
+                      final newTime = await showTimePicker(
+                          context: context, initialTime: TimeOfDay.now());
+                      if (newTime != null) {
+                        setState(() {
+                          time = newTime.format(context);
+                        });
+                      }
+                    },
+                    child: Text('Time : $time'),
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 5,
-              ),
-              OutlinedButton(
-                onPressed: () async {
-                  final newTime = await showTimePicker(
-                      context: context, initialTime: TimeOfDay.now());
-                  if (newTime != null) {
-                    setState(() {
-                      time = newTime.format(context);
-                    });
-                  }
-                },
-                child: Text('Time : $time'),
-              ),
-            ],
-          ),
-          actions: [
-            if (item != null)
-              TextButton.icon(
+              actions: [
+                if (item != null)
+                  TextButton.icon(
+                      onPressed: () {
+                        itemController.deleteItem(item.id);
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.redAccent,
+                      ),
+                      label: const Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black54),
+                      )),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel')),
+                ElevatedButton(
                   onPressed: () {
-                    itemController.deleteItem(item.id);
+                    if (textController.text.isEmpty) {
+                      return;
+                    }
+                    if (item != null) {
+                      itemController.updateItem(item.id,
+                          item.copyWith(text: textController.text, time: time));
+                    } else {
+                      itemController.addItem(textController.text, time,
+                          getDateTimestamp(DateTime.now()));
+                      showIsAdded();
+                    }
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.redAccent,
-                  ),
-                  label: const Text(
-                    'Delete',
-                    style: TextStyle(color: Colors.black54),
-                  )),
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (textController.text.isEmpty) {
-                  return;
-                }
-                if (item != null) {
-                  itemController.updateItem(item.id,
-                      item.copyWith(text: textController.text, time: time));
-                } else {
-                  itemController.addItem(textController.text, time,
-                      getDateTimestamp(DateTime.now()));
-                  showIsAdded();
-                }
-                Navigator.pop(context);
-              },
-              child: Text(item == null ? 'Add Item' : 'Update'),
-            )
-          ],
-        ));
+                  child: Text(item == null ? 'Add Item' : 'Update'),
+                )
+              ],
+            ));
   }
 
   showIsDone() {

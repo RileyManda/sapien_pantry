@@ -89,7 +89,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                 order: GroupedListOrder.ASC,
                 elements: itemList,
                 useStickyGroupSeparators: true,
-                groupBy: (Item item) => item.date,
+                groupBy: (Item item) => item.text,
                 groupHeaderBuilder: (Item item) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(

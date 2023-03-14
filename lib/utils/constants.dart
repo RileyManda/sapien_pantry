@@ -23,3 +23,9 @@ const labelColors = [
   Colors.blueGrey,
   Colors.orange
 ];
+
+const buttonColors = [
+  Colors.green,
+  Colors.orangeAccent,
+  Colors.redAccent,
+];
