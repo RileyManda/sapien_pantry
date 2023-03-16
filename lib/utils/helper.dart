@@ -15,9 +15,10 @@ String getFormattedDate(int timestamp) {
 
 Color getLabelColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
   return labelColors[date.weekday % labelColors.length];
 }
+
+//TODO: getItemCategory then group on pantry by category
 
 
 

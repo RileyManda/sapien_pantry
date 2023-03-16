@@ -59,6 +59,8 @@ class _PantryScreenState extends State<PantryScreen>
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
 
               return GroupedListView(
+                semanticChildCount: pantryList.length,
+                sort: true,
                 order: GroupedListOrder.ASC,
                 elements: pantryList,
                 useStickyGroupSeparators: true,
@@ -124,22 +126,26 @@ class _PantryScreenState extends State<PantryScreen>
                                   onTap: () {
                                     pantryController.updatePantry(pantry.id,
                                         pantry.copyWith(isDone: !pantry.isDone));
-                                    pantryController.addToShopping(textController.text, time,
-                                        getDateTimestamp(DateTime.now()));
-
                                     if (!pantry.isDone) {
+                                      pantryController.addToShopping(textController.text, time,
+                                          getDateTimestamp(DateTime.now()));
                                       itemFinished();
-                                    } else{
+                                      // setState(() {
+                                      //   pantry_notification++;
+                                      // });
+                                      //TODO: update shopping list notifications badge on dashboard
+                                    } else {
                                       itemAdded();
+                                      setState(() {
+                                        !pantry.isDone;
+                                      });
                                     }
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
-                                      pantry.isDone
-                                          ? Icons.check_circle
-                                          : Icons.circle_outlined,
+                                      pantry.isDone ? Icons.check_circle : Icons.circle_outlined,
                                       size: 28,
                                     ),
                                   )),
@@ -158,6 +164,7 @@ class _PantryScreenState extends State<PantryScreen>
       floatingActionButton:
           Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
+          mini: true,
           onPressed: () async {
           setState(() {
           time = TimeOfDay.now().format(context);
@@ -166,7 +173,7 @@ class _PantryScreenState extends State<PantryScreen>
           textController.clear();
           });
           },
-          child: const Icon(Icons.shopping_basket),
+          child: const Icon(Icons.add),
           ),
 
       ]),
@@ -177,7 +184,7 @@ class _PantryScreenState extends State<PantryScreen>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(pantry == null ? 'Add Item' : 'Update Item'),
+              title: Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,

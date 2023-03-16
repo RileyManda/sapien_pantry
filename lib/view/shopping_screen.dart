@@ -7,6 +7,7 @@ import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/search_view.dart';
+import '../model/pantry.dart';
 
 class ShoppingScreen extends StatefulWidget {
   const ShoppingScreen({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   String time = '';
-
+  late Pantry pantry;
   @override
   void dispose() {
     textController.dispose();
@@ -29,7 +30,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shopping List'),
+        title: Text('Shopping List'),
         actions: [
           // Navigate to the Search Screen
           IconButton(

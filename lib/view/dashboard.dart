@@ -25,6 +25,8 @@ class _DashboardState extends State<Dashboard>
   // child FABs
   late Animation<double> _translateButton;
   bool _isExpanded = false;
+  int pantry_notification = 0;
+  int shopping_notification = 0;
 
   @override
   initState() {
@@ -68,7 +70,98 @@ class _DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sapien Pantry'),
+        title: const Text('Dashboard'),
+        actions: <Widget>[
+          Stack(
+            children: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.storage_outlined, size: 18),
+                  onPressed: () {
+                    setState(() {
+                      pantry_notification = 0;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PantryScreen()),
+                    );
+                  }),
+              pantry_notification != 0
+                  ? Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.brown,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          '$pantry_notification',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+          Stack(
+            children: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.shopping_cart, size: 18),
+                  onPressed: () {
+                    setState(() {
+                      shopping_notification = 0;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ShoppingScreen()),
+                    );
+                  }),
+              shopping_notification != 0
+                  ? Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          '$shopping_notification',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+          //TODO: more vert icon makes appbar look too busy:Update spacing between icons
+          // Padding(
+          //     padding: const EdgeInsets.only(right: 20.0),
+          //     child: GestureDetector(
+          //       onTap: () {},
+          //       child: Icon(Icons.more_vert),
+          //     )),
+        ],
       ),
       drawer: const AppDrawer(),
       body: Container(
@@ -94,7 +187,7 @@ class _DashboardState extends State<Dashboard>
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
-                  child: Text('Pantry'),
+                  child: Icon(Icons.inventory, color: Colors.white, size: 24),
                 ),
               ),
             ),
@@ -109,13 +202,12 @@ class _DashboardState extends State<Dashboard>
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.blueAccent,
+                  color: Colors.orange,
                   borderRadius: BorderRadius.circular(8),
                 ),
-
-
                 child: const Center(
-                  child: Text('Shopping'),
+                  child: Icon(Icons.local_grocery_store,
+                      color: Colors.white, size: 24),
                 ),
               ),
             ),
@@ -133,6 +225,7 @@ class _DashboardState extends State<Dashboard>
           ),
           child: FloatingActionButton(
             heroTag: null,
+            mini: true,
             backgroundColor: buttonColors.elementAt(2),
             onPressed: () {
               comingSoon();
@@ -148,6 +241,7 @@ class _DashboardState extends State<Dashboard>
           ),
           child: FloatingActionButton(
             heroTag: null,
+            mini: true,
             backgroundColor: buttonColors.elementAt(1),
             onPressed: () {
               comingSoon();
@@ -165,6 +259,7 @@ class _DashboardState extends State<Dashboard>
           ),
           child: FloatingActionButton(
             heroTag: null,
+            mini: true,
             backgroundColor: buttonColors.elementAt(0),
             onPressed: () async {
               setState(() {
@@ -174,12 +269,12 @@ class _DashboardState extends State<Dashboard>
                 textController.clear();
               });
             },
-            child: const Icon(Icons.shopping_basket),
+            child: const Icon(Icons.inventory),
           ),
         ),
-
         FloatingActionButton(
           heroTag: null,
+          mini: true,
           onPressed: _toggle,
           child: AnimatedIcon(
             icon: AnimatedIcons.menu_close,
@@ -196,7 +291,8 @@ class _DashboardState extends State<Dashboard>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(pantry == null ? 'Add Item' : 'Update Item'),
+              title:
+                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Pantry'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -251,12 +347,17 @@ class _DashboardState extends State<Dashboard>
                       return;
                     }
                     if (pantry != null) {
-                      pantryController.updatePantry(pantry.id,
-                          pantry.copyWith(text: textController.text, time: time));
+                      pantryController.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(
+                              text: textController.text, time: time));
                     } else {
                       pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showIsAdded();
+                      setState(() {
+                        pantry_notification++;
+                      });
                     }
                     Navigator.pop(context);
                   },
