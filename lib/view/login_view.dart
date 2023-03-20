@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/register_screen.dart';
+import 'package:sapienpantry/view/register_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -118,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(
                     children: [
-                      const Text('Need to create an account?'),
+                      const Text('Dont have an account?'),
                       TextButton(
                           onPressed: () {
                             Get.off(() => const RegisterScreen());

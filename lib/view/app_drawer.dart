@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
+import 'package:sapienpantry/view/category_view.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
@@ -40,19 +41,22 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.add_shopping_cart_outlined),
+            leading: const Icon(Icons.space_dashboard),
             iconColor: Colors.lightGreen,
-            title: const Text('Add items to ShoppingList'),
+            title: const Text('Categories'),
             onTap: () {
-              itemController.deleteCompleted();
-              Scaffold.of(context).closeEndDrawer();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CategoryView()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.delete_sweep),
+            iconColor: Colors.lightGreen,
             title: const Text('Delete Finished Items'),
             onTap: () {
-              itemController.deleteCompleted();
+              pantryController.deleteCompleted();
               Scaffold.of(context).closeEndDrawer();
             },
           ),
@@ -71,10 +75,14 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('SignOut'),
           ),
-
-
         ],
       ),
     );
   }
+  //   comingSoon() {
+  //   ScaffoldMessenger.of(context as BuildContext).showSnackBar(const SnackBar(
+  //     content: Text('Feature coming soon'),
+  //     backgroundColor: Colors.grey,
+  //   ));
+  // }
 }

@@ -1,13 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:grouped_list/grouped_list.dart';
-import 'package:sapienpantry/model/item.dart';
+import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
-import 'package:sapienpantry/view/shopping_screen.dart';
-import 'package:sapienpantry/view/pantry_screen.dart';
+import 'package:sapienpantry/view/shopping_view.dart';
+import 'package:sapienpantry/view/pantry_view.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -25,6 +22,8 @@ class _DashboardState extends State<Dashboard>
   // child FABs
   late Animation<double> _translateButton;
   bool _isExpanded = false;
+  int pantryNotification = 0;
+  int shoppingNotification = 0;
 
   @override
   initState() {
@@ -68,7 +67,98 @@ class _DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sapien Pantry'),
+        title: const Text('Dashboard'),
+        actions: <Widget>[
+          Stack(
+            children: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.storage_outlined, size: 18),
+                  onPressed: () {
+                    setState(() {
+                      pantryNotification = 0;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PantryScreen()),
+                    );
+                  }),
+              pantryNotification != 0
+                  ? Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.brown,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          '$pantryNotification',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+          Stack(
+            children: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.shopping_cart, size: 18),
+                  onPressed: () {
+                    setState(() {
+                      shoppingNotification = 0;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ShoppingScreen()),
+                    );
+                  }),
+              shoppingNotification != 0
+                  ? Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          '$shoppingNotification',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+          //TODO: more vert icon makes appbar look too busy:Update spacing between icons
+          // Padding(
+          //     padding: const EdgeInsets.only(right: 20.0),
+          //     child: GestureDetector(
+          //       onTap: () {},
+          //       child: Icon(Icons.more_vert),
+          //     )),
+        ],
       ),
       drawer: const AppDrawer(),
       body: Container(
@@ -89,9 +179,12 @@ class _DashboardState extends State<Dashboard>
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
-                color: pPrimaryColor,
+                decoration: BoxDecoration(
+                  color: pPrimaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: const Center(
-                  child: Text('Pantry'),
+                  child: Icon(Icons.inventory, color: Colors.white, size: 24),
                 ),
               ),
             ),
@@ -105,9 +198,13 @@ class _DashboardState extends State<Dashboard>
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
-                color: Colors.blueAccent,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: const Center(
-                  child: Text('Shopping'),
+                  child: Icon(Icons.local_grocery_store,
+                      color: Colors.white, size: 24),
                 ),
               ),
             ),
@@ -125,6 +222,7 @@ class _DashboardState extends State<Dashboard>
           ),
           child: FloatingActionButton(
             heroTag: null,
+            mini: true,
             backgroundColor: buttonColors.elementAt(2),
             onPressed: () {
               comingSoon();
@@ -140,6 +238,7 @@ class _DashboardState extends State<Dashboard>
           ),
           child: FloatingActionButton(
             heroTag: null,
+            mini: true,
             backgroundColor: buttonColors.elementAt(1),
             onPressed: () {
               comingSoon();
@@ -157,6 +256,7 @@ class _DashboardState extends State<Dashboard>
           ),
           child: FloatingActionButton(
             heroTag: null,
+            mini: true,
             backgroundColor: buttonColors.elementAt(0),
             onPressed: () async {
               setState(() {
@@ -166,29 +266,17 @@ class _DashboardState extends State<Dashboard>
                 textController.clear();
               });
             },
-            child: const Icon(Icons.shopping_basket),
+            child: const Icon(Icons.inventory),
           ),
         ),
-        // This is the primary F
-
         FloatingActionButton(
           heroTag: null,
+          mini: true,
           onPressed: _toggle,
           child: AnimatedIcon(
             icon: AnimatedIcons.menu_close,
             progress: _buttonAnimatedIcon,
           ),
-          // FloatingActionButton(
-          // onPressed: () async {
-          // setState(() {
-          // time = TimeOfDay.now().format(context);
-          // });
-          // await showItemInput(context).then((value) {
-          // textController.clear();
-          // });
-          // },
-          // child: const Icon(Icons.shopping_basket),
-          // ),
         ),
       ]),
 
@@ -196,11 +284,12 @@ class _DashboardState extends State<Dashboard>
     );
   }
 
-  showItemInput(BuildContext context, {Item? item}) async {
+  showItemInput(BuildContext context, {Pantry? pantry}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(item == null ? 'Add Item' : 'Update Item'),
+              title:
+                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Pantry'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -230,10 +319,10 @@ class _DashboardState extends State<Dashboard>
                 ],
               ),
               actions: [
-                if (item != null)
+                if (pantry != null)
                   TextButton.icon(
                       onPressed: () {
-                        itemController.deleteItem(item.id);
+                        pantryController.deleteFromPantry(pantry.id);
                         Navigator.pop(context);
                       },
                       icon: const Icon(
@@ -254,17 +343,22 @@ class _DashboardState extends State<Dashboard>
                     if (textController.text.isEmpty) {
                       return;
                     }
-                    if (item != null) {
-                      itemController.updateItem(item.id,
-                          item.copyWith(text: textController.text, time: time));
+                    if (pantry != null) {
+                      pantryController.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(
+                              text: textController.text, time: time));
                     } else {
-                      itemController.addItem(textController.text, time,
+                      pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showIsAdded();
+                      setState(() {
+                        pantryNotification++;
+                      });
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(item == null ? 'Add Item' : 'Update'),
+                  child: Text(pantry == null ? 'Add Item' : 'Update'),
                 )
               ],
             ));
