@@ -33,11 +33,60 @@ class _CategoryViewState extends State<CategoryView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categoryies'),
+        title: const Text('Categories'),
       ),
       body: Container(
         color: Colors.grey.shade100,
-        
+        child: GridView.count(
+          primary: false,
+          padding: const EdgeInsets.all(4),
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          crossAxisCount: 3,
+          children: [
+            GestureDetector(
+              onTap: () {
+                 comingSoon();
+               
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => const PantryScreen()),
+                //   );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(Icons.emoji_food_beverage,
+                      color: Colors.white, size: 24),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                  comingSoon();
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const FoodView()),
+                // );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(Icons.fastfood, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
 
       //animated float
@@ -45,13 +94,14 @@ class _CategoryViewState extends State<CategoryView>
           Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
           mini: true,
+         backgroundColor: Colors.red,
           onPressed: () async {
-           
             await addNewCategory(context).then((value) {
               textController.clear();
             });
           },
           child: const Icon(Icons.add),
+         
         ),
       ]),
     );
