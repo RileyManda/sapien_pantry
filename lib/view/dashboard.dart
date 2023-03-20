@@ -1,13 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:grouped_list/grouped_list.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
-import 'package:sapienpantry/view/shopping_screen.dart';
-import 'package:sapienpantry/view/pantry_screen.dart';
+import 'package:sapienpantry/view/shopping_view.dart';
+import 'package:sapienpantry/view/pantry_view.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -25,8 +22,8 @@ class _DashboardState extends State<Dashboard>
   // child FABs
   late Animation<double> _translateButton;
   bool _isExpanded = false;
-  int pantry_notification = 0;
-  int shopping_notification = 0;
+  int pantryNotification = 0;
+  int shoppingNotification = 0;
 
   @override
   initState() {
@@ -78,7 +75,7 @@ class _DashboardState extends State<Dashboard>
                   icon: const Icon(Icons.storage_outlined, size: 18),
                   onPressed: () {
                     setState(() {
-                      pantry_notification = 0;
+                      pantryNotification = 0;
                     });
                     Navigator.push(
                       context,
@@ -86,7 +83,7 @@ class _DashboardState extends State<Dashboard>
                           builder: (context) => const PantryScreen()),
                     );
                   }),
-              pantry_notification != 0
+              pantryNotification != 0
                   ? Positioned(
                       right: 11,
                       top: 11,
@@ -101,7 +98,7 @@ class _DashboardState extends State<Dashboard>
                           minHeight: 14,
                         ),
                         child: Text(
-                          '$pantry_notification',
+                          '$pantryNotification',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 8,
@@ -119,7 +116,7 @@ class _DashboardState extends State<Dashboard>
                   icon: const Icon(Icons.shopping_cart, size: 18),
                   onPressed: () {
                     setState(() {
-                      shopping_notification = 0;
+                      shoppingNotification = 0;
                     });
                     Navigator.push(
                       context,
@@ -127,7 +124,7 @@ class _DashboardState extends State<Dashboard>
                           builder: (context) => const ShoppingScreen()),
                     );
                   }),
-              shopping_notification != 0
+              shoppingNotification != 0
                   ? Positioned(
                       right: 11,
                       top: 11,
@@ -142,7 +139,7 @@ class _DashboardState extends State<Dashboard>
                           minHeight: 14,
                         ),
                         child: Text(
-                          '$shopping_notification',
+                          '$shoppingNotification',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 8,
@@ -356,7 +353,7 @@ class _DashboardState extends State<Dashboard>
                           getDateTimestamp(DateTime.now()));
                       showIsAdded();
                       setState(() {
-                        pantry_notification++;
+                        pantryNotification++;
                       });
                     }
                     Navigator.pop(context);

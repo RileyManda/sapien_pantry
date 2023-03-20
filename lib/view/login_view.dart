@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/register_screen.dart';
+import 'package:sapienpantry/view/register_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -1,69 +1,67 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
-import 'package:sapienpantry/view/search_view.dart';
-import '../model/pantry.dart';
+import 'package:sapienpantry/model/shopping.dart';
 
-class ShoppingScreen extends StatefulWidget {
-  const ShoppingScreen({Key? key}) : super(key: key);
+
+class PantryScreen extends StatefulWidget {
+  const PantryScreen({Key? key}) : super(key: key);
   @override
-  State<ShoppingScreen> createState() => _ShoppingScreenState();
+  State<PantryScreen> createState() => _PantryScreenState();
 }
 
-class _ShoppingScreenState extends State<ShoppingScreen>
+class _PantryScreenState extends State<PantryScreen>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   String time = '';
-  late Pantry pantry;
+  late Shopping shopping;
+
+  @override
+  initState() {
+    super.initState();
+  }
+
   @override
   void dispose() {
     textController.dispose();
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Shopping List'),
-        actions: [
-          // Navigate to the Search Screen
-          IconButton(
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => const SearchPage())),
-              icon: const Icon(Icons.search))
-        ],
+        title: const Text('Pantry'),
       ),
-
       body: Container(
         color: Colors.grey.shade100,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: firestore
                 .collection('users')
                 .doc(authController.user!.uid)
-                .collection('shoppinglist')
+                .collection('pantry')
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              final shoppingList =
-                  snapshot.data!.docs.map((e) => Shopping.fromMap(e)).toList();
-
+              final pantryList =
+                  snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               return GroupedListView(
+                semanticChildCount: pantryList.length,
+                sort: true,
                 order: GroupedListOrder.ASC,
-                elements: shoppingList,
+                elements: pantryList,
                 useStickyGroupSeparators: true,
-                groupBy: (Shopping shopping) => shopping.text,
-                groupHeaderBuilder: (Shopping shopping) => Padding(
+                groupBy: (Pantry pantry) => pantry.date,
+                groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
-                    getFormattedDate(shopping.date).toUpperCase(),
+                    getFormattedDate(pantry.date).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -71,21 +69,21 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                     ),
                   ),
                 ),
-                itemBuilder: (context, Shopping shopping) {
+                itemBuilder: (context, Pantry pantry) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: InkWell(
                       onTap: () {
-                        textController.text = shopping.text;
-                        time = shopping.time;
-                        showItemInput(context, shopping: shopping);
+                        textController.text = pantry.text;
+                        time = pantry.time;
+                        showItemInput(context, pantry: pantry);
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getLabelColor(shopping.date),
+                            color: getLabelColor(pantry.date),
                             width: 10,
                           )),
                           boxShadow: const [
@@ -97,7 +95,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                           ],
                         ),
                         child: AnimatedOpacity(
-                          opacity: shopping.isDone ? 0.4 : 1.0,
+                          opacity: pantry.isDone ? 0.4 : 1.0,
                           duration: const Duration(milliseconds: 100),
                           child: Row(
                             children: [
@@ -105,12 +103,12 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                   child: Padding(
                                 padding: const EdgeInsets.all(14.0),
                                 child: Text(
-                                  shopping.text,
+                                  pantry.text,
                                   style: const TextStyle(fontSize: 18),
                                 ),
                               )),
                               Text(
-                                shopping.time,
+                                pantry.time,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -119,24 +117,31 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                    pantryController.updateShoppingList(
-                                        shopping.id,
-                                        shopping.copyWith(
-                                            isDone: !shopping.isDone));
-
-                                    if (!shopping.isDone) {
-                                      showIsDone();
+                                    pantryController.updatePantry(pantry.id,
+                                        pantry.copyWith(isDone: !pantry.isDone));
+                                    if (!pantry.isDone) {
+                                      pantryController.addToShopping(textController.text, time,
+                                          getDateTimestamp(DateTime.now()));
+                                      itemFinished();
+                                      // setState(() {
+                                      //   pantry_notification++;
+                                      // });
+                                      
+                                      // ignore: todo
+                                      //TODO: update shopping list notifications badge on dashboard
+                                      
                                     } else {
-                                      showIsAdded();
+                                      itemAdded();
+                                      setState(() {
+                                        !pantry.isDone;
+                                      });
                                     }
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
-                                      shopping.isDone
-                                          ? Icons.shopping_cart
-                                          : Icons.remove_shopping_cart_outlined,
+                                      pantry.isDone ? Icons.check_circle : Icons.circle_outlined,
                                       size: 28,
                                     ),
                                   )),
@@ -151,15 +156,31 @@ class _ShoppingScreenState extends State<ShoppingScreen>
             }),
       ),
 
-      // animated float end
+      //animated float
+      floatingActionButton:
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        FloatingActionButton(
+          mini: true,
+          onPressed: () async {
+          setState(() {
+          time = TimeOfDay.now().format(context);
+          });
+          await showItemInput(context).then((value) {
+          textController.clear();
+          });
+          },
+          child: const Icon(Icons.add),
+          ),
+
+      ]),
     );
   }
 
-  showItemInput(BuildContext context, {Shopping? shopping}) async {
+  showItemInput(BuildContext context, {Pantry? pantry}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(shopping == null ? 'Add Item' : 'Update Item'),
+              title: Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -189,10 +210,10 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                 ],
               ),
               actions: [
-                if (shopping != null)
+                if (pantry != null)
                   TextButton.icon(
                       onPressed: () {
-                        pantryController.deleteFromShopping(shopping.id);
+                        pantryController.deleteFromPantry(pantry.id);
                         Navigator.pop(context);
                       },
                       icon: const Icon(
@@ -213,32 +234,30 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                     if (textController.text.isEmpty) {
                       return;
                     }
-                    if (shopping != null) {
-                      pantryController.updateShoppingList(
-                          shopping.id,
-                          shopping.copyWith(
-                              text: textController.text, time: time));
+                    if (pantry != null) {
+                      pantryController.updatePantry(pantry.id,
+                          pantry.copyWith(text: textController.text, time: time));
                     } else {
-                      pantryController.addToShopping(textController.text, time,
+                      pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
-                      showIsAdded();
+                      itemAdded();
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(shopping == null ? 'Add Item' : 'Update'),
+                  child: Text(pantry == null ? 'Add Item' : 'Update'),
                 )
               ],
             ));
   }
 
-  showIsDone() {
+  itemFinished() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item purchased'),
-      backgroundColor: Colors.lightGreen,
+      content: Text('Item has run out & added to shopping list'),
+      backgroundColor: Colors.orangeAccent,
     ));
   }
 
-  showIsAdded() {
+  itemAdded() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Item added to Pantry'),
       backgroundColor: Colors.green,
@@ -247,7 +266,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
 
   showOurFault() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Something went wrong:Its our fault,'),
+      content: Text('Something went wrong: Our server is sleepy,'),
       backgroundColor: Colors.amberAccent,
     ));
   }

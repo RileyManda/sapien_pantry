@@ -1,6 +1,5 @@
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
-import 'package:sapienpantry/controller/pantry_controller.dart';
 import 'package:sapienpantry/utils/constants.dart';
 
 int getDateTimestamp(DateTime dateTime) {
@@ -17,8 +16,14 @@ Color getLabelColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return labelColors[date.weekday % labelColors.length];
 }
+// ignore: todo
+//TODO: getItemCategory then group on pantry by category andf set a color to each cat
 
-//TODO: getItemCategory then group on pantry by category
+
+Color getItemColor(int timestamp) {
+  final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  return labelColors[date.weekday % labelColors.length];
+}
 
 
 

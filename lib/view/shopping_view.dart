@@ -1,32 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
-import 'package:sapienpantry/view/app_drawer.dart';
-import 'package:sapienpantry/view/shopping_screen.dart';
+import 'package:sapienpantry/model/shopping.dart';
 
-import '../controller/pantry_controller.dart';
-import '../model/shopping.dart';
-
-class PantryScreen extends StatefulWidget {
-  const PantryScreen({Key? key}) : super(key: key);
+class ShoppingScreen extends StatefulWidget {
+  const ShoppingScreen({Key? key}) : super(key: key);
   @override
-  State<PantryScreen> createState() => _PantryScreenState();
+  State<ShoppingScreen> createState() => _ShoppingScreenState();
 }
 
-class _PantryScreenState extends State<PantryScreen>
+class _ShoppingScreenState extends State<ShoppingScreen>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   String time = '';
-  // Animation controller
   late Shopping shopping;
 
   @override
   initState() {
-
     super.initState();
   }
 
@@ -36,12 +29,11 @@ class _PantryScreenState extends State<PantryScreen>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pantry'),
+        title: const Text('Shopping List'),
       ),
       body: Container(
         color: Colors.grey.shade100,
@@ -50,6 +42,7 @@ class _PantryScreenState extends State<PantryScreen>
                 .collection('users')
                 .doc(authController.user!.uid)
                 .collection('pantry')
+                .where('isDone', isEqualTo: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -64,7 +57,7 @@ class _PantryScreenState extends State<PantryScreen>
                 order: GroupedListOrder.ASC,
                 elements: pantryList,
                 useStickyGroupSeparators: true,
-                groupBy: (Pantry pantry) => pantry.date,
+                groupBy: (Pantry pantry) => pantry.time,
                 groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
@@ -124,18 +117,23 @@ class _PantryScreenState extends State<PantryScreen>
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                    pantryController.updatePantry(pantry.id,
-                                        pantry.copyWith(isDone: !pantry.isDone));
+                                    pantryController.updatePantry(
+                                        pantry.id,
+                                        pantry.copyWith(
+                                            isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      pantryController.addToShopping(textController.text, time,
+                                      pantryController.addToShopping(
+                                          textController.text,
+                                          time,
                                           getDateTimestamp(DateTime.now()));
                                       itemFinished();
                                       // setState(() {
                                       //   pantry_notification++;
                                       // });
+                                      // ignore: todo
                                       //TODO: update shopping list notifications badge on dashboard
                                     } else {
-                                      itemAdded();
+                                      itemPurchased();
                                       setState(() {
                                         !pantry.isDone;
                                       });
@@ -145,7 +143,9 @@ class _PantryScreenState extends State<PantryScreen>
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
-                                      pantry.isDone ? Icons.check_circle : Icons.circle_outlined,
+                                      pantry.isDone
+                                          ? Icons.add_shopping_cart_rounded
+                                          : Icons.shopping_cart_sharp,
                                       size: 28,
                                     ),
                                   )),
@@ -161,22 +161,21 @@ class _PantryScreenState extends State<PantryScreen>
       ),
 
       //animated float
-      floatingActionButton:
-          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        FloatingActionButton(
-          mini: true,
-          onPressed: () async {
-          setState(() {
-          time = TimeOfDay.now().format(context);
-          });
-          await showItemInput(context).then((value) {
-          textController.clear();
-          });
-          },
-          child: const Icon(Icons.add),
-          ),
-
-      ]),
+      // floatingActionButton:
+      //     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+      //   FloatingActionButton(
+      //     mini: true,
+      //     onPressed: () async {
+      //       setState(() {
+      //         time = TimeOfDay.now().format(context);
+      //       });
+      //       await showItemInput(context).then((value) {
+      //         textController.clear();
+      //       });
+      //     },
+      //     child: const Icon(Icons.add),
+      //   ),
+      // ]),
     );
   }
 
@@ -184,7 +183,8 @@ class _PantryScreenState extends State<PantryScreen>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
+              title:
+                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -239,12 +239,14 @@ class _PantryScreenState extends State<PantryScreen>
                       return;
                     }
                     if (pantry != null) {
-                      pantryController.updatePantry(pantry.id,
-                          pantry.copyWith(text: textController.text, time: time));
+                      pantryController.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(
+                              text: textController.text, time: time));
                     } else {
                       pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
-                      itemAdded();
+                      itemPurchased();
                     }
                     Navigator.pop(context);
                   },
@@ -261,9 +263,9 @@ class _PantryScreenState extends State<PantryScreen>
     ));
   }
 
-  itemAdded() {
+  itemPurchased() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item added to Pantry'),
+      content: Text('Item purchased and added to Pantry'),
       backgroundColor: Colors.green,
     ));
   }
