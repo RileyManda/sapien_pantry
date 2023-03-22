@@ -112,30 +112,34 @@ class _CategoryViewState extends State<CategoryView>
         context: context,
         builder: (context) => AlertDialog(
               title:
-                  Text(pantry == null ? 'Add New Category' : 'Update Category'),
+                  Text(pantry == null ? 'Feature Coming Soon' : 'Update Category'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextField(
                     controller: textController,
+
                     autofocus: true,
                     decoration: InputDecoration(
+                        hintText:'Category Name',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
+                            borderRadius: BorderRadius.circular(5))
+                    ),
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   OutlinedButton(
                     onPressed: () async {
-                      final newTime = await showTimePicker(
-                          context: context, initialTime: TimeOfDay.now());
-                      if (newTime != null) {
-                        setState(() {
-                          time = newTime.format(context);
-                        });
-                      }
+                      comingSoon();
+                      // final newTime = await showTimePicker(
+                      //     context: context, initialTime: TimeOfDay.now());
+                      // if (newTime != null) {
+                      //   setState(() {
+                      //     time = newTime.format(context);
+                      //   });
+                      // }
                     },
                     child: Text('Time : $time'),
                   ),
@@ -145,12 +149,13 @@ class _CategoryViewState extends State<CategoryView>
                 if (pantry != null)
                   TextButton.icon(
                       onPressed: () {
-                        pantryController.deleteFromPantry(pantry.id);
-                        Navigator.pop(context);
+                        null;
+                        // pantryController.deleteFromPantry(pantry.id);
+                        // Navigator.pop(context);
                       },
                       icon: const Icon(
                         Icons.delete,
-                        color: Colors.redAccent,
+                        color: Colors.grey,
                       ),
                       label: const Text(
                         'Delete',
@@ -163,22 +168,23 @@ class _CategoryViewState extends State<CategoryView>
                     child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (textController.text.isEmpty) {
-                      return;
-                    }
-                    if (pantry != null) {
-                      pantryController.updatePantry(
-                          pantry.id,
-                          pantry.copyWith(
-                              text: textController.text, time: time));
-                    } else {
-                      pantryController.addtoPantry(textController.text, time,
-                          getDateTimestamp(DateTime.now()));
-                      itemAdded();
-                    }
-                    Navigator.pop(context);
+                    null;
+                    // if (textController.text.isEmpty) {
+                    //   return;
+                    // }
+                    // if (pantry != null) {
+                    //   pantryController.updatePantry(
+                    //       pantry.id,
+                    //       pantry.copyWith(
+                    //           text: textController.text, time: time));
+                    // } else {
+                    //   pantryController.addtoPantry(textController.text, time,
+                    //       getDateTimestamp(DateTime.now()));
+                    //   itemAdded();
+                    // }
+                    // Navigator.pop(context);
                   },
-                  child: Text(pantry == null ? 'Add Item' : 'Update'),
+                  child: Text(pantry == null ? 'Create' : 'Update'),
                 )
               ],
             ));

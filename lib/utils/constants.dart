@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:sapienpantry/controller/auth_controller.dart';
 import 'package:sapienpantry/controller/pantry_controller.dart';
 
-const pPrimaryColor = Colors.green;
+const pPrimaryColor = Colors.sapientheme;
+const shoppingColor = Colors.sapienshoptheme;
+// const pPrimaryColor = Color(0xFF265C7E);
 
 final firebaseAuth = FirebaseAuth.instance;
 final firestore = FirebaseFirestore.instance;
@@ -25,7 +27,7 @@ const labelColors = [
 ];
 
 const buttonColors = [
-  Colors.green,
+  Colors.sapientheme,
   Colors.orangeAccent,
   Colors.redAccent,
 ];

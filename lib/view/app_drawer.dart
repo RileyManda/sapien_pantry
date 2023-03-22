@@ -16,7 +16,7 @@ class AppDrawer extends StatelessWidget {
             width: double.infinity,
             height: 150,
             alignment: Alignment.bottomLeft,
-            color: pPrimaryColor.shade400,
+            color: pPrimaryColor,
             // padding: const EdgeInsets.all(16.0),
             padding: EdgeInsets.zero,
             child: Column(
@@ -42,7 +42,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.space_dashboard),
-            iconColor: Colors.lightGreen,
+            iconColor: Colors.amber,
             title: const Text('Categories'),
             onTap: () {
               Navigator.push(
@@ -51,9 +51,20 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
+               ListTile(
+            leading: const Icon(Icons.menu_book),
+            iconColor: Colors.blueAccent,
+            title: const Text('Menues'),
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const MenuView()),
+              // );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.delete_sweep),
-            iconColor: Colors.lightGreen,
+            iconColor: Colors.red,
             title: const Text('Delete Finished Items'),
             onTap: () {
               pantryController.deleteCompleted();
@@ -63,7 +74,7 @@ class AppDrawer extends StatelessWidget {
           const Spacer(),
           ListTile(
             onTap: () {
-              authController.signOut();
+             //go tp settings view
             },
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
