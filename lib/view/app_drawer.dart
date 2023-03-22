@@ -16,7 +16,7 @@ class AppDrawer extends StatelessWidget {
             width: double.infinity,
             height: 150,
             alignment: Alignment.bottomLeft,
-            color: pPrimaryColor.shade400,
+            color: pPrimaryColor,
             // padding: const EdgeInsets.all(16.0),
             padding: EdgeInsets.zero,
             child: Column(

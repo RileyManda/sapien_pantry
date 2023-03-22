@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
@@ -18,15 +19,31 @@ class _PantryScreenState extends State<PantryScreen>
   final textController = TextEditingController();
   String time = '';
   late Shopping shopping;
-
+  final _scrollController = ScrollController();
+  bool _isVisible = true;
   @override
   initState() {
     super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        setState(() {
+          _isVisible = false;
+        });
+      }
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     textController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -52,6 +69,7 @@ class _PantryScreenState extends State<PantryScreen>
               final pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               return GroupedListView(
+                controller: _scrollController,
                 semanticChildCount: pantryList.length,
                 sort: true,
                 order: GroupedListOrder.ASC,
@@ -155,12 +173,20 @@ class _PantryScreenState extends State<PantryScreen>
               );
             }),
       ),
-
+    //   floatingActionButton: _isVisible
+    //       ? FloatingActionButton(
+    //     onPressed: () {
+    //       // Add your onPressed action here
+    //     },
+    //     child: Icon(Icons.add),
+    //   )
+    //       : null,
+    // );
       //animated float
-      floatingActionButton:
-          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+      floatingActionButton: _isVisible
+          ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
-          mini: true,
+          mini: false,
           onPressed: () async {
           setState(() {
           time = TimeOfDay.now().format(context);
@@ -172,7 +198,8 @@ class _PantryScreenState extends State<PantryScreen>
           child: const Icon(Icons.add),
           ),
 
-      ]),
+      ])
+          : null,
     );
   }
 

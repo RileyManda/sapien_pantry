@@ -199,7 +199,7 @@ class _DashboardState extends State<Dashboard>
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.orange,
+                  color: Colors.sapienshoptheme,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
@@ -271,7 +271,7 @@ class _DashboardState extends State<Dashboard>
         ),
         FloatingActionButton(
           heroTag: null,
-          mini: true,
+
           onPressed: _toggle,
           child: AnimatedIcon(
             icon: AnimatedIcons.menu_close,
@@ -298,6 +298,7 @@ class _DashboardState extends State<Dashboard>
                     controller: textController,
                     autofocus: true,
                     decoration: InputDecoration(
+                        hintText:'Item Name',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5))),
                   ),
@@ -358,7 +359,7 @@ class _DashboardState extends State<Dashboard>
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(pantry == null ? 'Add Item' : 'Update'),
+                  child: Text(pantry == null ? 'Add' : 'Update'),
                 )
               ],
             ));

@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Sapien Pantry',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primarySwatch: pPrimaryColor,
+          primarySwatch:pPrimaryColor,
           iconTheme: const IconThemeData(color: pPrimaryColor),
           appBarTheme: const AppBarTheme(
             centerTitle: true,

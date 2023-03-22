@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       color: authController.isAuthenticating
-                          ? pPrimaryColor.shade200
+                          ? pPrimaryColor
                           : pPrimaryColor,
                       borderRadius: BorderRadius.circular(5),
                     ),

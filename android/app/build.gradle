@@ -76,7 +76,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
             signingConfig signingConfigs.release
         }
     }
-}
+      namespace 'com.cixhub.sapienpantry'
+  }
 
 flutter {
     source '../..'

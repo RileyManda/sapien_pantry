@@ -79,7 +79,7 @@ class _RegisterSceenState extends State<RegisterScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       color: authController.isAuthenticating
-                          ? pPrimaryColor.shade200
+                          ? pPrimaryColor
                           : pPrimaryColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
