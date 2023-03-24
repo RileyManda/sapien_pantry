@@ -63,6 +63,17 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.pie_chart),
+            iconColor: Colors.deepPurple,
+            title: const Text('Analytics'),
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const MenuView()),
+              // );
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.delete_sweep),
             iconColor: Colors.red,
             title: const Text('Delete Finished Items'),
