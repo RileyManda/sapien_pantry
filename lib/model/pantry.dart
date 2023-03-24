@@ -7,7 +7,6 @@ class Pantry {
   final bool isDone;
   final String time;
   final int date;
-  // final int quantity;
 
   Pantry({
     required this.id,

@@ -187,16 +187,7 @@ class _PantryScreenState extends State<PantryScreen>
               );
             }),
       ),
-    //   floatingActionButton: _isVisible
-    //       ? FloatingActionButton(
-    //     onPressed: () {
-    //       // Add your onPressed action here
-    //     },
-    //     child: Icon(Icons.add),
-    //   )
-    //       : null,
-    // );
-      //animated float
+
       floatingActionButton: _isVisible
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
@@ -234,7 +225,7 @@ class _PantryScreenState extends State<PantryScreen>
                             borderRadius: BorderRadius.circular(5))),
                   ),
                   TextField(
-
+                    controller: categoryController,
                     autofocus: true,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -289,9 +280,9 @@ class _PantryScreenState extends State<PantryScreen>
                     if (pantry != null) {
 
                       pantryController.updatePantry(pantry.id,
-                          pantry.copyWith(text: textController.text, category: textController.text, time: time));
+                          pantry.copyWith(text: textController.text, category: categoryController.text, time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text,textController.text, time,
+                      pantryController.addtoPantry(textController.text,categoryController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showItemAdded(context);
                     }
@@ -300,8 +291,8 @@ class _PantryScreenState extends State<PantryScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.save),
-                      SizedBox(width: 8.0),
+                      const Icon(Icons.save),
+                      const SizedBox(width: 8.0),
                       Text(pantry == null ? 'Add Item' : 'Update'),
                     ],
                   ),
