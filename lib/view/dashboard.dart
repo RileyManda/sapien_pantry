@@ -6,6 +6,8 @@ import 'package:sapienpantry/view/app_drawer.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
 
+import '../utils/messages.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
   @override
@@ -225,7 +227,7 @@ class _DashboardState extends State<Dashboard>
             mini: true,
             backgroundColor: buttonColors.elementAt(2),
             onPressed: () {
-              comingSoon();
+              showComingSoon(context);
             },
             child: const Icon(Icons.message),
           ),
@@ -241,7 +243,7 @@ class _DashboardState extends State<Dashboard>
             mini: true,
             backgroundColor: buttonColors.elementAt(1),
             onPressed: () {
-              comingSoon();
+              showComingSoon(context);
             },
             child: const Icon(
               Icons.call,
@@ -352,7 +354,7 @@ class _DashboardState extends State<Dashboard>
                     } else {
                       pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
-                      showIsAdded();
+                      showIsAdded(context);
                       setState(() {
                         pantryNotification++;
                       });
@@ -365,31 +367,11 @@ class _DashboardState extends State<Dashboard>
             ));
   }
 
-  showIsDone() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item has run out'),
-      backgroundColor: Colors.orangeAccent,
-    ));
-  }
 
-  showIsAdded() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item added to Pantry'),
-      backgroundColor: Colors.green,
-    ));
-  }
 
-  showOurFault() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Something went wrong: Our server is sleepy,'),
-      backgroundColor: Colors.amberAccent,
-    ));
-  }
 
-  comingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Feature coming soon'),
-      backgroundColor: Colors.grey,
-    ));
-  }
+
+
+
+
 }

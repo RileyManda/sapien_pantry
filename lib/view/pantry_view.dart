@@ -6,6 +6,7 @@ import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
+import 'package:sapienpantry/utils/messages.dart';
 
 
 class PantryScreen extends StatefulWidget {
@@ -67,7 +68,8 @@ class _PantryScreenState extends State<PantryScreen>
                 return const Center(child: CircularProgressIndicator());
               }
               final pantryList =
-                  snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              pantryList.sort((a, b) => a.text.compareTo(b.text)); // Sorts the list alphabetically
               return GroupedListView(
                 controller: _scrollController,
                 semanticChildCount: pantryList.length,
@@ -101,9 +103,9 @@ class _PantryScreenState extends State<PantryScreen>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getLabelColor(pantry.date),
-                            width: 10,
-                          )),
+                                color: getLabelColorFromText(pantry.text),
+                                width: 10,
+                              )),
                           boxShadow: const [
                             BoxShadow(
                               offset: Offset(4, 4),
@@ -119,12 +121,12 @@ class _PantryScreenState extends State<PantryScreen>
                             children: [
                               Expanded(
                                   child: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Text(
-                                  pantry.text,
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                              )),
+                                    padding: const EdgeInsets.all(14.0),
+                                    child: Text(
+                                      pantry.text,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  )),
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -140,16 +142,16 @@ class _PantryScreenState extends State<PantryScreen>
                                     if (!pantry.isDone) {
                                       pantryController.addToShopping(textController.text, time,
                                           getDateTimestamp(DateTime.now()));
-                                      itemFinished();
+                                      showItemFinished(context);
                                       // setState(() {
                                       //   pantry_notification++;
                                       // });
-                                      
+
                                       // ignore: todo
                                       //TODO: update shopping list notifications badge on dashboard
-                                      
+
                                     } else {
-                                      itemAdded();
+                                      showItemAdded(context);
                                       setState(() {
                                         !pantry.isDone;
                                       });
@@ -267,7 +269,7 @@ class _PantryScreenState extends State<PantryScreen>
                     } else {
                       pantryController.addtoPantry(textController.text, time,
                           getDateTimestamp(DateTime.now()));
-                      itemAdded();
+                      showItemAdded(context);
                     }
                     Navigator.pop(context);
                   },
@@ -277,31 +279,9 @@ class _PantryScreenState extends State<PantryScreen>
             ));
   }
 
-  itemFinished() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item has run out & added to shopping list'),
-      backgroundColor: Colors.orangeAccent,
-    ));
-  }
 
-  itemAdded() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item added to Pantry'),
-      backgroundColor: Colors.green,
-    ));
-  }
 
-  showOurFault() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Something went wrong: Our server is sleepy,'),
-      backgroundColor: Colors.amberAccent,
-    ));
-  }
 
-  comingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Feature coming soon'),
-      backgroundColor: Colors.grey,
-    ));
-  }
+
+
 }
