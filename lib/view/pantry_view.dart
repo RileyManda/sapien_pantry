@@ -102,8 +102,8 @@ class _PantryScreenState extends State<PantryScreen>
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border(
-                              top: BorderSide(
-                                color: getLabelColor(pantry.date),
+                              right: BorderSide(
+                                color: getLabelColorFromText(pantry.text),
                                 width: 10,
                               )),
                           boxShadow: const [
