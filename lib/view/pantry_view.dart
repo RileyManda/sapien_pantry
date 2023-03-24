@@ -18,6 +18,8 @@ class PantryScreen extends StatefulWidget {
 class _PantryScreenState extends State<PantryScreen>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
+  final categoryController = TextEditingController();
+  // final catController = TextEditingController();
   String time = '';
   late Shopping shopping;
   final _scrollController = ScrollController();
@@ -44,6 +46,7 @@ class _PantryScreenState extends State<PantryScreen>
   @override
   void dispose() {
     textController.dispose();
+    categoryController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -95,6 +98,7 @@ class _PantryScreenState extends State<PantryScreen>
                     child: InkWell(
                       onTap: () {
                         textController.text = pantry.text;
+                        categoryController.text = pantry.category ?? '';
                         time = pantry.time;
                         showItemInput(context, pantry: pantry);
                       },
@@ -127,6 +131,14 @@ class _PantryScreenState extends State<PantryScreen>
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                   )),
+                              Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(14.0),
+                                    child: Text(
+                                      pantry.category ?? '',
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  )),
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -140,7 +152,7 @@ class _PantryScreenState extends State<PantryScreen>
                                     pantryController.updatePantry(pantry.id,
                                         pantry.copyWith(isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      pantryController.addToShopping(textController.text, time,
+                                      pantryController.addToShopping(textController.text,textController.text, time,
                                           getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
                                       // setState(() {
@@ -175,16 +187,7 @@ class _PantryScreenState extends State<PantryScreen>
               );
             }),
       ),
-    //   floatingActionButton: _isVisible
-    //       ? FloatingActionButton(
-    //     onPressed: () {
-    //       // Add your onPressed action here
-    //     },
-    //     child: Icon(Icons.add),
-    //   )
-    //       : null,
-    // );
-      //animated float
+
       floatingActionButton: _isVisible
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
@@ -216,6 +219,13 @@ class _PantryScreenState extends State<PantryScreen>
                 children: [
                   TextField(
                     controller: textController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                  ),
+                  TextField(
+                    controller: categoryController,
                     autofocus: true,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -257,23 +267,35 @@ class _PantryScreenState extends State<PantryScreen>
                     onPressed: () {
                       Navigator.pop(context);
                     },
+
                     child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
                     if (textController.text.isEmpty) {
                       return;
                     }
+                    // if (category.isEmpty) {
+                    //   return;
+                    // }
                     if (pantry != null) {
+
                       pantryController.updatePantry(pantry.id,
-                          pantry.copyWith(text: textController.text, time: time));
+                          pantry.copyWith(text: textController.text, category: categoryController.text, time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text, time,
+                      pantryController.addtoPantry(textController.text,categoryController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showItemAdded(context);
                     }
                     Navigator.pop(context);
                   },
-                  child: Text(pantry == null ? 'Add Item' : 'Update'),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.save),
+                      const SizedBox(width: 8.0),
+                      Text(pantry == null ? 'Add Item' : 'Update'),
+                    ],
+                  ),
                 )
               ],
             ));

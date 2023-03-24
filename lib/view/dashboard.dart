@@ -17,6 +17,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
+  final catController = TextEditingController();
   String time = '';
   late AnimationController _animationController;
   // animate the icon of the main FAB
@@ -51,6 +52,7 @@ class _DashboardState extends State<Dashboard>
   @override
   void dispose() {
     textController.dispose();
+    catController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -266,6 +268,7 @@ class _DashboardState extends State<Dashboard>
               });
               await showItemInput(context).then((value) {
                 textController.clear();
+                catController.clear();
               });
             },
             child: const Icon(Icons.inventory),
@@ -301,6 +304,14 @@ class _DashboardState extends State<Dashboard>
                     autofocus: true,
                     decoration: InputDecoration(
                         hintText:'Item Name',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                  ),
+                  TextField(
+                    controller: catController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        hintText:'Category',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5))),
                   ),
@@ -346,13 +357,16 @@ class _DashboardState extends State<Dashboard>
                     if (textController.text.isEmpty) {
                       return;
                     }
+                    if (catController.text.isEmpty) {
+                      return;
+                    }
                     if (pantry != null) {
                       pantryController.updatePantry(
                           pantry.id,
                           pantry.copyWith(
-                              text: textController.text, time: time));
+                              text: textController.text,category: catController.text, time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text, time,
+                      pantryController.addtoPantry(textController.text,catController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showIsAdded(context);
                       setState(() {
