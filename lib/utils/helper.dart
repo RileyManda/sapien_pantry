@@ -26,6 +26,13 @@ Color getItemColor(int timestamp) {
 }
 
 
+// Color getNameColor(String category) {
+//   final catName = DateTime.fromMillisecondsSinceEpoch(category);
+//   return labelColors[catName.weekday % labelColors.length];
+// }
+
+
+
 
 
 
