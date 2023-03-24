@@ -15,6 +15,7 @@ class ShoppingScreen extends StatefulWidget {
 class _ShoppingScreenState extends State<ShoppingScreen>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
+  final categoryController = TextEditingController();
   String time = '';
   late Shopping shopping;
 
@@ -26,6 +27,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
   @override
   void dispose() {
     textController.dispose();
+    // catController.dispose();
     super.dispose();
   }
 
@@ -75,6 +77,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                     child: InkWell(
                       onTap: () {
                         textController.text = pantry.text;
+                        textController.text = pantry.category ?? '';
                         time = pantry.time;
                         showItemInput(context, pantry: pantry);
                       },
@@ -106,7 +109,22 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                   pantry.text,
                                   style: const TextStyle(fontSize: 18),
                                 ),
-                              )),
+
+                              ),
+
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14.0),
+                                  child: Text(
+                                    pantry.category ?? '' ,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+
+                                ),
+
+                              ),
+
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -123,6 +141,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                             isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
                                       pantryController.addToShopping(
+                                          textController.text,
                                           textController.text,
                                           time,
                                           getDateTimestamp(DateTime.now()));
@@ -196,6 +215,13 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5))),
                   ),
+                  TextField(
+                    // controller: catController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                  ),
                   const SizedBox(
                     height: 5,
                   ),
@@ -238,13 +264,16 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                     if (textController.text.isEmpty) {
                       return;
                     }
+                    // if (category.isEmpty) {
+                    //   return;
+                    // }
                     if (pantry != null) {
                       pantryController.updatePantry(
                           pantry.id,
                           pantry.copyWith(
-                              text: textController.text, time: time));
+                              text: textController.text, category: textController.text, time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text, time,
+                      pantryController.addtoPantry(textController.text,textController.text, time,
                           getDateTimestamp(DateTime.now()));
                       itemPurchased();
                     }

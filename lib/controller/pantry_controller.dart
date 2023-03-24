@@ -9,7 +9,8 @@ import '../model/pantry.dart';
 
 class PantryController extends GetxController {
   static PantryController instance = Get.find();
-  addtoPantry(String itemText, String time, int date) async {
+
+  addtoPantry(String itemText,String itemCategory, String time, int date) async {
     try {
       final ref = firestore
           .collection('users')
@@ -17,7 +18,7 @@ class PantryController extends GetxController {
           .collection('pantry')
           .doc();
       final pantry = Pantry(
-          id: ref.id, text: itemText, isDone: false, time: time, date: date);
+          id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
       await ref.set(pantry.toMap());
     } catch (e) {
       debugPrint('Something went wrong(Add): $e');
@@ -72,7 +73,7 @@ class PantryController extends GetxController {
 
 
 
-addToShopping(String itemText, String time, int date) async {
+addToShopping(String itemText,String itemCategory, String time, int date) async {
   try {
     final ref = firestore
         .collection('users')
@@ -80,7 +81,7 @@ addToShopping(String itemText, String time, int date) async {
         .collection('shoppinglist')
         .doc();
     final pantry = Pantry(
-        id: ref.id, text: itemText, isDone: false, time: time, date: date);
+        id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
     await ref.set(pantry.toMap());
   } catch (e) {
     debugPrint('Something went wrong(Add): $e');
