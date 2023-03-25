@@ -80,7 +80,7 @@ class _PantryScreenState extends State<PantryScreen>
                 order: GroupedListOrder.ASC,
                 elements: pantryList,
                 useStickyGroupSeparators: true,
-                groupBy: (Pantry pantry) => pantry.date,
+                groupBy: (Pantry pantry) => pantry.category,
                 groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
@@ -107,7 +107,7 @@ class _PantryScreenState extends State<PantryScreen>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                                color: getLabelColorFromText(pantry.text),
+                                color: getLabelColorFromCat(pantry.category),
                                 width: 10,
                               )),
                           boxShadow: const [
