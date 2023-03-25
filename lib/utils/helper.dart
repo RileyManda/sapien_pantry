@@ -24,6 +24,17 @@ Color getLabelColorFromText(String text) {
   return labelColors[index];
 }
 
+
+Color getLabelColorFromCat(String category) {
+  final bytes = category.codeUnits;
+  final sum = bytes.fold(0, (a, b) => a + b);
+  final index = sum % labelColors.length;
+  return labelColors[index];
+}
+
+
+
+
 // ignore: todo
 //TODO: getItemCategory then group on pantry by category andf set a color to each cat
 

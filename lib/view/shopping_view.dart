@@ -79,7 +79,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                         textController.text = pantry.text;
                         textController.text = pantry.category ?? '';
                         time = pantry.time;
-                        showItemInput(context, pantry: pantry);
+                        createShoppingList(context, pantry: pantry);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -145,10 +145,6 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                           textController.text,
                                           time,
                                           getDateTimestamp(DateTime.now()));
-                                      itemFinished();
-                                      // setState(() {
-                                      //   pantry_notification++;
-                                      // });
                                       // ignore: todo
                                       //TODO: update shopping list notifications badge on dashboard
                                     } else {
@@ -178,32 +174,14 @@ class _ShoppingScreenState extends State<ShoppingScreen>
               );
             }),
       ),
-
-      //animated float
-      // floatingActionButton:
-      //     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-      //   FloatingActionButton(
-      //     mini: true,
-      //     onPressed: () async {
-      //       setState(() {
-      //         time = TimeOfDay.now().format(context);
-      //       });
-      //       await showItemInput(context).then((value) {
-      //         textController.clear();
-      //       });
-      //     },
-      //     child: const Icon(Icons.add),
-      //   ),
-      // ]),
     );
   }
-
-  showItemInput(BuildContext context, {Pantry? pantry}) async {
+  createShoppingList(BuildContext context, {Pantry? pantry}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
               title:
-                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
+                  Text(pantry == null ? 'Add to Shopping List' : 'Update'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -285,12 +263,6 @@ class _ShoppingScreenState extends State<ShoppingScreen>
             ));
   }
 
-  itemFinished() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item has run out & added to shopping list'),
-      backgroundColor: Colors.orangeAccent,
-    ));
-  }
 
   itemPurchased() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
