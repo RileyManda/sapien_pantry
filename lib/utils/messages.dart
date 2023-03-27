@@ -44,4 +44,26 @@ void showItemFinished(BuildContext context) {
 }
 
 
+void noItemsShopping(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('No Items found in your Shopping List'),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
+
+void emptyPantry(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('Your Pantry is Empty'),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
+
+void itemPurchased(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('Item purchased & added to Pantry'),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
+
+
 

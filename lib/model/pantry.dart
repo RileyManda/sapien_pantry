@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Pantry {
   final String id;
   final String text;
-  final String? category;
+  final String category;
   final bool isDone;
   final String time;
   final int date;
@@ -11,7 +11,7 @@ class Pantry {
   Pantry({
     required this.id,
     required this.text,
-      this.category,
+    required this.category,
     required this.isDone,
     required this.time,
     required this.date,
