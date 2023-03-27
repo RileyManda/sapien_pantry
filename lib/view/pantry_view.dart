@@ -8,18 +8,16 @@ import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/utils/messages.dart';
 
-
-class PantryScreen extends StatefulWidget {
-  const PantryScreen({Key? key}) : super(key: key);
+class PantryView extends StatefulWidget {
+  const PantryView({Key? key}) : super(key: key);
   @override
-  State<PantryScreen> createState() => _PantryScreenState();
+  State<PantryView> createState() => _PantryViewState();
 }
 
-class _PantryScreenState extends State<PantryScreen>
+class _PantryViewState extends State<PantryView>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   final categoryController = TextEditingController();
-  // final catController = TextEditingController();
   String time = '';
   late Shopping shopping;
   final _scrollController = ScrollController();
@@ -51,7 +49,6 @@ class _PantryScreenState extends State<PantryScreen>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,9 +67,24 @@ class _PantryScreenState extends State<PantryScreen>
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
+              if (!snapshot.hasData) {
+                return Stack(
+                  children: const [
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    Center(
+                      child: Text('Loading...'),
+                    ),
+                  ],
+                );
+              } else if (snapshot.data == null || snapshot.data!.size == 0) {
+                Future.microtask(() => noItemsShopping(context));
+              }
               final pantryList =
-              snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
-              pantryList.sort((a, b) => a.text.compareTo(b.text)); // Sorts the list alphabetically
+                  snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              pantryList.sort((a, b) =>
+                  a.text.compareTo(b.text)); // Sorts the list alphabetically
               return GroupedListView(
                 controller: _scrollController,
                 semanticChildCount: pantryList.length,
@@ -107,9 +119,9 @@ class _PantryScreenState extends State<PantryScreen>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                                color: getLabelColorFromCat(pantry.category),
-                                width: 10,
-                              )),
+                            color: getLabelColorFromCat(pantry.category),
+                            width: 10,
+                          )),
                           boxShadow: const [
                             BoxShadow(
                               offset: Offset(4, 4),
@@ -125,20 +137,20 @@ class _PantryScreenState extends State<PantryScreen>
                             children: [
                               Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: Text(
-                                      pantry.text,
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  )),
+                                padding: const EdgeInsets.all(14.0),
+                                child: Text(
+                                  pantry.text,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              )),
                               Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: Text(
-                                      pantry.category ?? '',
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  )),
+                                padding: const EdgeInsets.all(14.0),
+                                child: Text(
+                                  pantry.category ?? '',
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              )),
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -149,19 +161,20 @@ class _PantryScreenState extends State<PantryScreen>
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                    pantryController.updatePantry(pantry.id,
-                                        pantry.copyWith(isDone: !pantry.isDone));
+                                    pantryController.updatePantry(
+                                        pantry.id,
+                                        pantry.copyWith(
+                                            isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      pantryController.addToShopping(textController.text,textController.text, time,
+                                      pantryController.addToShopping(
+                                          textController.text,
+                                          textController.text,
+                                          time,
                                           getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
-                                      // setState(() {
-                                      //   pantry_notification++;
-                                      // });
 
                                       // ignore: todo
                                       //TODO: update shopping list notifications badge on dashboard
-
                                     } else {
                                       showItemAdded(context);
                                       setState(() {
@@ -173,7 +186,9 @@ class _PantryScreenState extends State<PantryScreen>
                                     padding: const EdgeInsets.all(4)
                                         .copyWith(right: 14),
                                     child: Icon(
-                                      pantry.isDone ? Icons.check_circle : Icons.circle_outlined,
+                                      pantry.isDone
+                                          ? Icons.check_circle
+                                          : Icons.circle_outlined,
                                       size: 28,
                                     ),
                                   )),
@@ -187,23 +202,21 @@ class _PantryScreenState extends State<PantryScreen>
               );
             }),
       ),
-
       floatingActionButton: _isVisible
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        FloatingActionButton(
-          mini: false,
-          onPressed: () async {
-          setState(() {
-          time = TimeOfDay.now().format(context);
-          });
-          await showItemInput(context).then((value) {
-          textController.clear();
-          });
-          },
-          child: const Icon(Icons.add),
-          ),
-
-      ])
+              FloatingActionButton(
+                mini: false,
+                onPressed: () async {
+                  setState(() {
+                    time = TimeOfDay.now().format(context);
+                  });
+                  await showItemInput(context).then((value) {
+                    textController.clear();
+                  });
+                },
+                child: const Icon(Icons.add),
+              ),
+            ])
           : null,
     );
   }
@@ -212,24 +225,33 @@ class _PantryScreenState extends State<PantryScreen>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
+              title:
+                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextField(
+                  TextFormField(
                     controller: textController,
                     autofocus: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
+                    decoration: const InputDecoration(
+                      hintText: 'Item Name',
+                      labelText: 'Item Name',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an item name';
+                      }
+                      return null;
+                    },
                   ),
-                  TextField(
+                  TextFormField(
                     controller: categoryController,
                     autofocus: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
+                    decoration: const InputDecoration(
+                      hintText: 'Category',
+                      labelText: 'Category',
+                    ),
                   ),
                   const SizedBox(
                     height: 5,
@@ -267,7 +289,6 @@ class _PantryScreenState extends State<PantryScreen>
                     onPressed: () {
                       Navigator.pop(context);
                     },
-
                     child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
@@ -278,11 +299,17 @@ class _PantryScreenState extends State<PantryScreen>
                     //   return;
                     // }
                     if (pantry != null) {
-
-                      pantryController.updatePantry(pantry.id,
-                          pantry.copyWith(text: textController.text, category: categoryController.text, time: time));
+                      pantryController.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(
+                              text: textController.text,
+                              category: categoryController.text,
+                              time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text,categoryController.text, time,
+                      pantryController.addtoPantry(
+                          textController.text,
+                          categoryController.text,
+                          time,
                           getDateTimestamp(DateTime.now()));
                       showItemAdded(context);
                     }
@@ -293,17 +320,11 @@ class _PantryScreenState extends State<PantryScreen>
                     children: [
                       const Icon(Icons.save),
                       const SizedBox(width: 8.0),
-                      Text(pantry == null ? 'Add Item' : 'Update'),
+                      Text(pantry == null ? 'Add' : 'Update'),
                     ],
                   ),
                 )
               ],
             ));
   }
-
-
-
-
-
-
 }

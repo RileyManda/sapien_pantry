@@ -5,7 +5,6 @@ import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
-
 import '../utils/messages.dart';
 
 class Dashboard extends StatefulWidget {
@@ -26,7 +25,7 @@ class _DashboardState extends State<Dashboard>
   late Animation<double> _translateButton;
   bool _isExpanded = false;
   int pantryNotification = 0;
-  int shoppingNotification = 0;
+  int _itemsDone = 0;
 
   @override
   initState() {
@@ -46,6 +45,7 @@ class _DashboardState extends State<Dashboard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    updateItemsDone();
     super.initState();
   }
 
@@ -66,6 +66,23 @@ class _DashboardState extends State<Dashboard>
     }
     _isExpanded = !_isExpanded;
   }
+  void updateItemsDone() {
+    setState(() {
+      _itemsDone = 0;
+    });
+
+    firestore
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry')
+        .where('isDone', isEqualTo: true)
+        .snapshots()
+        .listen((snapshot) {
+      setState(() {
+        _itemsDone = snapshot.size;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +101,7 @@ class _DashboardState extends State<Dashboard>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const PantryScreen()),
+                          builder: (context) => const PantryView()),
                     );
                   }),
               pantryNotification != 0
@@ -94,7 +111,7 @@ class _DashboardState extends State<Dashboard>
                       child: Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Colors.brown,
+                          color: Colors.red,
                           borderRadius: BorderRadius.circular(6),
                         ),
                         constraints: const BoxConstraints(
@@ -115,53 +132,39 @@ class _DashboardState extends State<Dashboard>
             ],
           ),
           Stack(
-            children: <Widget>[
+            children: [
               IconButton(
-                  icon: const Icon(Icons.shopping_cart, size: 18),
-                  onPressed: () {
-                    setState(() {
-                      shoppingNotification = 0;
-                    });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ShoppingScreen()),
-                    );
-                  }),
-              shoppingNotification != 0
-                  ? Positioned(
-                      right: 11,
-                      top: 11,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 14,
-                          minHeight: 14,
-                        ),
-                        child: Text(
-                          '$shoppingNotification',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ShoppingView()),
+                  );
+                },
+              ),
+              if (_itemsDone > 0)
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      '$_itemsDone',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
-                    )
-                  : Container(),
+                    ),
+                  ),
+                ),
             ],
           ),
-          //TODO: more vert icon makes appbar look too busy:Update spacing between icons
-          // Padding(
-          //     padding: const EdgeInsets.only(right: 20.0),
-          //     child: GestureDetector(
-          //       onTap: () {},
-          //       child: Icon(Icons.more_vert),
-          //     )),
         ],
       ),
       drawer: const AppDrawer(),
@@ -178,7 +181,7 @@ class _DashboardState extends State<Dashboard>
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PantryScreen()),
+                  MaterialPageRoute(builder: (context) => const PantryView()),
                 );
               },
               child: Container(
@@ -197,7 +200,7 @@ class _DashboardState extends State<Dashboard>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ShoppingScreen()),
+                      builder: (context) => const ShoppingView()),
                 );
               },
               child: Container(
@@ -299,21 +302,26 @@ class _DashboardState extends State<Dashboard>
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextField(
+                  TextFormField(
                     controller: textController,
                     autofocus: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText:'Item Name',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
+                        labelText: 'Item Name',
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(5))
+                    ),
                   ),
-                  TextField(
+                  TextFormField(
                     controller: catController,
                     autofocus: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText:'Category',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
+                        labelText: 'Category Name',
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(5))
+
+                    ),
                   ),
                   const SizedBox(
                     height: 5,
@@ -356,6 +364,7 @@ class _DashboardState extends State<Dashboard>
                   onPressed: () {
                     if (textController.text.isEmpty) {
                       return;
+                      // TODO show error on field
                     }
                     if (catController.text.isEmpty) {
                       return;

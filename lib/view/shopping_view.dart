@@ -6,18 +6,21 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 
-class ShoppingScreen extends StatefulWidget {
-  const ShoppingScreen({Key? key}) : super(key: key);
+import '../utils/messages.dart';
+
+class ShoppingView extends StatefulWidget {
+  const ShoppingView({Key? key}) : super(key: key);
   @override
-  State<ShoppingScreen> createState() => _ShoppingScreenState();
+  State<ShoppingView> createState() => _ShoppingViewState();
 }
 
-class _ShoppingScreenState extends State<ShoppingScreen>
+class _ShoppingViewState extends State<ShoppingView>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
   late Shopping shopping;
+  int shopping_notification = 0;
 
   @override
   initState() {
@@ -48,7 +51,18 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
+                return Stack(
+                  children: const [
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    Center(
+                      child: Text('Loading...'),
+                    ),
+                  ],
+                );
+              } else if (snapshot.data == null || snapshot.data!.size == 0) {
+                Future.microtask(() => noItemsShopping(context));
               }
               final pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
@@ -103,28 +117,23 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Text(
-                                  pantry.text,
-                                  style: const TextStyle(fontSize: 18),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14.0),
+                                  child: Text(
+                                    pantry.text,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
                                 ),
-
-                              ),
-
                               ),
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(14.0),
                                   child: Text(
-                                    pantry.category ?? '' ,
+                                    pantry.category ?? '',
                                     style: const TextStyle(fontSize: 18),
                                   ),
-
                                 ),
-
                               ),
-
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -148,7 +157,7 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                                       // ignore: todo
                                       //TODO: update shopping list notifications badge on dashboard
                                     } else {
-                                      itemPurchased();
+                                      itemPurchased(context);
                                       setState(() {
                                         !pantry.isDone;
                                       });
@@ -176,12 +185,12 @@ class _ShoppingScreenState extends State<ShoppingScreen>
       ),
     );
   }
+
   createShoppingList(BuildContext context, {Pantry? pantry}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title:
-                  Text(pantry == null ? 'Add to Shopping List' : 'Update'),
+              title: Text(pantry == null ? 'Add to Shopping List' : 'Update'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -249,11 +258,16 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                       pantryController.updatePantry(
                           pantry.id,
                           pantry.copyWith(
-                              text: textController.text, category: textController.text, time: time));
+                              text: textController.text,
+                              category: textController.text,
+                              time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text,textController.text, time,
+                      pantryController.addtoPantry(
+                          textController.text,
+                          textController.text,
+                          time,
                           getDateTimestamp(DateTime.now()));
-                      itemPurchased();
+                      itemPurchased(context);
                     }
                     Navigator.pop(context);
                   },
@@ -261,27 +275,5 @@ class _ShoppingScreenState extends State<ShoppingScreen>
                 )
               ],
             ));
-  }
-
-
-  itemPurchased() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Item purchased and added to Pantry'),
-      backgroundColor: Colors.green,
-    ));
-  }
-
-  showOurFault() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Something went wrong: Our server is sleepy,'),
-      backgroundColor: Colors.amberAccent,
-    ));
-  }
-
-  comingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Feature coming soon'),
-      backgroundColor: Colors.grey,
-    ));
   }
 }
