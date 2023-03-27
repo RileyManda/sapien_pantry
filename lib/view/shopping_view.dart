@@ -8,13 +8,13 @@ import 'package:sapienpantry/model/shopping.dart';
 
 import '../utils/messages.dart';
 
-class ShoppingScreen extends StatefulWidget {
-  const ShoppingScreen({Key? key}) : super(key: key);
+class ShoppingView extends StatefulWidget {
+  const ShoppingView({Key? key}) : super(key: key);
   @override
-  State<ShoppingScreen> createState() => _ShoppingScreenState();
+  State<ShoppingView> createState() => _ShoppingViewState();
 }
 
-class _ShoppingScreenState extends State<ShoppingScreen>
+class _ShoppingViewState extends State<ShoppingView>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   final categoryController = TextEditingController();

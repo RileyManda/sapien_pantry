@@ -25,7 +25,6 @@ class _DashboardState extends State<Dashboard>
   late Animation<double> _translateButton;
   bool _isExpanded = false;
   int pantryNotification = 0;
-  int shoppingNotification = 0;
   int _itemsDone = 0;
 
   @override
@@ -102,7 +101,7 @@ class _DashboardState extends State<Dashboard>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const PantryScreen()),
+                          builder: (context) => const PantryView()),
                     );
                   }),
               pantryNotification != 0
@@ -136,7 +135,13 @@ class _DashboardState extends State<Dashboard>
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ShoppingView()),
+                  );
+                },
               ),
               if (_itemsDone > 0)
                 Positioned(
@@ -176,7 +181,7 @@ class _DashboardState extends State<Dashboard>
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PantryScreen()),
+                  MaterialPageRoute(builder: (context) => const PantryView()),
                 );
               },
               child: Container(
@@ -195,7 +200,7 @@ class _DashboardState extends State<Dashboard>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ShoppingScreen()),
+                      builder: (context) => const ShoppingView()),
                 );
               },
               child: Container(
