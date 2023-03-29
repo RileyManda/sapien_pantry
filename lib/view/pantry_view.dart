@@ -100,7 +100,7 @@ class _PantryViewState extends State<PantryView>
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black45,
+                      color: Colors.grey,
                     ),
                   ),
                 ),

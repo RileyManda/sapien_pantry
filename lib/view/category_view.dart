@@ -47,12 +47,7 @@ class _CategoryViewState extends State<CategoryView>
           children: [
             GestureDetector(
               onTap: () {
-                 showComingSoon(context);
-               
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => const PantryScreen()),
-                //   );
+                showComingSoon(context);
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -68,12 +63,7 @@ class _CategoryViewState extends State<CategoryView>
             ),
             GestureDetector(
               onTap: () {
-                  showComingSoon(context);
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => const FoodView()),
-                // );
+                showComingSoon(context);
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -95,14 +85,13 @@ class _CategoryViewState extends State<CategoryView>
           Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
           mini: true,
-         backgroundColor: Colors.red,
+          backgroundColor: Colors.red,
           onPressed: () async {
             await addNewCategory(context).then((value) {
               textController.clear();
             });
           },
           child: const Icon(Icons.add),
-         
         ),
       ]),
     );
@@ -112,21 +101,19 @@ class _CategoryViewState extends State<CategoryView>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title:
-                  Text(pantry == null ? 'Feature Coming Soon' : 'Update Category'),
+              title: Text(
+                  pantry == null ? 'Feature Coming Soon' : 'Update Category'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextField(
                     controller: textController,
-
                     autofocus: true,
                     decoration: InputDecoration(
-                        hintText:'Category Name',
+                        hintText: 'Category Name',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))
-                    ),
+                            borderRadius: BorderRadius.circular(5))),
                   ),
                   const SizedBox(
                     height: 5,
@@ -134,13 +121,6 @@ class _CategoryViewState extends State<CategoryView>
                   OutlinedButton(
                     onPressed: () async {
                       showComingSoon(context);
-                      // final newTime = await showTimePicker(
-                      //     context: context, initialTime: TimeOfDay.now());
-                      // if (newTime != null) {
-                      //   setState(() {
-                      //     time = newTime.format(context);
-                      //   });
-                      // }
                     },
                     child: Text('Time : $time'),
                   ),
