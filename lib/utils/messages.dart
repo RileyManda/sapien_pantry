@@ -24,7 +24,7 @@ void showIsAdded(BuildContext context) {
 void showIsDone(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item has run out'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.redAccent,
   ));
 }
 
@@ -32,7 +32,7 @@ void showIsDone(BuildContext context) {
 void showItemAdded(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item added to Pantry'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.green,
   ));
 }
 
@@ -47,7 +47,7 @@ void showItemFinished(BuildContext context) {
 void noItemsShopping(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('No Items found in your Shopping List'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.deepOrangeAccent,
   ));
 }
 
@@ -61,8 +61,28 @@ void emptyPantry(BuildContext context) {
 void itemPurchased(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item purchased & added to Pantry'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.green,
   ));
+}
+
+// wifi connection checks:
+void showErrorMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 5),
+    ),
+  );
+}
+void showIsConnected(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+      duration: const Duration(seconds: 3),
+    ),
+  );
 }
 
 
