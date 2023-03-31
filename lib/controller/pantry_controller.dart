@@ -133,11 +133,6 @@ deleteAllShopping() {
     debugPrint('Something went wrong(Batch Delete): $e');
   }
 }
-
-
-// ignore: todo
-//TODO: getItemCategory then group on pantry by category andf set a color to each cat
-
   getDoneItems(String id, Shopping shopping) async {
     try {
       firestore

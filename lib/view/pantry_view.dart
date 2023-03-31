@@ -97,6 +97,7 @@ class _PantryViewState extends State<PantryView>
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
                     getFormattedDate(pantry.date).toUpperCase(),
+
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -172,9 +173,6 @@ class _PantryViewState extends State<PantryView>
                                           time,
                                           getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
-
-                                      // ignore: todo
-                                      //TODO: update shopping list notifications badge on dashboard
                                     } else {
                                       showItemAdded(context);
                                       setState(() {
@@ -295,9 +293,6 @@ class _PantryViewState extends State<PantryView>
                     if (textController.text.isEmpty) {
                       return;
                     }
-                    // if (category.isEmpty) {
-                    //   return;
-                    // }
                     if (pantry != null) {
                       pantryController.updatePantry(
                           pantry.id,

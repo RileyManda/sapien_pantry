@@ -101,10 +101,4 @@ class AppDrawer extends StatelessWidget {
       ),
     );
   }
-  //   comingSoon() {
-  //   ScaffoldMessenger.of(context as BuildContext).showSnackBar(const SnackBar(
-  //     content: Text('Feature coming soon'),
-  //     backgroundColor: Colors.grey,
-  //   ));
-  // }
 }
