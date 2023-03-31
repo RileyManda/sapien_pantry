@@ -49,6 +49,15 @@ class _PantryViewState extends State<PantryView>
     super.dispose();
   }
 
+  Stream<List<String>> categoriesStream() {
+    return firestore
+        .collection('categories')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => doc.data()['category'].toString())
+        .toList());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +88,7 @@ class _PantryViewState extends State<PantryView>
                   ],
                 );
               } else if (snapshot.data == null || snapshot.data!.size == 0) {
-                Future.microtask(() => noItemsShopping(context));
+                Future.microtask(() => emptyPantry(context));
               }
               final pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
@@ -250,6 +259,7 @@ class _PantryViewState extends State<PantryView>
                       labelText: 'Category',
                     ),
                   ),
+
                   const SizedBox(
                     height: 5,
                   ),
