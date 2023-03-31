@@ -77,6 +77,8 @@ class _ShoppingViewState extends State<ShoppingView>
                 groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
+                    //TODO: display items by category name in ascending order.
+                    // getLabelColorFromText(pantry.category).toString(),
                     getFormattedDate(pantry.date).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,

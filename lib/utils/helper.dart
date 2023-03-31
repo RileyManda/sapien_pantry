@@ -38,6 +38,11 @@ Color getItemColor(int timestamp) {
 }
 
 
+//
+// String getCategoryName(String cat) {
+//   final category = '';
+//   return DateFormat('d MMM yyyy').format(category);
+// }
 
 
 
