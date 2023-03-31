@@ -77,40 +77,45 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       color: authController.isAuthenticating
-                          ? pPrimaryColor
+                          ? pPrimaryColor.withOpacity(0.5)
                           : pPrimaryColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: authController.isAuthenticating
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white),
+                      ),
+                    )
                         : MaterialButton(
-                            onPressed: () async {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              if (formKey.currentState!.validate()) {
-                                debugPrint('Ok');
-                                final result = await authController.signIn(
-                                  emailController.text,
-                                  passwordController.text,
-                                );
-                                if (!result) {
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(const SnackBar(
-                                      content: Text('Something went wrong'),
-                                      backgroundColor: Colors.redAccent,
-                                    ));
-                                  }
-                                }
-                              } else {
-                                debugPrint('Not Ok');
-                              }
-                            },
-                            child: const Text(
-                              'Login',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                          ),
+                      onPressed: () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        if (formKey.currentState!.validate()) {
+                          debugPrint('Ok');
+                          final result = await authController.signIn(
+                            emailController.text,
+                            passwordController.text,
+                          );
+                          if (!result) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Something went wrong'),
+                                backgroundColor: Colors.redAccent,
+                              ));
+                            }
+                          }
+                        } else {
+                          debugPrint('Not Ok');
+                        }
+                      },
+                      child: const Text(
+                        'Login',
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
                   );
                 }),
                 Padding(

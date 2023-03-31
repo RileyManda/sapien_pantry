@@ -97,7 +97,6 @@ class _PantryViewState extends State<PantryView>
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
                     getFormattedDate(pantry.date).toUpperCase(),
-
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
