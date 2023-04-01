@@ -39,15 +39,15 @@ void showItemAdded(BuildContext context) {
 void showItemFinished(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item has run out & added to shopping list'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.deepOrangeAccent,
   ));
 }
 
 
 void noItemsShopping(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    content: Text('No Items found in your Shopping List'),
-    backgroundColor: Colors.deepOrangeAccent,
+    content: Text('Your Shopping List is empty'),
+    backgroundColor: Colors.orangeAccent,
   ));
 }
 
