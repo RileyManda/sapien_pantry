@@ -102,7 +102,7 @@ class _ShoppingViewState extends State<ShoppingView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getLabelColor(pantry.date),
+                            color: getLabelColorFromCat(pantry.category),
                             width: 10,
                           )),
                           boxShadow: const [

@@ -175,11 +175,6 @@ class _PantryViewState extends State<PantryView>
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      pantryController.addToShopping(
-                                          textController.text,
-                                          textController.text,
-                                          time,
-                                          getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
                                     } else {
                                       showItemAdded(context);
