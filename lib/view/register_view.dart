@@ -4,15 +4,8 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/login_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/login_view.dart';
-import 'package:sapienpantry/widgets/app_logo.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
-
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }

@@ -22,6 +22,8 @@ class _PantryViewState extends State<PantryView>
   late Shopping shopping;
   final _scrollController = ScrollController();
   bool _isVisible = true;
+
+
   @override
   initState() {
     super.initState();
@@ -49,17 +51,10 @@ class _PantryViewState extends State<PantryView>
     super.dispose();
   }
 
-  Stream<List<String>> categoriesStream() {
-    return firestore
-        .collection('categories')
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => doc.data()['category'].toString())
-        .toList());
-  }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pantry'),
@@ -119,7 +114,7 @@ class _PantryViewState extends State<PantryView>
                     child: InkWell(
                       onTap: () {
                         textController.text = pantry.text;
-                        categoryController.text = pantry.category ?? '';
+                        categoryController.text = pantry.category;
                         time = pantry.time;
                         showItemInput(context, pantry: pantry);
                       },
@@ -128,7 +123,7 @@ class _PantryViewState extends State<PantryView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getLabelColorFromCat(pantry.category),
+                            color: getCatColorForCategory(pantry.category),
                             width: 10,
                           )),
                           boxShadow: const [
@@ -156,7 +151,7 @@ class _PantryViewState extends State<PantryView>
                                   child: Padding(
                                 padding: const EdgeInsets.all(14.0),
                                 child: Text(
-                                  pantry.category ?? '',
+                                  pantry.category,
                                   style: const TextStyle(fontSize: 18),
                                 ),
                               )),
@@ -258,6 +253,12 @@ class _PantryViewState extends State<PantryView>
                       hintText: 'Category',
                       labelText: 'Category',
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a category';
+                      }
+                      return null;
+                    },
                   ),
 
                   const SizedBox(
@@ -310,7 +311,7 @@ class _PantryViewState extends State<PantryView>
                               category: categoryController.text,
                               time: time));
                     } else {
-                      pantryController.addtoPantry(
+                      pantryController.addToPantry(
                           textController.text,
                           categoryController.text,
                           time,
