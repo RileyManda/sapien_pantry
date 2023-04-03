@@ -24,18 +24,51 @@ Color getLabelColorFromText(String text) {
   return labelColors[index];
 }
 
+int lastColorIndex = -1;
+List<int> usedColorIndices = [];
 
-Color getLabelColorFromCat(String category) {
+
+Color getCatColorForCategory(String category) {
   final bytes = category.codeUnits;
   final sum = bytes.fold(0, (a, b) => a + b);
-  final index = sum % labelColors.length;
+  int index = sum % labelColors.length;
+  // Check if index has been used before
+  while (usedColorIndices.contains(index)) {
+    index = (index + 1) % labelColors.length;
+  }
+  // Mark index as used and update lastColorIndex
+  usedColorIndices.add(index);
+  lastColorIndex = index;
   return labelColors[index];
 }
+
+String getCategoryName(String categoryId) {
+  return "Category $categoryId";
+}
+
+//TODO: Code cleanup
+
+// Color getLabelColorFromCat(String category) {
+//   final bytes = category.codeUnits;
+//   final sum = bytes.fold(0, (a, b) => a + b);
+//   final index = sum % labelColors.length;
+//   return labelColors[index];
+// }
+// Color getRandomColor() {
+//   // Generate a random number between 0 and labelColors.length - 1
+//   final randomIndex = Random().nextInt(labelColors.length);
+//   // Get the color at the random index
+//   final randomColor = labelColors[randomIndex];
+//   return randomColor;
+// }
 
 Color getItemColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return labelColors[date.weekday % labelColors.length];
 }
+
+
+
 
 
 //

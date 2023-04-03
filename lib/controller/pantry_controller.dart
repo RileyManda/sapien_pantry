@@ -10,20 +10,46 @@ import '../model/pantry.dart';
 class PantryController extends GetxController {
   static PantryController instance = Get.find();
 
-  addtoPantry(String itemText,String itemCategory, String time, int date) async {
+  addToPantry(String itemText, String itemCategory, String time, int date) async {
     try {
-      final ref = firestore
+      final categoryRef = firestore
+          .collection('users')
+          .doc(authController.user!.uid)
+          .collection('categories')
+          .doc();
+
+      final category = Category(
+        id: categoryRef.id,
+        category: itemCategory,
+      );
+      await categoryRef.set(category.toMap());
+
+      final pantryRef = firestore
           .collection('users')
           .doc(authController.user!.uid)
           .collection('pantry')
           .doc();
+
       final pantry = Pantry(
-          id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
-      await ref.set(pantry.toMap());
+        id: pantryRef.id,
+        text: itemText,
+        category: categoryRef.id,
+        isDone: false,
+        time: time,
+        date: date,
+      );
+
+      await pantryRef.set(pantry.toMap());
     } catch (e) {
       debugPrint('Something went wrong(Add): $e');
     }
   }
+
+  addCategory(String category) async {
+    final categoryRef = FirebaseFirestore.instance.collection('categories');
+    await categoryRef.add({'category': category});
+  }
+
 
   // addtoPantry(String itemText,String itemCategory, String time, int date) async {
   //   try {
@@ -174,22 +200,5 @@ deleteAllShopping() {
       debugPrint('Something went wrong(Update): $e');
     }
   }
-
-    addNewCategory(String catName) async {
-    try {
-      final ref = firestore
-          .collection('users')
-          .doc(authController.user!.uid)
-          .collection('categories')
-          .doc();
-      final pantry = Category(
-          id: ref.id, category: catName);
-      await ref.set(pantry.toMap());
-    } catch (e) {
-      debugPrint('Something went wrong(Add): $e');
-    }
-  }
-
-
 
 }

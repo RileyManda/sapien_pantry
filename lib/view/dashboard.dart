@@ -375,7 +375,7 @@ class _DashboardState extends State<Dashboard>
                           pantry.copyWith(
                               text: textController.text,category: catController.text, time: time));
                     } else {
-                      pantryController.addtoPantry(textController.text,catController.text, time,
+                      pantryController.addToPantry(textController.text,catController.text, time,
                           getDateTimestamp(DateTime.now()));
                       showIsAdded(context);
                       setState(() {
