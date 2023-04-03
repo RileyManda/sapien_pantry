@@ -33,7 +33,7 @@ class PantryController extends GetxController {
       final pantry = Pantry(
         id: pantryRef.id,
         text: itemText,
-        category: categoryRef.id,
+        category: itemCategory,
         isDone: false,
         time: time,
         date: date,

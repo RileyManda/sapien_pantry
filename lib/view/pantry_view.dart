@@ -16,14 +16,13 @@ class PantryView extends StatefulWidget {
 
 class _PantryViewState extends State<PantryView>
     with SingleTickerProviderStateMixin {
+
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
   late Shopping shopping;
   final _scrollController = ScrollController();
   bool _isVisible = true;
-
-
   @override
   initState() {
     super.initState();
@@ -54,7 +53,6 @@ class _PantryViewState extends State<PantryView>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pantry'),

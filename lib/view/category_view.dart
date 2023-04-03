@@ -50,30 +50,35 @@ class _CategoryViewState extends State<CategoryView>
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-
-            if (snapshot.data == null || snapshot.data!.size == 0) {
+            if (!snapshot.hasData) {
+              return Stack(
+                children: const [
+                  Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  Center(
+                    child: Text('Loading...'),
+                  ),
+                ],
+              );
+            } else if (snapshot.data == null || snapshot.data!.size == 0) {
               Future.microtask(() => noCategories(context));
-              return const SizedBox();
             }
             // Get the list of categories from the QuerySnapshot
             final categories = snapshot.data!.docs
                 .map((doc) => Category.fromMap(doc.data()))
                 .toList();
 
-            List<Color> categoryColors = [];
-            categories.forEach((category) {
-              categoryColors.add(getCatColorForCategory(category.category));
-            });
+
 
             // Build a list of Container widgets for each category
-            return categoryGridView(categories, categoryColors);
+            return categoryGridView(categories);
           },
         ),
       ),
     );
   }
-  Widget categoryGridView(List<Category> categories,
-      List<Color> categoryColors) {
+  Widget categoryGridView(List<Category> categories){
     return GridView.count(
       primary: false,
       padding: const EdgeInsets.all(4),
@@ -89,7 +94,7 @@ class _CategoryViewState extends State<CategoryView>
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: categoryColors[index],
+              color: getCatColorForCategory(category.id),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
