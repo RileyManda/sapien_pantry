@@ -221,7 +221,8 @@ class _DashboardState extends State<Dashboard>
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CategoryView()),
+                  MaterialPageRoute(
+                      builder: (context) => const CategoryView()),
                 );
               },
               child: Container(
@@ -231,7 +232,8 @@ class _DashboardState extends State<Dashboard>
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
-                  child: Icon(Icons.space_dashboard, color: Colors.white, size: 24),
+                  child: Icon(Icons.space_dashboard,
+                      color: Colors.white, size: 24),
                 ),
               ),
             ),
