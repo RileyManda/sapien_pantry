@@ -1,14 +1,9 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/model/category.dart';
-import 'package:sapienpantry/model/item.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'grouped_view.dart';
-
-
 
 class CategoryView extends StatefulWidget {
   const CategoryView({Key? key}) : super(key: key);
@@ -111,11 +106,6 @@ class _CategoryViewState extends State<CategoryView>
           ),
         );
       }).toList(),
-
-
     );
   }
-
-
 }
-

@@ -93,4 +93,12 @@ void showIsConnected(BuildContext context, String message) {
 }
 
 
+void deleteCompleted(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('Items deleted successfully'),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
+
+
 

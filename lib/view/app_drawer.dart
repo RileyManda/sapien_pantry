@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/category_view.dart';
+import 'package:sapienpantry/utils/messages.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
@@ -19,37 +20,29 @@ class AppDrawer extends StatelessWidget {
             color: pPrimaryColor,
             // padding: const EdgeInsets.all(16.0),
             padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${authController.user!.email}',
-                  style: const TextStyle(
+            child: Center(
+              child: Column(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.person,
+                    size: 60,
                     color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Text(
+                    '${authController.user!.email}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.space_dashboard),
-            iconColor: Colors.amber,
-            title: const Text('Categories'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CategoryView()),
-              );
-            },
           ),
                ListTile(
             leading: const Icon(Icons.menu_book),
@@ -116,11 +109,7 @@ class AppDrawer extends StatelessWidget {
                                   deletionInProgress = true;
                                 });
                                 await pantryController.deleteCompleted();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Items deleted successfully'),
-                                  ),
-                                );
+                                deleteCompleted(context);
                                 Navigator.of(context).pop();
                               }
                             },
