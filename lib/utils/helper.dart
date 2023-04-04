@@ -2,6 +2,8 @@ import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 import 'package:sapienpantry/utils/constants.dart';
 
+import '../model/pantry.dart';
+
 int getDateTimestamp(DateTime dateTime) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day)
       .millisecondsSinceEpoch;
@@ -78,17 +80,17 @@ Color getItemColor(int timestamp) {
   return labelColors[date.weekday % labelColors.length];
 }
 
-
-
-
-
-//
-// String getCategoryName(String cat) {
-//   final category = '';
-//   return DateFormat('d MMM yyyy').format(category);
+// bool isDone(Pantry pantry) {
+//   if (pantry.isDone) {
+//     // Add the item and time to the chat messages list
+//     _ChatViewState chatViewState = context.findAncestorStateOfType<_ChatViewState>();
+//     String message = 'Item "${pantry.item}" is done at ${DateTime.now()}';
+//     chatViewState.setState(() {
+//       chatViewState._messages.add(message);
+//     });
+//   }
+//   return pantry.isDone;
 // }
-
-
 
 
 
