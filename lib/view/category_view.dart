@@ -12,8 +12,7 @@ class CategoryView extends StatefulWidget {
   State<CategoryView> createState() => _CategoryViewState();
 }
 
-class _CategoryViewState extends State<CategoryView>
-    with SingleTickerProviderStateMixin {
+class _CategoryViewState extends State<CategoryView> {
   late Stream<QuerySnapshot<Map<String, dynamic>>> _categoriesStream;
 
   @override
@@ -57,54 +56,49 @@ class _CategoryViewState extends State<CategoryView>
             final categories = snapshot.data!.docs
                 .map((doc) => Category.fromMap(doc.data()))
                 .toList();
+
             // Build a list of Container widgets for each category
-            return categoryGridView(categories);
+            return GridView.count(
+              primary: false,
+              padding: const EdgeInsets.all(4),
+              crossAxisSpacing: 4,
+              mainAxisSpacing: 4,
+              crossAxisCount: 3,
+              children: categories.map((category) {
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to the ItemsView passing the category id
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            GroupItemView(categoryId: category.id,category: category.category),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: getCatColorForCategory(category.id),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        category.category,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
           },
         ),
       ),
-    );
-  }
-
-  Widget categoryGridView(List<Category> categories) {
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(4),
-      crossAxisSpacing: 4,
-      mainAxisSpacing: 4,
-      crossAxisCount: 3,
-      children: categories.map((category) {
-        final color =
-            categoryColors[category.id] ?? getCatColorForCategory(category.id);
-        return GestureDetector(
-          onTap: () {
-            // Navigate to the ItemsView passing the category id
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                // builder: (context) => ItemView(categoryId: category.id),
-                builder: (context) => GroupItemView(categoryId: category.id),
-              ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(
-                category.category,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }

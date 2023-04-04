@@ -45,11 +45,14 @@ Color getCatColorForCategory(String category) {
   // Mark index as used and update lastColorIndex
   usedColorIndices.add(index);
   lastColorIndex = index;
+
   // Store the color for this category
-  final color = labelColors[index];
+  final color = labelColors[index]!;
   categoryColors[category] = color;
   return color;
 }
+
+
 String getCategoryName(String categoryId) {
   return "Category $categoryId";
 }

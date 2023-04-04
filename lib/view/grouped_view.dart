@@ -10,7 +10,8 @@ import 'package:sapienpantry/utils/messages.dart';
 
 class GroupItemView extends StatefulWidget {
   final String categoryId;
-  const GroupItemView({Key? key, required this.categoryId}) : super(key: key);
+  final String category;
+  const GroupItemView({Key? key, required this.categoryId,required this.category}) : super(key: key);
 
   @override
   State<GroupItemView> createState() => _GroupItemViewState();
@@ -69,7 +70,7 @@ class _GroupItemViewState extends State<GroupItemView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CategoryItem'),
+        title: Text(widget.category),
       ),
       body: Container(
         color: Colors.grey.shade100,
