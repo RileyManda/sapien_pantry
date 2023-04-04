@@ -57,7 +57,6 @@ class _CategoryViewState extends State<CategoryView>
             final categories = snapshot.data!.docs
                 .map((doc) => Category.fromMap(doc.data()))
                 .toList();
-
             // Build a list of Container widgets for each category
             return categoryGridView(categories);
           },
