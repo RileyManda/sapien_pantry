@@ -1,56 +1,82 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
+import 'package:sapienpantry/utils/messages.dart';
 
-import '../utils/messages.dart';
+import '../model/item.dart';
 
-class GroupedView extends StatefulWidget {
+class GroupItemView extends StatefulWidget {
   final String categoryId;
-  const GroupedView({Key? key, required this.categoryId}) : super(key: key);
+  const GroupItemView({Key? key, required this.categoryId}) : super(key: key);
 
   @override
-  State<GroupedView> createState() => _GroupedViewState();
+  State<GroupItemView> createState() => _GroupItemViewState();
 }
 
-class _GroupedViewState extends State<GroupedView>
+class _GroupItemViewState extends State<GroupItemView>
     with SingleTickerProviderStateMixin {
+  late Stream<QuerySnapshot<Map<String, dynamic>>> _itemsStream;
+
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
   late Shopping shopping;
-  int shopping_notification = 0;
+  final _scrollController = ScrollController();
+  bool _isVisible = true;
 
   @override
   initState() {
     super.initState();
+    _itemsStream = getItemsStream(widget.categoryId);
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        setState(() {
+          _isVisible = false;
+        });
+      }
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
+    });
   }
+
+
 
   @override
   void dispose() {
     textController.dispose();
-    // catController.dispose();
+    categoryController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+  Stream<QuerySnapshot<Map<String, dynamic>>> getItemsStream(String categoryId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry')
+        .where('catId', isEqualTo: categoryId)
+        .snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shopping List'),
+        title: const Text('CategoryItem'),
       ),
       body: Container(
         color: Colors.grey.shade100,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: firestore
-                .collection('users')
-                .doc(authController.user!.uid)
-                .collection('pantry')
-                .where('isDone', isEqualTo: true)
-                .snapshots(),
+            stream: getItemsStream(widget.categoryId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Something went wrong');
@@ -60,19 +86,22 @@ class _GroupedViewState extends State<GroupedView>
               }
               if (snapshot.data == null || snapshot.data!.size == 0) {
                 return const Center(
-                  child: Text('Your shopping List is empty'),
+                  child: Text('You Pantry is Empty'),
                 );
               }
-              final pantryList =
-              snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
 
+              final itemList =
+              snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              itemList.sort((a, b) =>
+                  a.text.compareTo(b.text)); // Sorts the list alphabetically
               return GroupedListView(
-                semanticChildCount: pantryList.length,
+                controller: _scrollController,
+                semanticChildCount: itemList.length,
                 sort: true,
                 order: GroupedListOrder.ASC,
-                elements: pantryList,
+                elements: itemList,
                 useStickyGroupSeparators: true,
-                groupBy: (Pantry pantry) => pantry.time,
+                groupBy: (Pantry pantry) => pantry.category,
                 groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
@@ -80,7 +109,7 @@ class _GroupedViewState extends State<GroupedView>
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black45,
+                      color: Colors.grey,
                     ),
                   ),
                 ),
@@ -90,16 +119,16 @@ class _GroupedViewState extends State<GroupedView>
                     child: InkWell(
                       onTap: () {
                         textController.text = pantry.text;
-                        textController.text = pantry.category;
+                        categoryController.text = pantry.category;
                         time = pantry.time;
-                        createShoppingList(context, pantry: pantry);
+                        showItemInput(context, pantry: pantry);
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                                color: getLabelColor(pantry.date),
+                                color: getCatColorForCategory(pantry.category),
                                 width: 10,
                               )),
                           boxShadow: const [
@@ -116,23 +145,21 @@ class _GroupedViewState extends State<GroupedView>
                           child: Row(
                             children: [
                               Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: Text(
-                                    pantry.text,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(14.0),
+                                    child: Text(
+                                      pantry.text,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  )),
                               Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: Text(
-                                    pantry.category,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(14.0),
+                                    child: Text(
+                                      pantry.category,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  )),
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -147,10 +174,15 @@ class _GroupedViewState extends State<GroupedView>
                                         pantry.id,
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
-                                    if (pantry.isDone) {
-                                      itemPurchased(context);
+                                    if (!pantry.isDone) {
+                                      // pantryController.addToShopping(
+                                      //     textController.text,
+                                      //     textController.text,
+                                      //     time,
+                                      //     getDateTimestamp(DateTime.now()));
+                                      showItemFinished(context);
                                     } else {
-                                      // itemPurchased(context);
+                                      showItemAdded(context);
                                       setState(() {
                                         !pantry.isDone;
                                       });
@@ -161,8 +193,8 @@ class _GroupedViewState extends State<GroupedView>
                                         .copyWith(right: 14),
                                     child: Icon(
                                       pantry.isDone
-                                          ? Icons.add_shopping_cart_rounded
-                                          : Icons.shopping_cart_sharp,
+                                          ? Icons.check_circle
+                                          : Icons.circle_outlined,
                                       size: 28,
                                     ),
                                   )),
@@ -176,32 +208,64 @@ class _GroupedViewState extends State<GroupedView>
               );
             }),
       ),
+      floatingActionButton: _isVisible
+          ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        FloatingActionButton(
+          mini: false,
+          onPressed: () async {
+            setState(() {
+              time = TimeOfDay.now().format(context);
+            });
+            await showItemInput(context).then((value) {
+              textController.clear();
+            });
+          },
+          child: const Icon(Icons.add),
+        ),
+      ])
+          : null,
     );
   }
 
-  createShoppingList(BuildContext context, {Pantry? pantry}) async {
+  showItemInput(BuildContext context, {Pantry? pantry}) async {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(pantry == null ? 'Add to Shopping List' : 'Update'),
+          title:
+          Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
+              TextFormField(
                 controller: textController,
                 autofocus: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5))),
+                decoration: const InputDecoration(
+                  hintText: 'Item Name',
+                  labelText: 'Item Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an item name';
+                  }
+                  return null;
+                },
               ),
-              TextField(
-                // controller: catController,
+              TextFormField(
+                controller: categoryController,
                 autofocus: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5))),
+                decoration: const InputDecoration(
+                  hintText: 'Category',
+                  labelText: 'Category',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a category';
+                  }
+                  return null;
+                },
               ),
+
               const SizedBox(
                 height: 5,
               ),
@@ -244,27 +308,31 @@ class _GroupedViewState extends State<GroupedView>
                 if (textController.text.isEmpty) {
                   return;
                 }
-                // if (category.isEmpty) {
-                //   return;
-                // }
                 if (pantry != null) {
                   pantryController.updatePantry(
                       pantry.id,
                       pantry.copyWith(
                           text: textController.text,
-                          category: textController.text,
+                          category: categoryController.text,
                           time: time));
                 } else {
                   pantryController.addToPantry(
                       textController.text,
-                      textController.text,
+                      categoryController.text,
                       time,
                       getDateTimestamp(DateTime.now()));
-                  itemPurchased(context);
+                  showItemAdded(context);
                 }
                 Navigator.pop(context);
               },
-              child: Text(pantry == null ? 'Add Item' : 'Update'),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.save),
+                  const SizedBox(width: 8.0),
+                  Text(pantry == null ? 'Add' : 'Update'),
+                ],
+              ),
             )
           ],
         ));

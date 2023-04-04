@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/model/category.dart';
+import 'package:sapienpantry/model/item.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
-import 'package:sapienpantry/utils/messages.dart';
+import 'grouped_view.dart';
 
-import 'item_view.dart';
 
 
 class CategoryView extends StatefulWidget {
@@ -87,7 +87,8 @@ class _CategoryViewState extends State<CategoryView>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ItemView(categoryId: category.id),
+                // builder: (context) => ItemView(categoryId: category.id),
+                builder: (context) => GroupItemView(categoryId: category.id),
               ),
             );
           },
