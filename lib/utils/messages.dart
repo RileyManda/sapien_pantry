@@ -58,6 +58,13 @@ void emptyPantry(BuildContext context) {
   ));
 }
 
+void noCategories(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('You have not created any categories '),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
+
 void itemPurchased(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item purchased & added to Pantry'),

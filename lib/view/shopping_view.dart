@@ -50,19 +50,16 @@ class _ShoppingViewState extends State<ShoppingView>
                 .where('isDone', isEqualTo: true)
                 .snapshots(),
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
               if (!snapshot.hasData) {
-                return Stack(
-                  children: const [
-                    Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    Center(
-                      child: Text('Loading...'),
-                    ),
-                  ],
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.data == null || snapshot.data!.size == 0) {
+                return const Center(
+                  child: Text('Your shopping List is empty'),
                 );
-              } else if (snapshot.data == null || snapshot.data!.size == 0) {
-                Future.microtask(() => noItemsShopping(context));
               }
               final pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
@@ -93,7 +90,7 @@ class _ShoppingViewState extends State<ShoppingView>
                     child: InkWell(
                       onTap: () {
                         textController.text = pantry.text;
-                        textController.text = pantry.category ?? '';
+                        textController.text = pantry.category;
                         time = pantry.time;
                         createShoppingList(context, pantry: pantry);
                       },
@@ -131,7 +128,7 @@ class _ShoppingViewState extends State<ShoppingView>
                                 child: Padding(
                                   padding: const EdgeInsets.all(14.0),
                                   child: Text(
-                                    pantry.category ?? '',
+                                    pantry.category,
                                     style: const TextStyle(fontSize: 18),
                                   ),
                                 ),
@@ -150,16 +147,10 @@ class _ShoppingViewState extends State<ShoppingView>
                                         pantry.id,
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
-                                    if (!pantry.isDone) {
-                                      pantryController.addToShopping(
-                                          textController.text,
-                                          textController.text,
-                                          time,
-                                          getDateTimestamp(DateTime.now()));
-                                      // ignore: todo
-                                      //TODO: update shopping list notifications badge on dashboard
-                                    } else {
+                                    if (pantry.isDone) {
                                       itemPurchased(context);
+                                    } else {
+                                      // itemPurchased(context);
                                       setState(() {
                                         !pantry.isDone;
                                       });
@@ -264,7 +255,7 @@ class _ShoppingViewState extends State<ShoppingView>
                               category: textController.text,
                               time: time));
                     } else {
-                      pantryController.addtoPantry(
+                      pantryController.addToPantry(
                           textController.text,
                           textController.text,
                           time,
