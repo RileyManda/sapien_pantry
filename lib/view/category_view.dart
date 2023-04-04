@@ -72,7 +72,7 @@ class _CategoryViewState extends State<CategoryView> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            GroupItemView(categoryId: category.id),
+                            GroupItemView(categoryId: category.id,category: category.category),
                       ),
                     );
                   },
