@@ -96,7 +96,7 @@ class AppDrawer extends StatelessWidget {
                         title: Text('Delete Confirmation'),
                         content: deletionInProgress
                             ? LinearProgressIndicator()
-                            : Text(
+                            : const Text(
                           'Are you sure you want to delete all completed items in your Pantry and clear your shopping list?',
                         ),
                         actions: <Widget>[
