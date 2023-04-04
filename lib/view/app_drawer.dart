@@ -44,17 +44,6 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.space_dashboard),
-            iconColor: Colors.amber,
-            title: const Text('Categories'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CategoryView()),
-              );
-            },
-          ),
                ListTile(
             leading: const Icon(Icons.menu_book),
             iconColor: Colors.blueAccent,
