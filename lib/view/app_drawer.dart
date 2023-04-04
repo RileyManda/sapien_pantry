@@ -76,11 +76,63 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.delete_sweep),
             iconColor: Colors.red,
-            title: const Text('Delete Finished Items'),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Delete Finished Items'),
+                Icon(Icons.check_circle_rounded, color: Colors.grey,),
+                SizedBox(width: 8),
+              ],
+            ),
             onTap: () {
-              pantryController.deleteCompleted();
-              Scaffold.of(context).closeEndDrawer();
+              Navigator.pop(context); // Close the drawer
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      bool deletionInProgress = false;
+                      return AlertDialog(
+                        title: Text('Delete Confirmation'),
+                        content: deletionInProgress
+                            ? LinearProgressIndicator()
+                            : Text(
+                          'Are you sure you want to delete all completed items in your Pantry and clear your shopping list?',
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: deletionInProgress
+                                ? Text('Deletion in Progress')
+                                : Text('Delete'),
+                            onPressed: () async {
+                              if (!deletionInProgress) {
+                                setState(() {
+                                  deletionInProgress = true;
+                                });
+                                await pantryController.deleteCompleted();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Items deleted successfully'),
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
             },
+
           ),
           const Spacer(),
           ListTile(
@@ -92,7 +144,30 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              authController.signOut();
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Confirm Sign Out'),
+                    content: Text('Are you sure you want to sign out?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Sign Out'),
+                        onPressed: () {
+                          authController.signOut();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             leading: const Icon(Icons.logout),
             title: const Text('SignOut'),
