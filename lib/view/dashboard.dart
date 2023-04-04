@@ -3,6 +3,7 @@ import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
+import 'package:sapienpantry/view/chat_view.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
 import 'package:sapienpantry/view/category_view.dart';
@@ -254,7 +255,11 @@ class _DashboardState extends State<Dashboard>
             mini: true,
             backgroundColor: buttonColors.elementAt(2),
             onPressed: () {
-              showComingSoon(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ChatView()),
+              );
             },
             child: const Icon(Icons.message),
           ),
