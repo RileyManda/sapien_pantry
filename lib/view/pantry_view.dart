@@ -22,6 +22,44 @@ class _PantryViewState extends State<PantryView>
   late Shopping shopping;
   final _scrollController = ScrollController();
   bool _isVisible = true;
+  bool _isSearching = false;
+  late List<Pantry> _pantryList = [];
+  late List<Pantry> _searchResults = [];
+
+  List<Widget> _buildAppBarActions() {
+    if (_isSearching) {
+      return [
+        IconButton(
+          onPressed: () {
+            _stopSearch();
+            textController.clear();
+          },
+          icon: const Icon(Icons.close),
+        ),
+      ];
+    } else {
+      return [
+        IconButton(
+          onPressed: _startSearch,
+          icon: const Icon(Icons.search),
+        ),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) {
+            return [
+              const PopupMenuItem(
+                child: Text('Sort by date'),
+              ),
+              const PopupMenuItem(
+                child: Text('Sort by name'),
+              ),
+            ];
+          },
+          onSelected: (value) {},
+        ),
+      ];
+    }
+  }
+
   @override
   initState() {
     super.initState();
@@ -49,11 +87,55 @@ class _PantryViewState extends State<PantryView>
     super.dispose();
   }
 
+  void _startSearch() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _stopSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchResults.clear();
+    });
+  }
+
+  void _searchItem(String query) {
+    _searchResults.clear();
+    if (query.isNotEmpty) {
+      _pantryList.forEach((pantry) {
+        if (pantry.text.toLowerCase().contains(query.toLowerCase())) {
+          _searchResults.add(pantry);
+        }
+      });
+    } else {
+      _searchResults.addAll(_pantryList);
+    }
+    setState(() {});
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pantry'),
+        leading: _isSearching
+            ? const BackButton()
+            : null, // Display back button only while searching
+        title: _isSearching
+            ? TextField(
+          controller: textController,
+          autofocus: true,
+          onChanged: _searchItem,
+          decoration: const InputDecoration(
+            hintText: 'Search',
+            border: InputBorder.none,
+          ),
+
+        )
+            : const Text('Pantry'),
+        actions: _buildAppBarActions(),
       ),
       body: Container(
         color: Colors.grey.shade100,
@@ -76,16 +158,19 @@ class _PantryViewState extends State<PantryView>
                 );
               }
 
-              final pantryList =
-                  snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
-              pantryList.sort((a, b) =>
-                  a.text.compareTo(b.text)); // Sorts the list alphabetically
+              _pantryList = snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              _pantryList.sort((a, b) => a.text.compareTo(b.text));
+
+
+              // final pantryList =
+              //     snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              // pantryList.sort((a, b) =>
+              //     a.text.compareTo(b.text)); // Sorts the list alphabetically
               return GroupedListView(
                 controller: _scrollController,
-                semanticChildCount: pantryList.length,
                 sort: true,
                 order: GroupedListOrder.ASC,
-                elements: pantryList,
+                elements: _isSearching ? _searchResults : _pantryList,
                 useStickyGroupSeparators: true,
                 groupBy: (Pantry pantry) => pantry.category,
                 groupHeaderBuilder: (Pantry pantry) => Padding(
@@ -161,11 +246,6 @@ class _PantryViewState extends State<PantryView>
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      // pantryController.addToShopping(
-                                      //     textController.text,
-                                      //     textController.text,
-                                      //     time,
-                                      //     getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
                                     } else {
                                       showItemAdded(context);
