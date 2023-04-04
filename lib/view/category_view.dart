@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/model/category.dart';
+import 'package:sapienpantry/model/item.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
-import 'package:sapienpantry/utils/messages.dart';
+import 'grouped_view.dart';
+
+
 
 class CategoryView extends StatefulWidget {
   const CategoryView({Key? key}) : super(key: key);
@@ -45,35 +48,30 @@ class _CategoryViewState extends State<CategoryView>
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.hasError) {
-              return Text('Something went wrong');
+              return const Text('Something went wrong');
             }
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-
             if (snapshot.data == null || snapshot.data!.size == 0) {
-              Future.microtask(() => noCategories(context));
-              return const SizedBox();
+              return const Center(
+                child: Text('You have not created any categories.'),
+              );
             }
             // Get the list of categories from the QuerySnapshot
             final categories = snapshot.data!.docs
                 .map((doc) => Category.fromMap(doc.data()))
                 .toList();
 
-            List<Color> categoryColors = [];
-            categories.forEach((category) {
-              categoryColors.add(getCatColorForCategory(category.category));
-            });
-
             // Build a list of Container widgets for each category
-            return categoryGridView(categories, categoryColors);
+            return categoryGridView(categories);
           },
         ),
       ),
     );
   }
-  Widget categoryGridView(List<Category> categories,
-      List<Color> categoryColors) {
+
+  Widget categoryGridView(List<Category> categories) {
     return GridView.count(
       primary: false,
       padding: const EdgeInsets.all(4),
@@ -81,15 +79,23 @@ class _CategoryViewState extends State<CategoryView>
       mainAxisSpacing: 4,
       crossAxisCount: 3,
       children: categories.map((category) {
-        int index = categories.indexOf(category);
+        final color =
+            categoryColors[category.id] ?? getCatColorForCategory(category.id);
         return GestureDetector(
           onTap: () {
-            showComingSoon(context);
+            // Navigate to the ItemsView passing the category id
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                // builder: (context) => ItemView(categoryId: category.id),
+                builder: (context) => GroupItemView(categoryId: category.id),
+              ),
+            );
           },
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: categoryColors[index],
+              color: color,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -105,7 +111,11 @@ class _CategoryViewState extends State<CategoryView>
           ),
         );
       }).toList(),
+
+
     );
   }
 
+
 }
+

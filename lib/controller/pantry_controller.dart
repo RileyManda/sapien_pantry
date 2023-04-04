@@ -12,17 +12,31 @@ class PantryController extends GetxController {
 
   addToPantry(String itemText, String itemCategory, String time, int date) async {
     try {
-      final categoryRef = firestore
+      final categorySnapshot = await firestore
           .collection('users')
           .doc(authController.user!.uid)
           .collection('categories')
-          .doc();
+          .where('category', isEqualTo: itemCategory)
+          .get();
 
-      final category = Category(
-        id: categoryRef.id,
-        category: itemCategory,
-      );
-      await categoryRef.set(category.toMap());
+      String categoryId;
+      if (categorySnapshot.docs.isNotEmpty) {
+        categoryId = categorySnapshot.docs.first.id;
+      } else {
+        final categoryRef = firestore
+            .collection('users')
+            .doc(authController.user!.uid)
+            .collection('categories')
+            .doc();
+
+        final category = Category(
+          id: categoryRef.id,
+          category: itemCategory,
+        );
+        await categoryRef.set(category.toMap());
+
+        categoryId = categoryRef.id;
+      }
 
       final pantryRef = firestore
           .collection('users')
@@ -33,7 +47,8 @@ class PantryController extends GetxController {
       final pantry = Pantry(
         id: pantryRef.id,
         text: itemText,
-        category: categoryRef.id,
+        category: itemCategory,
+        catId: categoryId,
         isDone: false,
         time: time,
         date: date,
@@ -45,10 +60,47 @@ class PantryController extends GetxController {
     }
   }
 
-  addCategory(String category) async {
-    final categoryRef = FirebaseFirestore.instance.collection('categories');
-    await categoryRef.add({'category': category});
-  }
+
+  // addToPantry(String itemText, String itemCategory, String time, int date) async {
+  //   try {
+  //     final categoryRef = firestore
+  //         .collection('users')
+  //         .doc(authController.user!.uid)
+  //         .collection('categories')
+  //         .doc();
+  //
+  //     final category = Category(
+  //       id: categoryRef.id,
+  //       category: itemCategory,
+  //     );
+  //     await categoryRef.set(category.toMap());
+  //
+  //     final pantryRef = firestore
+  //         .collection('users')
+  //         .doc(authController.user!.uid)
+  //         .collection('pantry')
+  //         .doc();
+  //
+  //     final pantry = Pantry(
+  //       id: pantryRef.id,
+  //       text: itemText,
+  //       category: itemCategory,
+  //       catId:categoryRef.id,
+  //       isDone: false,
+  //       time: time,
+  //       date: date,
+  //     );
+  //
+  //     await pantryRef.set(pantry.toMap());
+  //   } catch (e) {
+  //     debugPrint('Something went wrong(Add): $e');
+  //   }
+  // }
+
+  // addCategory(String category) async {
+  //   final categoryRef = FirebaseFirestore.instance.collection('categories');
+  //   await categoryRef.add({'category': category});
+  // }
 
 
   // addtoPantry(String itemText,String itemCategory, String time, int date) async {
@@ -128,20 +180,20 @@ class PantryController extends GetxController {
 
 
 
-addToShopping(String itemText,String itemCategory, String time, int date) async {
-  try {
-    final ref = firestore
-        .collection('users')
-        .doc(authController.user!.uid)
-        .collection('shoppinglist')
-        .doc();
-    final pantry = Pantry(
-        id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
-    await ref.set(pantry.toMap());
-  } catch (e) {
-    debugPrint('Something went wrong(Add): $e');
-  }
-}
+// addToShopping(String itemText,String itemCategory, String time, int date) async {
+//   try {
+//     final ref = firestore
+//         .collection('users')
+//         .doc(authController.user!.uid)
+//         .collection('shoppinglist')
+//         .doc();
+//     final pantry = Pantry(
+//         id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
+//     await ref.set(pantry.toMap());
+//   } catch (e) {
+//     debugPrint('Something went wrong(Add): $e');
+//   }
+// }
 
 updateShoppingList(String id, Shopping shopping) async {
   try {
