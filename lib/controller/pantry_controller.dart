@@ -34,6 +34,7 @@ class PantryController extends GetxController {
         id: pantryRef.id,
         text: itemText,
         category: itemCategory,
+        catId:categoryRef.id,
         isDone: false,
         time: time,
         date: date,
@@ -128,20 +129,20 @@ class PantryController extends GetxController {
 
 
 
-addToShopping(String itemText,String itemCategory, String time, int date) async {
-  try {
-    final ref = firestore
-        .collection('users')
-        .doc(authController.user!.uid)
-        .collection('shoppinglist')
-        .doc();
-    final pantry = Pantry(
-        id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
-    await ref.set(pantry.toMap());
-  } catch (e) {
-    debugPrint('Something went wrong(Add): $e');
-  }
-}
+// addToShopping(String itemText,String itemCategory, String time, int date) async {
+//   try {
+//     final ref = firestore
+//         .collection('users')
+//         .doc(authController.user!.uid)
+//         .collection('shoppinglist')
+//         .doc();
+//     final pantry = Pantry(
+//         id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
+//     await ref.set(pantry.toMap());
+//   } catch (e) {
+//     debugPrint('Something went wrong(Add): $e');
+//   }
+// }
 
 updateShoppingList(String id, Shopping shopping) async {
   try {

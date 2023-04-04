@@ -27,20 +27,6 @@ Color getLabelColorFromText(String text) {
 int lastColorIndex = -1;
 List<int> usedColorIndices = [];
 
-
-// Color getCatColorForCategory(String category) {
-//   final bytes = category.codeUnits;
-//   final sum = bytes.fold(0, (a, b) => a + b);
-//   int index = sum % labelColors.length;
-//   // Check if index has been used before
-//   while (usedColorIndices.contains(index)) {
-//     index = (index + 1) % labelColors.length;
-//   }
-//   // Mark index as used and update lastColorIndex
-//   usedColorIndices.add(index);
-//   lastColorIndex = index;
-//   return labelColors[index];
-// }
 Map<String, Color> categoryColors = {};
 Color getCatColorForCategory(String category) {
   // Check if color has already been generated for this category
@@ -61,7 +47,7 @@ Color getCatColorForCategory(String category) {
   lastColorIndex = index;
 
   // Store the color for this category
-  final color = labelColors[index]!;
+  final color = labelColors[index];
   categoryColors[category] = color;
   return color;
 }

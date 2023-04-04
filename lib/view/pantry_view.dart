@@ -66,23 +66,18 @@ class _PantryViewState extends State<PantryView>
                 .collection('pantry')
                 .snapshots(),
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (!snapshot.hasData) {
-                return Stack(
-                  children: const [
-                    Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    Center(
-                      child: Text('Loading...'),
-                    ),
-                  ],
+              if (snapshot.data == null || snapshot.data!.size == 0) {
+                return const Center(
+                  child: Text('You Pantrty is Empty'),
                 );
-              } else if (snapshot.data == null || snapshot.data!.size == 0) {
-                Future.microtask(() => emptyPantry(context));
               }
+
               final pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               pantryList.sort((a, b) =>
@@ -168,11 +163,11 @@ class _PantryViewState extends State<PantryView>
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      pantryController.addToShopping(
-                                          textController.text,
-                                          textController.text,
-                                          time,
-                                          getDateTimestamp(DateTime.now()));
+                                      // pantryController.addToShopping(
+                                      //     textController.text,
+                                      //     textController.text,
+                                      //     time,
+                                      //     getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
                                     } else {
                                       showItemAdded(context);

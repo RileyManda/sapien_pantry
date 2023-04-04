@@ -4,6 +4,7 @@ class Pantry {
   final String id;
   final String text;
   final String category;
+  final String catId;
   final bool isDone;
   final String time;
   final int date;
@@ -12,15 +13,17 @@ class Pantry {
     required this.id,
     required this.text,
     required this.category,
+    required this.catId,
     required this.isDone,
     required this.time,
     required this.date,
   });
 
-  Pantry copyWith({String? text,String? category, bool? isDone, String? time, int? date}) => Pantry(
+  Pantry copyWith({String? text,String? category,String? catId, bool? isDone, String? time, int? date}) => Pantry(
         id: id,
         text: text ?? this.text,
         category: category ?? this.category,
+       catId: catId ?? this.catId,
         isDone: isDone ?? this.isDone,
         time: time ?? this.time,
         date: date ?? this.date,
@@ -32,6 +35,7 @@ class Pantry {
         id: documentSnapshot.id,
         text: documentSnapshot.data()!['text'],
         category: documentSnapshot.data()!['category'],
+        catId:documentSnapshot.data()!['catId'],
         isDone: documentSnapshot.data()!['isDone'],
         time: documentSnapshot.data()!['time'],
         date: documentSnapshot.data()!['date'],
@@ -41,6 +45,7 @@ class Pantry {
         'id': id,
         'text': text,
     'category': category,
+    'catId': catId,
         'isDone': isDone,
         'time': time,
         'date': date,
