@@ -16,7 +16,6 @@ class PantryView extends StatefulWidget {
 
 class _PantryViewState extends State<PantryView>
     with SingleTickerProviderStateMixin {
-
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
@@ -49,7 +48,6 @@ class _PantryViewState extends State<PantryView>
     _scrollController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +251,6 @@ class _PantryViewState extends State<PantryView>
                       return null;
                     },
                   ),
-
                   const SizedBox(
                     height: 5,
                   ),

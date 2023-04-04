@@ -5,7 +5,8 @@ import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
-import '../utils/messages.dart';
+import 'package:sapienpantry/view/category_view.dart';
+import 'package:sapienpantry/utils/messages.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
-  final catController = TextEditingController();
+  final categoryController = TextEditingController();
   String time = '';
   late AnimationController _animationController;
   // animate the icon of the main FAB
@@ -52,7 +53,7 @@ class _DashboardState extends State<Dashboard>
   @override
   void dispose() {
     textController.dispose();
-    catController.dispose();
+    categoryController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -215,6 +216,25 @@ class _DashboardState extends State<Dashboard>
                 ),
               ),
             ),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CategoryView()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(Icons.space_dashboard, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -271,7 +291,7 @@ class _DashboardState extends State<Dashboard>
               });
               await showItemInput(context).then((value) {
                 textController.clear();
-                catController.clear();
+                categoryController.clear();
               });
             },
             child: const Icon(Icons.inventory),
@@ -296,100 +316,112 @@ class _DashboardState extends State<Dashboard>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title:
-                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Pantry'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: textController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        hintText:'Item Name',
-                        labelText: 'Item Name',
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(5))
-                    ),
-                  ),
-                  TextFormField(
-                    controller: catController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        hintText:'Category',
-                        labelText: 'Category Name',
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(5))
-
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  OutlinedButton(
-                    onPressed: () async {
-                      final newTime = await showTimePicker(
-                          context: context, initialTime: TimeOfDay.now());
-                      if (newTime != null) {
-                        setState(() {
-                          time = newTime.format(context);
-                        });
-                      }
-                    },
-                    child: Text('Time : $time'),
-                  ),
-                ],
+          title:
+          Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: textController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Item Name',
+                  labelText: 'Item Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an item name';
+                  }
+                  return null;
+                },
               ),
-              actions: [
-                if (pantry != null)
-                  TextButton.icon(
-                      onPressed: () {
-                        pantryController.deleteFromPantry(pantry.id);
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.redAccent,
-                      ),
-                      label: const Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-                ElevatedButton(
+              TextFormField(
+                controller: categoryController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Category',
+                  labelText: 'Category',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a category';
+                  }
+                  return null;
+                },
+              ),
+
+              const SizedBox(
+                height: 5,
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  final newTime = await showTimePicker(
+                      context: context, initialTime: TimeOfDay.now());
+                  if (newTime != null) {
+                    setState(() {
+                      time = newTime.format(context);
+                    });
+                  }
+                },
+                child: Text('Time : $time'),
+              ),
+            ],
+          ),
+          actions: [
+            if (pantry != null)
+              TextButton.icon(
                   onPressed: () {
-                    if (textController.text.isEmpty) {
-                      return;
-                      // TODO show error on field
-                    }
-                    if (catController.text.isEmpty) {
-                      return;
-                    }
-                    if (pantry != null) {
-                      pantryController.updatePantry(
-                          pantry.id,
-                          pantry.copyWith(
-                              text: textController.text,category: catController.text, time: time));
-                    } else {
-                      pantryController.addToPantry(textController.text,catController.text, time,
-                          getDateTimestamp(DateTime.now()));
-                      showIsAdded(context);
-                      setState(() {
-                        pantryNotification++;
-                      });
-                    }
+                    pantryController.deleteFromPantry(pantry.id);
                     Navigator.pop(context);
                   },
-                  child: Text(pantry == null ? 'Add' : 'Update'),
-                )
-              ],
-            ));
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.redAccent,
+                  ),
+                  label: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.black54),
+                  )),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                if (textController.text.isEmpty) {
+                  return;
+                }
+                if (pantry != null) {
+                  pantryController.updatePantry(
+                      pantry.id,
+                      pantry.copyWith(
+                          text: textController.text,
+                          category: categoryController.text,
+                          time: time));
+                } else {
+                  pantryController.addToPantry(
+                      textController.text,
+                      categoryController.text,
+                      time,
+                      getDateTimestamp(DateTime.now()));
+                  showItemAdded(context);
+                }
+                Navigator.pop(context);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.save),
+                  const SizedBox(width: 8.0),
+                  Text(pantry == null ? 'Add' : 'Update'),
+                ],
+              ),
+            )
+          ],
+        ));
   }
-
 
 
 
