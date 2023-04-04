@@ -143,6 +143,7 @@ class _PantryViewState extends State<PantryView>
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.white),
                 ),
+          style: const TextStyle(color: Colors.white),
               )
             : const Text('Pantry'),
         actions: _buildAppBarActions(),
