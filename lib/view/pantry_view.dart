@@ -71,8 +71,6 @@ class _PantryViewState extends State<PantryView>
     }
   }
 
-
-
   @override
   initState() {
     super.initState();
@@ -128,8 +126,6 @@ class _PantryViewState extends State<PantryView>
     setState(() {});
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,17 +135,15 @@ class _PantryViewState extends State<PantryView>
             : null, // Display back button only while searching
         title: _isSearching
             ? TextField(
-          controller: textController,
-          autofocus: true,
-          onChanged: _searchItem,
-          decoration: const InputDecoration(
-            hintText: 'Search',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.white),
-
-          ),
-
-        )
+                controller: textController,
+                autofocus: true,
+                onChanged: _searchItem,
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+              )
             : const Text('Pantry'),
         actions: _buildAppBarActions(),
       ),
@@ -174,9 +168,9 @@ class _PantryViewState extends State<PantryView>
                 );
               }
 
-              _pantryList = snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              _pantryList =
+                  snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
-
 
               // final pantryList =
               //     snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
