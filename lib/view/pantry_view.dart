@@ -25,6 +25,7 @@ class _PantryViewState extends State<PantryView>
   bool _isSearching = false;
   late List<Pantry> _pantryList = [];
   late List<Pantry> _searchResults = [];
+  late List<Pantry> _sortedList;
 
   List<Widget> _buildAppBarActions() {
     if (_isSearching) {
@@ -47,22 +48,35 @@ class _PantryViewState extends State<PantryView>
           itemBuilder: (BuildContext context) {
             return [
               const PopupMenuItem(
-                child: Text('Sort by date'),
+                child: Text('Sort by time'),
+                value: 'time',
               ),
               const PopupMenuItem(
                 child: Text('Sort by name'),
+                value: 'name',
               ),
             ];
           },
-          onSelected: (value) {},
+          onSelected: (value) {
+            setState(() {
+              if (value == 'time') {
+                _pantryList.sort((a, b) => a.time.compareTo(b.time));
+              } else if (value == 'name') {
+                _pantryList.sort((a, b) => a.text.compareTo(b.text));
+              }
+            });
+          },
         ),
       ];
     }
   }
 
+
+
   @override
   initState() {
     super.initState();
+    _sortedList = _pantryList;
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -131,6 +145,8 @@ class _PantryViewState extends State<PantryView>
           decoration: const InputDecoration(
             hintText: 'Search',
             border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white),
+
           ),
 
         )
