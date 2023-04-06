@@ -60,8 +60,6 @@ class PantryController extends GetxController {
     }
   }
 
-
-
   updatePantry(String id, Pantry pantry) async {
     try {
       await firestore
@@ -107,7 +105,7 @@ class PantryController extends GetxController {
       debugPrint('Something went wrong(Batch Delete): $e');
     }
   }
-  
+
 updateShoppingList(String id, Shopping shopping) async {
   try {
     await firestore
@@ -153,7 +151,9 @@ deleteAllShopping() {
     debugPrint('Something went wrong(Batch Delete): $e');
   }
 }
-  getDoneItems(String id, Shopping shopping) async {
+
+
+  getShoppingList(String id, Shopping shopping) async {
     try {
       firestore
           .collection('users')

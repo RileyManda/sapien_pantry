@@ -8,7 +8,8 @@ import 'package:sapienpantry/controller/pantry_controller.dart';
 
 const pPrimaryColor = Colors.sapientheme;
 const shoppingColor = Colors.sapienshoptheme;
-// const pPrimaryColor = Color(0xFF265C7E);
+const kCategoriesCacheKey = 'categories_cache';
+const kCategoriesCacheTimeKey = 'categories_cache_time';
 
 final firebaseAuth = FirebaseAuth.instance;
 final firestore = FirebaseFirestore.instance;
@@ -49,3 +50,5 @@ const buttonColors = [
   Colors.orangeAccent,
   Colors.redAccent,
 ];
+
+
