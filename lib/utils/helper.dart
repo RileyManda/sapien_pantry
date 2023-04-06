@@ -28,7 +28,6 @@ Color getLabelColorFromText(String text) {
 
 int lastColorIndex = -1;
 List<int> usedColorIndices = [];
-
 Map<String, Color> categoryColors = {};
 Color getCatColorForCategory(String category) {
   // Check if color has already been generated for this category
@@ -49,7 +48,7 @@ Color getCatColorForCategory(String category) {
   lastColorIndex = index;
 
   // Store the color for this category
-  final color = labelColors[index]!;
+  final color = labelColors[index];
   categoryColors[category] = color;
   return color;
 }
@@ -59,38 +58,11 @@ String getCategoryName(String categoryId) {
   return "Category $categoryId";
 }
 
-//TODO: Code cleanup
-
-// Color getLabelColorFromCat(String category) {
-//   final bytes = category.codeUnits;
-//   final sum = bytes.fold(0, (a, b) => a + b);
-//   final index = sum % labelColors.length;
-//   return labelColors[index];
-// }
-// Color getRandomColor() {
-//   // Generate a random number between 0 and labelColors.length - 1
-//   final randomIndex = Random().nextInt(labelColors.length);
-//   // Get the color at the random index
-//   final randomColor = labelColors[randomIndex];
-//   return randomColor;
-// }
 
 Color getItemColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return labelColors[date.weekday % labelColors.length];
 }
-
-// bool isDone(Pantry pantry) {
-//   if (pantry.isDone) {
-//     // Add the item and time to the chat messages list
-//     _ChatViewState chatViewState = context.findAncestorStateOfType<_ChatViewState>();
-//     String message = 'Item "${pantry.item}" is done at ${DateTime.now()}';
-//     chatViewState.setState(() {
-//       chatViewState._messages.add(message);
-//     });
-//   }
-//   return pantry.isDone;
-// }
 
 
 

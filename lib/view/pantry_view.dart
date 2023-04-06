@@ -8,6 +8,9 @@ import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/utils/messages.dart';
 
+import '../services/pantry_service.dart';
+
+
 class PantryView extends StatefulWidget {
   const PantryView({Key? key}) : super(key: key);
   @override
@@ -16,6 +19,7 @@ class PantryView extends StatefulWidget {
 
 class _PantryViewState extends State<PantryView>
     with SingleTickerProviderStateMixin {
+  final PantryService _pantryService = PantryService();
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
@@ -90,15 +94,6 @@ class _PantryViewState extends State<PantryView>
       }
     });
   }
-
-  @override
-  void dispose() {
-    textController.dispose();
-    categoryController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
   void _startSearch() {
     setState(() {
       _isSearching = true;
@@ -125,6 +120,15 @@ class _PantryViewState extends State<PantryView>
     }
     setState(() {});
   }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    categoryController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,11 +176,6 @@ class _PantryViewState extends State<PantryView>
               _pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
-
-              // final pantryList =
-              //     snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
-              // pantryList.sort((a, b) =>
-              //     a.text.compareTo(b.text)); // Sorts the list alphabetically
               return GroupedListView(
                 controller: _scrollController,
                 sort: true,
@@ -253,7 +252,7 @@ class _PantryViewState extends State<PantryView>
                               const SizedBox(width: 5),
                               InkWell(
                                   onTap: () {
-                                    pantryController.updatePantry(
+                                    _pantryService.updatePantry(
                                         pantry.id,
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
@@ -262,8 +261,9 @@ class _PantryViewState extends State<PantryView>
                                     } else {
                                       showItemAdded(context);
                                       setState(() {
-                                        !pantry.isDone;
+                                        pantry.isDone = !pantry.isDone;
                                       });
+
                                     }
                                   },
                                   child: Container(
@@ -364,7 +364,7 @@ class _PantryViewState extends State<PantryView>
                 if (pantry != null)
                   TextButton.icon(
                       onPressed: () {
-                        pantryController.deleteFromPantry(pantry.id);
+                        _pantryService.deleteFromPantry(pantry.id);
                         Navigator.pop(context);
                       },
                       icon: const Icon(
@@ -386,14 +386,16 @@ class _PantryViewState extends State<PantryView>
                       return;
                     }
                     if (pantry != null) {
-                      pantryController.updatePantry(
+                      // TODO: switched from PantryController to Pantry service
+                      _pantryService.updatePantry(
                           pantry.id,
                           pantry.copyWith(
                               text: textController.text,
                               category: categoryController.text,
                               time: time));
                     } else {
-                      pantryController.addToPantry(
+                      // TODO: switched from PantryController to Pantry service
+                      _pantryService.addToPantry(
                           textController.text,
                           categoryController.text,
                           time,

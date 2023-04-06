@@ -1,16 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:sapienpantry/model/shopping.dart';
-import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/model/category.dart';
-
+import '../controller/auth_controller.dart';
+import '../model/category.dart';
 import '../model/pantry.dart';
 
-class PantryController extends GetxController {
-  static PantryController instance = Get.find();
+class PantryService {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final AuthController authController = AuthController();
 
-  addToPantry(String itemText, String itemCategory, String time, int date) async {
+  Stream<List<Pantry>> get pantryList {
+    return _pantryCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Pantry.fromMap(doc as DocumentSnapshot<Map<String, dynamic>>)).toList();
+    });
+  }
+  CollectionReference get _pantryCollection {
+    return firestore
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry');
+  }
+
+  Future<void> addToPantry(
+      String itemText, String itemCategory, String time, int date) async {
     try {
       final categorySnapshot = await firestore
           .collection('users')
@@ -60,7 +71,7 @@ class PantryController extends GetxController {
     }
   }
 
-  updatePantry(String id, Pantry pantry) async {
+  Future<void> updatePantry(String id, Pantry pantry) async {
     try {
       await firestore
           .collection('users')
@@ -73,7 +84,7 @@ class PantryController extends GetxController {
     }
   }
 
-  deleteFromPantry(String id) async {
+  Future<void> deleteFromPantry(String id) async {
     try {
       await firestore
           .collection('users')
@@ -86,25 +97,42 @@ class PantryController extends GetxController {
     }
   }
 
-  deleteCompleted() {
+  Future<void> deleteCompleted() async {
     try {
       WriteBatch batch = firestore.batch();
-      return firestore
+      final querySnapshot = await firestore
           .collection('users')
           .doc(authController.user!.uid)
           .collection('pantry')
           .where('isDone', isEqualTo: true)
-          .get()
-          .then((querySnapshot) {
-        for (var document in querySnapshot.docs) {
-          batch.delete(document.reference);
-        }
-        return batch.commit();
-      });
+          .get();
+      for (var document in querySnapshot.docs) {
+        batch.delete(document.reference);
+      }
+      await batch.commit();
     } catch (e) {
       debugPrint('Something went wrong(Batch Delete): $e');
     }
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingList() {
+    return firestore
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry')
+        .where('isDone', isEqualTo: true)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCategories() {
+    return firestore
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('categories')
+        .snapshots();
+  }
+
+
 
 
 }
