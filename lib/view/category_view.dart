@@ -31,7 +31,7 @@ class _CategoryViewState extends State<CategoryView> {
     _categoriesStream = getCategoriesStream();
     _cachedCategories = [];
     SharedPreferences.getInstance().then((prefs) {
-      _cacheService = CacheService(prefs);
+      _cacheService = CacheService();
     });
   }
 
