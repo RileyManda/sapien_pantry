@@ -11,12 +11,8 @@ class PantryService {
   Stream<List<Pantry>> get pantryList {
     return _pantryCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) => Pantry.fromMap(doc as DocumentSnapshot<Map<String, dynamic>>)).toList();
-
-
     });
   }
-
-
   CollectionReference get _pantryCollection {
     return firestore
         .collection('users')
@@ -118,4 +114,25 @@ class PantryService {
       debugPrint('Something went wrong(Batch Delete): $e');
     }
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingList() {
+    return firestore
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry')
+        .where('isDone', isEqualTo: true)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCategories() {
+    return firestore
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('categories')
+        .snapshots();
+  }
+
+
+
+
 }

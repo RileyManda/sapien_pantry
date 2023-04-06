@@ -50,7 +50,8 @@ class _DashboardState extends State<Dashboard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    updateItemsDone();
+    //TODO:buggy code hunt--gotcha
+    // updateItemsDone();
     super.initState();
   }
 
@@ -71,23 +72,23 @@ class _DashboardState extends State<Dashboard>
     }
     _isExpanded = !_isExpanded;
   }
-  void updateItemsDone() {
-    setState(() {
-      _itemsDone = 0;
-    });
-
-    firestore
-        .collection('users')
-        .doc(authController.user!.uid)
-        .collection('pantry')
-        .where('isDone', isEqualTo: true)
-        .snapshots()
-        .listen((snapshot) {
-      setState(() {
-        _itemsDone = snapshot.size;
-      });
-    });
-  }
+  // void updateItemsDone() {
+  //   setState(() {
+  //     _itemsDone = 0;
+  //   });
+  //
+  //   firestore
+  //       .collection('users')
+  //       .doc(authController.user!.uid)
+  //       .collection('pantry')
+  //       .where('isDone', isEqualTo: true)
+  //       .snapshots()
+  //       .listen((snapshot) {
+  //     setState(() {
+  //       _itemsDone = snapshot.size;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +223,7 @@ class _DashboardState extends State<Dashboard>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CategoryView()),
+                      builder: (context) => CategoryView()),
                 );
               },
               child: Container(
@@ -399,15 +400,16 @@ class _DashboardState extends State<Dashboard>
                 if (textController.text.isEmpty) {
                   return;
                 }
+                // TODO: updatePantry not required here
                 if (pantry != null) {
-                  pantryController.updatePantry(
+                  _pantryService.updatePantry(
                       pantry.id,
                       pantry.copyWith(
                           text: textController.text,
                           category: categoryController.text,
                           time: time));
                 } else {
-                  pantryController.addToPantry(
+                  _pantryService.addToPantry(
                       textController.text,
                       categoryController.text,
                       time,
