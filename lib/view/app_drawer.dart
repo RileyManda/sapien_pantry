@@ -3,6 +3,8 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
 
+import '../services/pantry_service.dart';
+
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
     Key? key,
@@ -108,7 +110,8 @@ class AppDrawer extends StatelessWidget {
                                 setState(() {
                                   deletionInProgress = true;
                                 });
-                                await pantryController.deleteCompleted();
+                                final PantryService _pantryService = PantryService();
+                                await _pantryService.deleteCompleted();
                                 deleteCompleted(context);
                                 Navigator.of(context).pop();
                               }

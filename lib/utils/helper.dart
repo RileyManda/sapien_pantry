@@ -28,7 +28,6 @@ Color getLabelColorFromText(String text) {
 
 int lastColorIndex = -1;
 List<int> usedColorIndices = [];
-
 Map<String, Color> categoryColors = {};
 Color getCatColorForCategory(String category) {
   // Check if color has already been generated for this category
@@ -64,35 +63,6 @@ Color getItemColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return labelColors[date.weekday % labelColors.length];
 }
-
-// bool updatedPantry(Pantry pantry) {
-//   bool isDone = pantry.isDone;
-//   if (isDone) {
-//     String message =
-//         'Item "${pantry.text}" is done on ${DateTime.fromMillisecondsSinceEpoch(pantry.date)}';
-//   }
-//   return isDone;
-// }
-
-
-// void updateItemsDone() {
-//   setState(() {
-//     _itemsDone = 0;
-//   });
-//
-//   firestore
-//       .collection('users')
-//       .doc(authController.user!.uid)
-//       .collection('pantry')
-//       .where('isDone', isEqualTo: true)
-//       .snapshots()
-//       .listen((snapshot) {
-//     setState(() {
-//       _itemsDone = snapshot.size;
-//     });
-//   });
-// }
-
 
 
 
