@@ -59,38 +59,40 @@ String getCategoryName(String categoryId) {
   return "Category $categoryId";
 }
 
-//TODO: Code cleanup
-
-// Color getLabelColorFromCat(String category) {
-//   final bytes = category.codeUnits;
-//   final sum = bytes.fold(0, (a, b) => a + b);
-//   final index = sum % labelColors.length;
-//   return labelColors[index];
-// }
-// Color getRandomColor() {
-//   // Generate a random number between 0 and labelColors.length - 1
-//   final randomIndex = Random().nextInt(labelColors.length);
-//   // Get the color at the random index
-//   final randomColor = labelColors[randomIndex];
-//   return randomColor;
-// }
 
 Color getItemColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return labelColors[date.weekday % labelColors.length];
 }
 
-// bool isDone(Pantry pantry) {
-//   if (pantry.isDone) {
-//     // Add the item and time to the chat messages list
-//     _ChatViewState chatViewState = context.findAncestorStateOfType<_ChatViewState>();
-//     String message = 'Item "${pantry.item}" is done at ${DateTime.now()}';
-//     chatViewState.setState(() {
-//       chatViewState._messages.add(message);
-//     });
+// bool updatedPantry(Pantry pantry) {
+//   bool isDone = pantry.isDone;
+//   if (isDone) {
+//     String message =
+//         'Item "${pantry.text}" is done on ${DateTime.fromMillisecondsSinceEpoch(pantry.date)}';
 //   }
-//   return pantry.isDone;
+//   return isDone;
 // }
+
+
+// void updateItemsDone() {
+//   setState(() {
+//     _itemsDone = 0;
+//   });
+//
+//   firestore
+//       .collection('users')
+//       .doc(authController.user!.uid)
+//       .collection('pantry')
+//       .where('isDone', isEqualTo: true)
+//       .snapshots()
+//       .listen((snapshot) {
+//     setState(() {
+//       _itemsDone = snapshot.size;
+//     });
+//   });
+// }
+
 
 
 

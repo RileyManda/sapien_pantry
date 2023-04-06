@@ -100,11 +100,7 @@ class _DashboardState extends State<Dashboard>
                     setState(() {
                       pantryNotification = 0;
                     });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PantryView()),
-                    );
+
                   }),
               pantryNotification != 0
                   ? Positioned(
