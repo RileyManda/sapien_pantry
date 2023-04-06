@@ -9,6 +9,8 @@ import 'package:sapienpantry/view/pantry_view.dart';
 import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
 
+import '../services/pantry_service.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
   @override
@@ -19,6 +21,7 @@ class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   final categoryController = TextEditingController();
+  final PantryService _pantryService = PantryService();
   String time = '';
   late AnimationController _animationController;
   // animate the icon of the main FAB
@@ -375,7 +378,7 @@ class _DashboardState extends State<Dashboard>
             if (pantry != null)
               TextButton.icon(
                   onPressed: () {
-                    pantryController.deleteFromPantry(pantry.id);
+                    _pantryService.deleteFromPantry(pantry.id);
                     Navigator.pop(context);
                   },
                   icon: const Icon(
