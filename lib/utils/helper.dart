@@ -49,7 +49,7 @@ Color getCatColorForCategory(String category) {
   lastColorIndex = index;
 
   // Store the color for this category
-  final color = labelColors[index]!;
+  final color = labelColors[index];
   categoryColors[category] = color;
   return color;
 }
