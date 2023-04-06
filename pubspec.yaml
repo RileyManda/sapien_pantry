@@ -44,6 +44,7 @@ dependencies:
   firebase_auth: ^4.2.2
   badges: ^3.0.2
   flutter_automation: ^2.0.0
+  rxdart: ^0.27.2
 
 
 dev_dependencies:

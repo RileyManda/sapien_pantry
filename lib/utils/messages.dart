@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:sapienpantry/model/pantry.dart';
 
 void showComingSoon(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -98,6 +99,15 @@ void deleteCompleted(BuildContext context) {
     content: Text('Items deleted successfully'),
     backgroundColor: Colors.orangeAccent,
   ));
+}
+
+bool updatedPantry(Pantry pantry) {
+  bool isDone = pantry.isDone;
+  if (isDone) {
+    String message =
+        'Item "${pantry.text}" is done on ${DateTime.fromMillisecondsSinceEpoch(pantry.date)}';
+  }
+  return isDone;
 }
 
 

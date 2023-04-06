@@ -5,10 +5,10 @@ class Pantry {
   final String text;
   final String category;
   final String catId;
-  final bool isDone;
+  late final bool isDone;
   final String time;
   final int date;
-  
+
 
   Pantry({
     required this.id,
@@ -58,9 +58,10 @@ class Pantry {
     'time': time,
     'date': date,
   };
-
   @override
   String toString() {
     return '$text - $category - $date - $time - $isDone';
   }
+
+
 }

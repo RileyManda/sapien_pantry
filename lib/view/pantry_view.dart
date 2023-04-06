@@ -89,15 +89,10 @@ class _PantryViewState extends State<PantryView>
         });
       }
     });
+
+
   }
 
-  @override
-  void dispose() {
-    textController.dispose();
-    categoryController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
 
   void _startSearch() {
     setState(() {
@@ -125,6 +120,15 @@ class _PantryViewState extends State<PantryView>
     }
     setState(() {});
   }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    categoryController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,11 +176,6 @@ class _PantryViewState extends State<PantryView>
               _pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
-
-              // final pantryList =
-              //     snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
-              // pantryList.sort((a, b) =>
-              //     a.text.compareTo(b.text)); // Sorts the list alphabetically
               return GroupedListView(
                 controller: _scrollController,
                 sort: true,
@@ -262,8 +261,9 @@ class _PantryViewState extends State<PantryView>
                                     } else {
                                       showItemAdded(context);
                                       setState(() {
-                                        !pantry.isDone;
+                                        pantry.isDone = !pantry.isDone;
                                       });
+
                                     }
                                   },
                                   child: Container(

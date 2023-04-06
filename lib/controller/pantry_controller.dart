@@ -61,76 +61,6 @@ class PantryController extends GetxController {
   }
 
 
-  // addToPantry(String itemText, String itemCategory, String time, int date) async {
-  //   try {
-  //     final categoryRef = firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('categories')
-  //         .doc();
-  //
-  //     final category = Category(
-  //       id: categoryRef.id,
-  //       category: itemCategory,
-  //     );
-  //     await categoryRef.set(category.toMap());
-  //
-  //     final pantryRef = firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('pantry')
-  //         .doc();
-  //
-  //     final pantry = Pantry(
-  //       id: pantryRef.id,
-  //       text: itemText,
-  //       category: itemCategory,
-  //       catId:categoryRef.id,
-  //       isDone: false,
-  //       time: time,
-  //       date: date,
-  //     );
-  //
-  //     await pantryRef.set(pantry.toMap());
-  //   } catch (e) {
-  //     debugPrint('Something went wrong(Add): $e');
-  //   }
-  // }
-
-  // addCategory(String category) async {
-  //   final categoryRef = FirebaseFirestore.instance.collection('categories');
-  //   await categoryRef.add({'category': category});
-  // }
-
-
-  // addtoPantry(String itemText,String itemCategory, String time, int date) async {
-  //   try {
-  //     // Check if the category document already exists
-  //     final categoryRef = firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('categories')
-  //         .doc(itemCategory);
-  //     final categorySnapshot = await categoryRef.get();
-  //     if (!categorySnapshot.exists) {
-  //       // If the category document does not exist, create it
-  //       final category = Pantry(category: itemCategory);
-  //       await categoryRef.set(category.toMap());
-  //     }
-  //     // Create the pantry item document
-  //     final pantryRef = firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('pantry')
-  //         .doc();
-  //     final pantry = Pantry(
-  //         id: pantryRef.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
-  //     await pantryRef.set(pantry.toMap());
-  //   } catch (e) {
-  //     debugPrint('Something went wrong(Add): $e');
-  //   }
-  // }
-
 
   updatePantry(String id, Pantry pantry) async {
     try {
@@ -177,24 +107,7 @@ class PantryController extends GetxController {
       debugPrint('Something went wrong(Batch Delete): $e');
     }
   }
-
-
-
-// addToShopping(String itemText,String itemCategory, String time, int date) async {
-//   try {
-//     final ref = firestore
-//         .collection('users')
-//         .doc(authController.user!.uid)
-//         .collection('shoppinglist')
-//         .doc();
-//     final pantry = Pantry(
-//         id: ref.id, text: itemText,category: itemCategory, isDone: false, time: time, date: date);
-//     await ref.set(pantry.toMap());
-//   } catch (e) {
-//     debugPrint('Something went wrong(Add): $e');
-//   }
-// }
-
+  
 updateShoppingList(String id, Shopping shopping) async {
   try {
     await firestore

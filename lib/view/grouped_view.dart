@@ -85,7 +85,7 @@ class _GroupItemViewState extends State<GroupItemView>
               }
               if (snapshot.data == null || snapshot.data!.size == 0) {
                 return const Center(
-                  child: Text('You Pantry is Empty'),
+                  child: Text('This Category is Empty:You can still add + items'),
                 );
               }
 
