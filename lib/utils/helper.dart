@@ -29,6 +29,7 @@ Color getLabelColorFromText(String text) {
 int lastColorIndex = -1;
 List<int> usedColorIndices = [];
 Map<String, Color> categoryColors = {};
+
 Color getCatColorForCategory(String category) {
   // Check if color has already been generated for this category
   if (categoryColors.containsKey(category)) {
