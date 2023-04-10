@@ -12,9 +12,14 @@ import '../services/pantry_service.dart';
 class GroupItemView extends StatefulWidget {
   final String categoryId;
   final String category;
-  final String categoryColor;
-  const GroupItemView({Key? key, required this.categoryId,required this.category, required this.categoryColor}) : super(key: key);
+  final Color categoryColor;
 
+  const GroupItemView({
+    Key? key,
+    required this.categoryId,
+    required this.category,
+    required this.categoryColor,
+  }) : super(key: key);
   @override
   State<GroupItemView> createState() => _GroupItemViewState();
 }
@@ -73,6 +78,7 @@ class _GroupItemViewState extends State<GroupItemView>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
+        backgroundColor: categoryColors[widget.categoryId],
       ),
       body: Container(
         color: Colors.grey.shade100,
@@ -129,7 +135,8 @@ class _GroupItemViewState extends State<GroupItemView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getCatColorForCategory(pantry.category),
+                                color: getCatColorForCategory(pantry.catId),
+
                             width: 10,
                           )),
                           boxShadow: const [

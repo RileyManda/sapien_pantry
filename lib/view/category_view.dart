@@ -37,19 +37,16 @@ class _CategoryViewState extends State<CategoryView> {
               .map((DocumentSnapshot<Map<String, dynamic>> document) {
             Category category = Category.fromMap(document.data()!);
 
-
-
             return GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        GroupItemView(
-                          categoryId: document.id,
-                          category: category.category,
-                          categoryColor: category.categoryColor.toString(),
-                        ),
+                    builder: (context) => GroupItemView(
+                      categoryId: document.id,
+                      category: category.category,
+                      categoryColor: category.categoryColor,
+                    ),
                   ),
                 );
               },
@@ -84,6 +81,4 @@ class _CategoryViewState extends State<CategoryView> {
       ),
     );
   }
-
-
 }
