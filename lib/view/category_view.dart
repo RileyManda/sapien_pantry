@@ -52,7 +52,10 @@ class _CategoryViewState extends State<CategoryView> {
               },
               child: Card(
                 child: Container(
-                  color: getCatColorForCategory(category.id),
+                  decoration: BoxDecoration(
+                    color: getCatColorForCategory(category.id),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -68,7 +71,6 @@ class _CategoryViewState extends State<CategoryView> {
               ),
             );
           }).toList();
-
           return GridView.count(
             primary: false,
             padding: const EdgeInsets.all(4),
