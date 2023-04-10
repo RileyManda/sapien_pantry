@@ -169,10 +169,9 @@ class _PantryViewState extends State<PantryView>
               }
               if (snapshot.data == null || snapshot.data!.size == 0) {
                 return const Center(
-                  child: Text('You Pantrty is Empty'),
+                  child: Text('You Pantry is Empty'),
                 );
               }
-
               _pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
@@ -210,7 +209,7 @@ class _PantryViewState extends State<PantryView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getCatColorForCategory(pantry.category),
+                            color: getCatColorForCategory(pantry.catId),
                             width: 10,
                           )),
                           boxShadow: const [
