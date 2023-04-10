@@ -7,7 +7,6 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/utils/messages.dart';
-
 import '../services/pantry_service.dart';
 
 class GroupItemView extends StatefulWidget {
