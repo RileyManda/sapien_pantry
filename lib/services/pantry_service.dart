@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../controller/auth_controller.dart';
 import '../model/category.dart';
 import '../model/pantry.dart';
+import '../utils/helper.dart';
 
 class PantryService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -31,8 +32,10 @@ class PantryService {
           .get();
 
       String categoryId;
+      Color categoryColor;
       if (categorySnapshot.docs.isNotEmpty) {
         categoryId = categorySnapshot.docs.first.id;
+        categoryColor = Color(categorySnapshot.docs.first.get('color'));
       } else {
         final categoryRef = firestore
             .collection('users')
@@ -40,9 +43,15 @@ class PantryService {
             .collection('categories')
             .doc();
 
+        final color = getCatColorForCategory(itemCategory);
+        categoryColor = color;
+
+
+
         final category = Category(
           id: categoryRef.id,
           category: itemCategory,
+          categoryColor: categoryColor,
         );
         await categoryRef.set(category.toMap());
 
@@ -70,6 +79,7 @@ class PantryService {
       debugPrint('Something went wrong(Add): $e');
     }
   }
+
 
   Future<void> updatePantry(String id, Pantry pantry) async {
     try {
@@ -133,6 +143,7 @@ class PantryService {
   }
 
 
-
-
 }
+
+
+

@@ -7,11 +7,13 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/utils/messages.dart';
+import '../services/pantry_service.dart';
 
 class GroupItemView extends StatefulWidget {
   final String categoryId;
   final String category;
-  const GroupItemView({Key? key, required this.categoryId,required this.category}) : super(key: key);
+  final String categoryColor;
+  const GroupItemView({Key? key, required this.categoryId,required this.category, required this.categoryColor}) : super(key: key);
 
   @override
   State<GroupItemView> createState() => _GroupItemViewState();
@@ -20,7 +22,7 @@ class GroupItemView extends StatefulWidget {
 class _GroupItemViewState extends State<GroupItemView>
     with SingleTickerProviderStateMixin {
   late Stream<QuerySnapshot<Map<String, dynamic>>> _itemsStream;
-
+  final PantryService _pantryService = PantryService();
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
@@ -314,7 +316,7 @@ class _GroupItemViewState extends State<GroupItemView>
                               category: categoryController.text,
                               time: time));
                     } else {
-                      pantryController.addToPantry(
+                      _pantryService.addToPantry(
                           textController.text,
                           categoryController.text,
                           time,
