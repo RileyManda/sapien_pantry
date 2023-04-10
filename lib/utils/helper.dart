@@ -36,7 +36,7 @@ Color getCatColorForCategory(String category) {
     return categoryColors[category]!;
   }
 
-  // Generate a new color
+  // Color has not been generated for this category, so generate a new one
   final bytes = category.codeUnits;
   final sum = bytes.fold(0, (a, b) => a + b);
   int index = sum % labelColors.length;
@@ -53,6 +53,7 @@ Color getCatColorForCategory(String category) {
   categoryColors[category] = color;
   return color;
 }
+
 
 
 String getCategoryName(String categoryId) {
