@@ -256,9 +256,10 @@ class _GroupItemViewState extends State<GroupItemView>
                   TextFormField(
                     controller: categoryController,
                     autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Category',
-                      labelText: 'Category',
+                    decoration: InputDecoration(
+                      hintText: 'Category Name',
+                      labelText: widget.category,
+                      suffixIcon: Icon(Icons.dashboard),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -266,6 +267,7 @@ class _GroupItemViewState extends State<GroupItemView>
                       }
                       return null;
                     },
+
                   ),
                   const SizedBox(
                     height: 5,
