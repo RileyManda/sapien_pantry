@@ -72,7 +72,6 @@ class _GroupItemViewState extends State<GroupItemView>
         .where('catId', isEqualTo: categoryId)
         .snapshots();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,11 +182,6 @@ class _GroupItemViewState extends State<GroupItemView>
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
-                                      // pantryController.addToShopping(
-                                      //     textController.text,
-                                      //     textController.text,
-                                      //     time,
-                                      //     getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
                                     } else {
                                       showItemAdded(context);
