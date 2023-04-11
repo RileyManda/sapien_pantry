@@ -386,7 +386,6 @@ class _PantryViewState extends State<PantryView>
                       return;
                     }
                     if (pantry != null) {
-                      // TODO: switched from PantryController to Pantry service
                       _pantryService.updatePantry(
                           pantry.id,
                           pantry.copyWith(
@@ -394,7 +393,6 @@ class _PantryViewState extends State<PantryView>
                               category: categoryController.text,
                               time: time));
                     } else {
-                      // TODO: switched from PantryController to Pantry service
                       _pantryService.addToPantry(
                           textController.text,
                           categoryController.text,
