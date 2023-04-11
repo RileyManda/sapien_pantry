@@ -30,7 +30,7 @@ class _CategoryViewState extends State<CategoryView> {
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return const Text('Something went wrong');
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -68,20 +68,22 @@ class _CategoryViewState extends State<CategoryView> {
                   ),
                 );
               },
-              child: Card(
-                child: Container(
+              child: Container(
+                decoration: BoxDecoration(
                   color: categoryColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        data['category'],
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      data['category'],
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -95,6 +97,7 @@ class _CategoryViewState extends State<CategoryView> {
             crossAxisCount: 3,
             children: categoryCards,
           );
+
         },
       ),
     );

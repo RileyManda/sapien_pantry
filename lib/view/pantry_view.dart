@@ -173,12 +173,13 @@ class _PantryViewState extends State<PantryView>
                 );
               }
 
+              // Update _pantryList here
               _pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
               return GroupedListView(
                 controller: _scrollController,
-                sort: true,
+                sort: false,
                 order: GroupedListOrder.ASC,
                 elements: _isSearching ? _searchResults : _pantryList,
                 useStickyGroupSeparators: true,
@@ -202,7 +203,7 @@ class _PantryViewState extends State<PantryView>
                       onTap: () {
                         textController.text = pantry.text;
                         categoryController.text = pantry.category;
-                        time = pantry.time;
+                        // time = pantry.time;
                         showItemInput(context, pantry: pantry);
                       },
                       child: Container(

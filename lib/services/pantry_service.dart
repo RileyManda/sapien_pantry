@@ -166,6 +166,22 @@ class PantryService {
   }
 
 
+  Stream<List<Pantry>> getPantryList() async* {
+    final collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry');
+    await for (final querySnapshot in collectionRef.snapshots()) {
+      final pantryList =
+      querySnapshot.docs.map((doc) => Pantry.fromMap(doc)).toList();
+      yield pantryList;
+    }
+  }
+
+
+
+
+
 
 
 }
