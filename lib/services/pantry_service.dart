@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../controller/auth_controller.dart';
 import '../model/category.dart';
 import '../model/pantry.dart';
-import '../utils/helper.dart';
 
 class PantryService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -32,10 +31,8 @@ class PantryService {
           .get();
 
       String categoryId;
-      Color categoryColor;
       if (categorySnapshot.docs.isNotEmpty) {
         categoryId = categorySnapshot.docs.first.id;
-        categoryColor = Color(categorySnapshot.docs.first.get('color'));
       } else {
         final categoryRef = firestore
             .collection('users')
@@ -43,15 +40,9 @@ class PantryService {
             .collection('categories')
             .doc();
 
-        final color = getCatColorForCategory(itemCategory);
-        categoryColor = color;
-
-
-
         final category = Category(
           id: categoryRef.id,
           category: itemCategory,
-          categoryColor: categoryColor,
         );
         await categoryRef.set(category.toMap());
 
@@ -80,19 +71,51 @@ class PantryService {
     }
   }
 
+  // Future<void> updatePantry(String id, Pantry pantry) async {
+  //   try {
+  //     await firestore
+  //         .collection('users')
+  //         .doc(authController.user!.uid)
+  //         .collection('pantry')
+  //         .doc(id)
+  //         .update(pantry.toMap());
+  //   } catch (e) {
+  //     debugPrint('Something went wrong(Update): $e');
+  //   }
+  // }
 
   Future<void> updatePantry(String id, Pantry pantry) async {
     try {
+      // Update pantry collection
       await firestore
           .collection('users')
           .doc(authController.user!.uid)
           .collection('pantry')
           .doc(id)
-          .update(pantry.toMap());
+          .update({
+        'text': pantry.text,
+        'category': pantry.category,
+        'date': pantry.date,
+        'time': pantry.time,
+        'isDone': pantry.isDone,
+      });
+
+      // Update categories collection
+      await firestore
+          .collection('users')
+          .doc(authController.user!.uid)
+          .collection('categories')
+          .doc(pantry.catId)
+          .update({
+        'category': pantry.category,
+      });
     } catch (e) {
       debugPrint('Something went wrong(Update): $e');
     }
   }
+
+
+
 
   Future<void> deleteFromPantry(String id) async {
     try {
@@ -143,7 +166,22 @@ class PantryService {
   }
 
 
+  Stream<List<Pantry>> getPantryList() async* {
+    final collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(authController.user!.uid)
+        .collection('pantry');
+    await for (final querySnapshot in collectionRef.snapshots()) {
+      final pantryList =
+      querySnapshot.docs.map((doc) => Pantry.fromMap(doc)).toList();
+      yield pantryList;
+    }
+  }
+
+
+
+
+
+
+
 }
-
-
-

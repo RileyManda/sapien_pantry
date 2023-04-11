@@ -169,15 +169,17 @@ class _PantryViewState extends State<PantryView>
               }
               if (snapshot.data == null || snapshot.data!.size == 0) {
                 return const Center(
-                  child: Text('You Pantry is Empty'),
+                  child: Text('You Pantrty is Empty'),
                 );
               }
+
+              // Update _pantryList here
               _pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
               return GroupedListView(
                 controller: _scrollController,
-                sort: true,
+                sort: false,
                 order: GroupedListOrder.ASC,
                 elements: _isSearching ? _searchResults : _pantryList,
                 useStickyGroupSeparators: true,
@@ -201,7 +203,7 @@ class _PantryViewState extends State<PantryView>
                       onTap: () {
                         textController.text = pantry.text;
                         categoryController.text = pantry.category;
-                        time = pantry.time;
+                        // time = pantry.time;
                         showItemInput(context, pantry: pantry);
                       },
                       child: Container(
@@ -209,7 +211,7 @@ class _PantryViewState extends State<PantryView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getCatColorForCategory(pantry.catId),
+                            color: getCatColorForCategory(pantry.category),
                             width: 10,
                           )),
                           boxShadow: const [
@@ -385,7 +387,6 @@ class _PantryViewState extends State<PantryView>
                       return;
                     }
                     if (pantry != null) {
-                      // TODO: switched from PantryController to Pantry service
                       _pantryService.updatePantry(
                           pantry.id,
                           pantry.copyWith(
@@ -393,7 +394,6 @@ class _PantryViewState extends State<PantryView>
                               category: categoryController.text,
                               time: time));
                     } else {
-                      // TODO: switched from PantryController to Pantry service
                       _pantryService.addToPantry(
                           textController.text,
                           categoryController.text,

@@ -1,27 +1,21 @@
-import 'package:flutter/material.dart';
-
 class Category {
   String id;
   String category;
-  Color categoryColor;
 
-  Category({required this.id, required this.category, required this.categoryColor});
+  Category({
+    required this.id,
+    required this.category,
+  });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'category': category,
-      'categoryColor': categoryColor.value,
-    };
+  factory Category.fromMap(Map<String, dynamic> map) {
+    return Category(
+      id: map['id'],
+      category: map['category'],
+    );
   }
 
-  Category.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
-        category = map['category'],
-        categoryColor = Color(map['categoryColor']);
-
-  @override
-  String toString() {
-    return 'Category{id: $id, category: $category, categoryColor: $categoryColor}';
-  }
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'category': category,
+  };
 }
