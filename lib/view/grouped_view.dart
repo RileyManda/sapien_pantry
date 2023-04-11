@@ -7,19 +7,12 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/utils/messages.dart';
-import '../services/pantry_service.dart';
 
 class GroupItemView extends StatefulWidget {
   final String categoryId;
   final String category;
-  final Color categoryColor;
+  const GroupItemView({Key? key, required this.categoryId,required this.category}) : super(key: key);
 
-  const GroupItemView({
-    Key? key,
-    required this.categoryId,
-    required this.category,
-    required this.categoryColor,
-  }) : super(key: key);
   @override
   State<GroupItemView> createState() => _GroupItemViewState();
 }
@@ -27,7 +20,7 @@ class GroupItemView extends StatefulWidget {
 class _GroupItemViewState extends State<GroupItemView>
     with SingleTickerProviderStateMixin {
   late Stream<QuerySnapshot<Map<String, dynamic>>> _itemsStream;
-  final PantryService _pantryService = PantryService();
+
   final textController = TextEditingController();
   final categoryController = TextEditingController();
   String time = '';
@@ -72,12 +65,12 @@ class _GroupItemViewState extends State<GroupItemView>
         .where('catId', isEqualTo: categoryId)
         .snapshots();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
-        backgroundColor: categoryColors[widget.categoryId],
       ),
       body: Container(
         color: Colors.grey.shade100,
@@ -134,8 +127,7 @@ class _GroupItemViewState extends State<GroupItemView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                                color: getCatColorForCategory(pantry.catId),
-
+                            color: getCatColorForCategory(pantry.category),
                             width: 10,
                           )),
                           boxShadow: const [
@@ -182,6 +174,11 @@ class _GroupItemViewState extends State<GroupItemView>
                                         pantry.copyWith(
                                             isDone: !pantry.isDone));
                                     if (!pantry.isDone) {
+                                      // pantryController.addToShopping(
+                                      //     textController.text,
+                                      //     textController.text,
+                                      //     time,
+                                      //     getDateTimestamp(DateTime.now()));
                                       showItemFinished(context);
                                     } else {
                                       showItemAdded(context);
@@ -256,10 +253,9 @@ class _GroupItemViewState extends State<GroupItemView>
                   TextFormField(
                     controller: categoryController,
                     autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: 'Category Name',
-                      labelText: widget.category,
-                      suffixIcon: Icon(Icons.dashboard),
+                    decoration: const InputDecoration(
+                      hintText: 'Category',
+                      labelText: 'Category',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -267,7 +263,6 @@ class _GroupItemViewState extends State<GroupItemView>
                       }
                       return null;
                     },
-
                   ),
                   const SizedBox(
                     height: 5,
@@ -319,7 +314,7 @@ class _GroupItemViewState extends State<GroupItemView>
                               category: categoryController.text,
                               time: time));
                     } else {
-                      _pantryService.addToPantry(
+                      pantryController.addToPantry(
                           textController.text,
                           categoryController.text,
                           time,

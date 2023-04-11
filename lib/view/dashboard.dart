@@ -50,6 +50,8 @@ class _DashboardState extends State<Dashboard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    //TODO:buggy code hunt--gotcha
+    // updateItemsDone();
     super.initState();
   }
 
@@ -70,6 +72,24 @@ class _DashboardState extends State<Dashboard>
     }
     _isExpanded = !_isExpanded;
   }
+  // void updateItemsDone() {
+  //   setState(() {
+  //     _itemsDone = 0;
+  //   });
+  //
+  //   firestore
+  //       .collection('users')
+  //       .doc(authController.user!.uid)
+  //       .collection('pantry')
+  //       .where('isDone', isEqualTo: true)
+  //       .snapshots()
+  //       .listen((snapshot) {
+  //     setState(() {
+  //       _itemsDone = snapshot.size;
+  //     });
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

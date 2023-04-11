@@ -250,7 +250,7 @@ class _ShoppingViewState extends State<ShoppingView>
                               category: textController.text,
                               time: time));
                     } else {
-                      _pantryService.addToPantry(
+                      pantryController.addToPantry(
                           textController.text,
                           textController.text,
                           time,

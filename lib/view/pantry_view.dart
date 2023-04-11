@@ -7,7 +7,9 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
 import 'package:sapienpantry/utils/messages.dart';
+
 import '../services/pantry_service.dart';
+
 
 class PantryView extends StatefulWidget {
   const PantryView({Key? key}) : super(key: key);
@@ -92,7 +94,6 @@ class _PantryViewState extends State<PantryView>
       }
     });
   }
-
   void _startSearch() {
     setState(() {
       _isSearching = true;
@@ -128,6 +129,7 @@ class _PantryViewState extends State<PantryView>
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,16 +139,16 @@ class _PantryViewState extends State<PantryView>
             : null, // Display back button only while searching
         title: _isSearching
             ? TextField(
-          controller: textController,
-          autofocus: true,
-          onChanged: _searchItem,
-          decoration: const InputDecoration(
-            hintText: 'Search',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.white),
-          ),
+                controller: textController,
+                autofocus: true,
+                onChanged: _searchItem,
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
           style: const TextStyle(color: Colors.white),
-        )
+              )
             : const Text('Pantry'),
         actions: _buildAppBarActions(),
       ),
@@ -167,9 +169,10 @@ class _PantryViewState extends State<PantryView>
               }
               if (snapshot.data == null || snapshot.data!.size == 0) {
                 return const Center(
-                  child: Text('You Pantry is Empty'),
+                  child: Text('You Pantrty is Empty'),
                 );
               }
+
               _pantryList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
               _pantryList.sort((a, b) => a.text.compareTo(b.text));
@@ -207,9 +210,9 @@ class _PantryViewState extends State<PantryView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                                color: getCatColorForCategory(pantry.catId),
-                                width: 10,
-                              )),
+                            color: getCatColorForCategory(pantry.category),
+                            width: 10,
+                          )),
                           boxShadow: const [
                             BoxShadow(
                               offset: Offset(4, 4),
@@ -225,20 +228,20 @@ class _PantryViewState extends State<PantryView>
                             children: [
                               Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: Text(
-                                      pantry.text,
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  )),
+                                padding: const EdgeInsets.all(14.0),
+                                child: Text(
+                                  pantry.text,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              )),
                               Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: Text(
-                                      pantry.category,
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  )),
+                                padding: const EdgeInsets.all(14.0),
+                                child: Text(
+                                  pantry.category,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              )),
                               Text(
                                 pantry.time,
                                 style: const TextStyle(
@@ -260,6 +263,7 @@ class _PantryViewState extends State<PantryView>
                                       setState(() {
                                         pantry.isDone = !pantry.isDone;
                                       });
+
                                     }
                                   },
                                   child: Container(
@@ -284,19 +288,19 @@ class _PantryViewState extends State<PantryView>
       ),
       floatingActionButton: _isVisible
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        FloatingActionButton(
-          mini: false,
-          onPressed: () async {
-            setState(() {
-              time = TimeOfDay.now().format(context);
-            });
-            await showItemInput(context).then((value) {
-              textController.clear();
-            });
-          },
-          child: const Icon(Icons.add),
-        ),
-      ])
+              FloatingActionButton(
+                mini: false,
+                onPressed: () async {
+                  setState(() {
+                    time = TimeOfDay.now().format(context);
+                  });
+                  await showItemInput(context).then((value) {
+                    textController.clear();
+                  });
+                },
+                child: const Icon(Icons.add),
+              ),
+            ])
           : null,
     );
   }
@@ -305,109 +309,111 @@ class _PantryViewState extends State<PantryView>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title:
-          Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: textController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Item Name',
-                  labelText: 'Item Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an item name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: categoryController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Category',
-                  labelText: 'Category',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a category';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              OutlinedButton(
-                onPressed: () async {
-                  final newTime = await showTimePicker(
-                      context: context, initialTime: TimeOfDay.now());
-                  if (newTime != null) {
-                    setState(() {
-                      time = newTime.format(context);
-                    });
-                  }
-                },
-                child: Text('Time : $time'),
-              ),
-            ],
-          ),
-          actions: [
-            if (pantry != null)
-              TextButton.icon(
-                  onPressed: () {
-                    _pantryService.deleteFromPantry(pantry.id);
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.redAccent,
-                  ),
-                  label: const Text(
-                    'Delete',
-                    style: TextStyle(color: Colors.black54),
-                  )),
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (textController.text.isEmpty) {
-                  return;
-                }
-                if (pantry != null) {
-                  _pantryService.updatePantry(
-                      pantry.id,
-                      pantry.copyWith(
-                          text: textController.text,
-                          category: categoryController.text,
-                          time: time));
-                } else {
-                  _pantryService.addToPantry(
-                      textController.text,
-                      categoryController.text,
-                      time,
-                      getDateTimestamp(DateTime.now()));
-                  showItemAdded(context);
-                }
-                Navigator.pop(context);
-              },
-              child: Row(
+              title:
+                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.save),
-                  const SizedBox(width: 8.0),
-                  Text(pantry == null ? 'Add' : 'Update'),
+                  TextFormField(
+                    controller: textController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Item Name',
+                      labelText: 'Item Name',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an item name';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: categoryController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Category',
+                      labelText: 'Category',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a category';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  OutlinedButton(
+                    onPressed: () async {
+                      final newTime = await showTimePicker(
+                          context: context, initialTime: TimeOfDay.now());
+                      if (newTime != null) {
+                        setState(() {
+                          time = newTime.format(context);
+                        });
+                      }
+                    },
+                    child: Text('Time : $time'),
+                  ),
                 ],
               ),
-            )
-          ],
-        ));
+              actions: [
+                if (pantry != null)
+                  TextButton.icon(
+                      onPressed: () {
+                        _pantryService.deleteFromPantry(pantry.id);
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.redAccent,
+                      ),
+                      label: const Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black54),
+                      )),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: () {
+                    if (textController.text.isEmpty) {
+                      return;
+                    }
+                    if (pantry != null) {
+                      // TODO: switched from PantryController to Pantry service
+                      _pantryService.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(
+                              text: textController.text,
+                              category: categoryController.text,
+                              time: time));
+                    } else {
+                      // TODO: switched from PantryController to Pantry service
+                      _pantryService.addToPantry(
+                          textController.text,
+                          categoryController.text,
+                          time,
+                          getDateTimestamp(DateTime.now()));
+                      showItemAdded(context);
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.save),
+                      const SizedBox(width: 8.0),
+                      Text(pantry == null ? 'Add' : 'Update'),
+                    ],
+                  ),
+                )
+              ],
+            ));
   }
 }
