@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sapienpantry/model/pantry.dart';
-import 'package:sapienpantry/utils/constants.dart';
 import '../services/pantry_service.dart';
 import '../utils/helper.dart';
 import '../utils/messages.dart';
@@ -205,6 +204,9 @@ class _PantryViewState extends State<PantryView> {
                           }
                         },
                       ),
+                      onTap: () {
+                        _showMoreDetails(context, pantry);
+                      },
                     ),
                   ),
                 );
@@ -352,45 +354,78 @@ void _showMoreDetails(BuildContext context, Pantry pantry) {
   showModalBottomSheet(
     context: context,
     builder: (context) {
-      return Container(
-        padding: EdgeInsets.all(16.0),
+      return SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
-              controller: textController,
-              decoration: InputDecoration(
-                labelText: 'Item name',
-                border: OutlineInputBorder(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: textController,
+                        decoration: InputDecoration(
+                          labelText: 'Item name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      TextFormField(
+                        controller: categoryController,
+                        decoration: InputDecoration(
+                          labelText: 'Category',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Update the pantry item with the new values
+                          final updatedPantry = pantry.copyWith(
+                            text: textController.text,
+                            category: categoryController.text,
+                          );
+                          PantryService().updatePantry(
+                            pantry.id, // Pass the pantry item's id
+                            updatedPantry,
+                          );
+                          Navigator.pop(context); // Close the bottom sheet
+                        },
+                        child: Text('Save'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 8.0),
-            TextFormField(
-              controller: categoryController,
-              decoration: InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // Update the pantry item with the new values
-                final updatedPantry = pantry.copyWith(
-                  text: textController.text,
-                  category: categoryController.text,
-                );
-                PantryService().updatePantry(
-                  pantry.id, // Pass the pantry item's id
-                  updatedPantry,
-                );
-                Navigator.pop(context); // Close the bottom sheet
-              },
-              child: Text('Save'),
             ),
           ],
         ),
       );
     },
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    clipBehavior: Clip.antiAliasWithSaveLayer,
+    elevation: 8,
+    backgroundColor: Colors.white,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height -
+          AppBar().preferredSize.height -
+          MediaQuery.of(context).padding.top -
+          MediaQuery.of(context).padding.bottom,
+    ),
   );
 }
+
+
+
+
+
+
+
+
+
+
