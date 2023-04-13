@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
-
-import '../controller/auth_controller.dart';
 import '../services/pantry_service.dart';
 import '../utils/helper.dart';
 import '../utils/messages.dart';
@@ -240,7 +235,7 @@ class _PantryViewState extends State<PantryView> {
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
-        mini: true,
+        mini: false,
         backgroundColor: buttonColors.elementAt(0),
         onPressed: () async {
           setState(() {
@@ -251,7 +246,7 @@ class _PantryViewState extends State<PantryView> {
             categoryController.clear();
           });
         },
-        child: const Icon(Icons.inventory),
+        child: const Icon(Icons.add),
       ),
     );
   }
