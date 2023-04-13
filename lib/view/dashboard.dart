@@ -30,6 +30,7 @@ class _DashboardState extends State<Dashboard>
   late Animation<double> _translateButton;
   bool _isExpanded = false;
   int pantryNotification = 0;
+  int shoppingNotification = 0;
   int _itemsDone = 0;
 
   @override
