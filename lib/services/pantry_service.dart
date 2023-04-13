@@ -168,7 +168,15 @@ class PantryService {
   }
 
 
-
+  Stream<int> itemsDoneStream(String pantryId) {
+    return firestore
+        .collection('pantries')
+        .doc(pantryId)
+        .collection('items')
+        .where('isDone', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
 
 
 

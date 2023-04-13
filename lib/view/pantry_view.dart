@@ -239,12 +239,19 @@ class _PantryViewState extends State<PantryView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          textController.clear();
-          categoryController.clear();
-          showItemInput(context); // call the function here
+        heroTag: null,
+        mini: true,
+        backgroundColor: buttonColors.elementAt(0),
+        onPressed: () async {
+          setState(() {
+            time = TimeOfDay.now().format(context);
+          });
+          await showItemInput(context).then((value) {
+            textController.clear();
+            categoryController.clear();
+          });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.inventory),
       ),
     );
   }
@@ -333,7 +340,6 @@ class _PantryViewState extends State<PantryView> {
                 if (textController.text.isEmpty) {
                   return;
                 }
-                // TODO: updatePantry not required here
                 if (pantry != null) {
                   _pantryService.updatePantry(
                       pantry.id,

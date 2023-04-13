@@ -8,7 +8,6 @@ import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
 import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
-
 import '../services/pantry_service.dart';
 
 class Dashboard extends StatefulWidget {
@@ -30,8 +29,8 @@ class _DashboardState extends State<Dashboard>
   late Animation<double> _translateButton;
   bool _isExpanded = false;
   int pantryNotification = 0;
-  int shoppingNotification = 0;
   int _itemsDone = 0;
+  late Stream<int> _itemsDoneStream;
 
   @override
   initState() {
@@ -51,8 +50,9 @@ class _DashboardState extends State<Dashboard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    //TODO:buggy code hunt--gotcha
     // updateItemsDone();
+    Pantry pantry = Pantry(id: 'id', text: 'text', category: 'category', catId: 'catId', isDone: false, time: 'time', date: getDateTimestamp(DateTime.now()));
+    Stream<int> itemsDoneStream = PantryService().itemsDoneStream(pantry.id);
     super.initState();
   }
 
@@ -116,6 +116,8 @@ class _DashboardState extends State<Dashboard>
                   : Container(),
             ],
           ),
+
+
           Stack(
             children: [
               IconButton(
@@ -128,7 +130,7 @@ class _DashboardState extends State<Dashboard>
                   );
                 },
               ),
-              if (_itemsDone > 0)
+
                 Positioned(
                   top: 5,
                   right: 5,
@@ -185,7 +187,8 @@ class _DashboardState extends State<Dashboard>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ShoppingView()),
+                      builder: (context) => const ShoppingView(
+                      )),
                 );
               },
               child: Container(
