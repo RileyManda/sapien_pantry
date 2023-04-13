@@ -16,12 +16,10 @@ class _PantryViewState extends State<PantryView> {
   PantryService _pantryService = PantryService();
   final textController = TextEditingController();
   final categoryController = TextEditingController();
-  bool isDone = false;
   String time = '';
   bool _isSearching = false;
   late List<Pantry> _searchResults = [];
   late List<Pantry> _pantryList = [];
-
 
   @override
   void dispose() {
@@ -32,44 +30,20 @@ class _PantryViewState extends State<PantryView> {
 
   List<Widget> _buildAppBarActions() {
     if (_isSearching) {
-      return [
-        IconButton(
-          onPressed: () {
-            _stopSearch();
-            textController.clear();
-          },
-          icon: const Icon(Icons.close),
-        ),
-      ];
+      return [        IconButton(          onPressed: () {            _stopSearch();            textController.clear();          },          icon: const Icon(Icons.close),        ),      ];
     } else {
-      return [
-        IconButton(
-          onPressed: _startSearch,
-          icon: const Icon(Icons.search),
-        ),
-        PopupMenuButton(
-          itemBuilder: (BuildContext context) {
-            return [
-              const PopupMenuItem(
-                child: Text('Sort by time'),
-                value: 'time',
-              ),
-              const PopupMenuItem(
-                child: Text('Sort by name'),
-                value: 'name',
-              ),
-            ];
-          },
-          onSelected: (value) {
-            setState(() {
-              if (value == 'time') {
-                _pantryList.sort((a, b) => a.time.compareTo(b.time));
-              } else if (value == 'name') {
-                _pantryList.sort((a, b) => a.text.compareTo(b.text));
-              }
-            });
-          },
-        ),
+      return [        IconButton(          onPressed: _startSearch,          icon: const Icon(Icons.search),        ),        PopupMenuButton(          itemBuilder: (BuildContext context) {            return [              const PopupMenuItem(                child: Text('Sort by time'),                value: 'time',              ),              const PopupMenuItem(                child: Text('Sort by name'),                value: 'name',              ),            ];
+      },
+        onSelected: (value) {
+          setState(() {
+            if (value == 'time') {
+              _pantryList.sort((a, b) => a.time.compareTo(b.time));
+            } else if (value == 'name') {
+              _pantryList.sort((a, b) => a.text.compareTo(b.text));
+            }
+          });
+        },
+      ),
       ];
     }
   }
@@ -131,107 +105,97 @@ class _PantryViewState extends State<PantryView> {
         actions: _buildAppBarActions(),
       ),
       body: Container(
-        child: StreamBuilder<List<Pantry>>(
-          stream: _pantryService.streamPantryList(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text('Something went wrong.'));
-            }
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
-            _pantryList = snapshot.data!;
-            final data = _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
-            final filteredData = groupBy(data, (pantry) => pantry.category);
-            final groupedData = _isSearching ? filteredData : groupBy(snapshot.data!, (pantry) => pantry.category);
+          child:StreamBuilder<List<Pantry>>(
+            stream: _pantryService.streamPantryList(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Something went wrong.'));
+              }
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+              _pantryList = snapshot.data!;
+              final data = _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
+              final filteredData = groupBy(data, (pantry) => pantry.category);
+              final groupedData = _isSearching ? filteredData : groupBy(snapshot.data!, (pantry) => pantry.category);
 
-            return ListView.builder(
-              itemCount: _isSearching ? filteredData.length : groupedData.length,
-              itemBuilder: (context, index) {
-                final category = _isSearching ? filteredData.keys.toList()[index] : groupedData.keys.toList()[index];
-                final items = _isSearching ? filteredData[category]! : groupedData[category]!;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
+              return ListView.builder(
+                itemCount: _isSearching ? filteredData.length : groupedData.length,
+                itemBuilder: (context, index) {
+                  final category = _isSearching ? filteredData.keys.toList()[index] : groupedData.keys.toList()[index];
+                  final items = _isSearching ? filteredData[category]! : groupedData[category]!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
                         ),
                       ),
-                    ),
-                    ...items.map((pantry) {
-                      return AnimatedOpacity(
-                        opacity: pantry.isDone ? 0.5 : 1.0,
-                        duration: Duration(milliseconds: 500),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                              right: BorderSide(
-                                color: getCatColorForCategory(pantry.category),
-                                width: 10,
+                      ...items.map((pantry) {
+                        return AnimatedOpacity(
+                          opacity: pantry.isDone ? 0.5 : 1.0,
+                          duration: Duration(milliseconds: 500),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border(
+                                right: BorderSide(
+                                  color: getCatColorForCategory(pantry.category),
+                                  width: 10,
+                                ),
                               ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  offset: Offset(4, 4),
+                                  blurRadius: 2.0,
+                                  color: Colors.black12,
+                                ),
+                              ],
                             ),
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(4, 4),
-                                blurRadius: 2.0,
-                                color: Colors.black12,
-                              ),
-                            ],
-                          ),
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 4.0),
-                          child: ListTile(
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16.0),
-                            title: Text(pantry.text),
-                            trailing: Checkbox(
-                              value: pantry.isDone,
-                              onChanged: (bool? value) {
-                                if (value != null) {
-                                  _pantryService.updatePantry(
-                                    pantry.id,
-                                    pantry.copyWith(isDone: value),
-                                  );
-                                  if (!pantry.isDone) {
-                                    showItemFinished(context);
-                                  } else {
-                                    showItemAdded(context);
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 4.0),
+                            child: ListTile(
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 16.0),
+                              title: Text(pantry.text),
+                              trailing: Checkbox(
+                                value: pantry.isDone,
+                                onChanged: (bool? value) {
+                                  if (value != null) {
+                                    _pantryService.updatePantry(
+                                      pantry.id,
+                                      pantry.copyWith(isDone: value),
+                                    );
+                                    if (!pantry.isDone) {
+                                      showItemFinished(context);
+                                    } else {
+                                      showItemAdded(context);
+                                    }
+                                    setState(() {
+                                      // Remove this line
+                                      // pantry.isDone = value;
+                                    });
                                   }
-                                  setState(() {
-                                    // Remove this line
-                                    // pantry.isDone = value;
-                                  });
-                                }
-                              },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                              ),
-                              checkColor: Colors.white,
-                              fillColor: MaterialStateProperty.all<Color>(
-                                pantry.isDone
-                                    ? pPrimaryColor
-                                    : Colors.grey[300]!,
+                                },
+
                               ),
                             ),
-                            onTap: () {
-                              _showMoreDetails(context, pantry);
-                            },
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+                        );
+                      }).toList(),
+                    ],
+                  );
+                },
+              );
+            },
+          )
+
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
