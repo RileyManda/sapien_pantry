@@ -23,6 +23,10 @@ class _PantryViewState extends State<PantryView> {
   final categoryController = TextEditingController();
   bool isDone = false;
   String time = '';
+  bool _isSearching = false;
+  late List<Pantry> _searchResults = [];
+  late List<Pantry> _pantryList = [];
+
 
   @override
   void dispose() {
@@ -31,9 +35,80 @@ class _PantryViewState extends State<PantryView> {
     super.dispose();
   }
 
+  List<Widget> _buildAppBarActions() {
+    if (_isSearching) {
+      return [
+        IconButton(
+          onPressed: () {
+            _stopSearch();
+            textController.clear();
+          },
+          icon: const Icon(Icons.close),
+        ),
+      ];
+    } else {
+      return [
+        IconButton(
+          onPressed: _startSearch,
+          icon: const Icon(Icons.search),
+        ),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) {
+            return [
+              const PopupMenuItem(
+                child: Text('Sort by time'),
+                value: 'time',
+              ),
+              const PopupMenuItem(
+                child: Text('Sort by name'),
+                value: 'name',
+              ),
+            ];
+          },
+          onSelected: (value) {
+            setState(() {
+              if (value == 'time') {
+                _pantryList.sort((a, b) => a.time.compareTo(b.time));
+              } else if (value == 'name') {
+                _pantryList.sort((a, b) => a.text.compareTo(b.text));
+              }
+            });
+          },
+        ),
+      ];
+    }
+  }
+  void _startSearch() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+
+  void _stopSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchResults = []; // modify this line
+    });
+  }
+  void _searchItem(String query) {
+    setState(() {
+      if (query.isNotEmpty) {
+        _searchResults = _pantryList
+            .where((pantry) =>
+        pantry.text.toLowerCase().contains(query.toLowerCase()) ||
+            pantry.category.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      } else {
+        _searchResults = List.from(_pantryList);
+      }
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-
     Map<K, List<T>> groupBy<T, K>(Iterable<T> iterable, K Function(T) keyFunc) {
       final groups = <K, List<T>>{};
       for (final item in iterable) {
@@ -44,7 +119,21 @@ class _PantryViewState extends State<PantryView> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pantry'),
+        leading: _isSearching ? const BackButton() : null,
+        title: _isSearching
+            ? TextField(
+          controller: textController,
+          autofocus: true,
+          onChanged: _searchItem,
+          decoration: const InputDecoration(
+            hintText: 'Search',
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white),
+          ),
+          style: const TextStyle(color: Colors.white),
+        )
+            : const Text('Pantry'),
+        actions: _buildAppBarActions(),
       ),
       body: Container(
         child: StreamBuilder<List<Pantry>>(
@@ -56,13 +145,16 @@ class _PantryViewState extends State<PantryView> {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
             }
-            final data = snapshot.data!;
-            final groupedData = groupBy(data, (pantry) => pantry.category);
+            _pantryList = snapshot.data!;
+            final data = _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
+            final filteredData = groupBy(data, (pantry) => pantry.category);
+            final groupedData = _isSearching ? filteredData : groupBy(snapshot.data!, (pantry) => pantry.category);
+
             return ListView.builder(
-              itemCount: groupedData.length,
+              itemCount: _isSearching ? filteredData.length : groupedData.length,
               itemBuilder: (context, index) {
-                final category = groupedData.keys.toList()[index];
-                final items = groupedData[category]!;
+                final category = _isSearching ? filteredData.keys.toList()[index] : groupedData.keys.toList()[index];
+                final items = _isSearching ? filteredData[category]! : groupedData[category]!;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
