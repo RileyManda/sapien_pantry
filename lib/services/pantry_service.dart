@@ -71,18 +71,7 @@ class PantryService {
     }
   }
 
-  // Future<void> updatePantry(String id, Pantry pantry) async {
-  //   try {
-  //     await firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('pantry')
-  //         .doc(id)
-  //         .update(pantry.toMap());
-  //   } catch (e) {
-  //     debugPrint('Something went wrong(Update): $e');
-  //   }
-  // }
+
 
   Future<void> updatePantry(String id, Pantry pantry) async {
     try {
@@ -166,7 +155,7 @@ class PantryService {
   }
 
 
-  Stream<List<Pantry>> getPantryList() async* {
+  Stream<List<Pantry>> streamPantryList() async* {
     final collectionRef = FirebaseFirestore.instance
         .collection('users')
         .doc(authController.user!.uid)

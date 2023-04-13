@@ -101,6 +101,7 @@ class _GroupItemViewState extends State<GroupItemView>
                 elements: itemList,
                 useStickyGroupSeparators: true,
                 groupBy: (Pantry pantry) => pantry.category,
+
                 groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(

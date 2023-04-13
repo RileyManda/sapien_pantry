@@ -72,24 +72,6 @@ class _DashboardState extends State<Dashboard>
     }
     _isExpanded = !_isExpanded;
   }
-  // void updateItemsDone() {
-  //   setState(() {
-  //     _itemsDone = 0;
-  //   });
-  //
-  //   firestore
-  //       .collection('users')
-  //       .doc(authController.user!.uid)
-  //       .collection('pantry')
-  //       .where('isDone', isEqualTo: true)
-  //       .snapshots()
-  //       .listen((snapshot) {
-  //     setState(() {
-  //       _itemsDone = snapshot.size;
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +165,7 @@ class _DashboardState extends State<Dashboard>
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PantryView()),
+                  MaterialPageRoute(builder: (context) =>  PantryView()),
                 );
               },
               child: Container(
@@ -397,6 +379,8 @@ class _DashboardState extends State<Dashboard>
                 child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () {
+                textController.text.trim();
+                categoryController.text.trim();
                 if (textController.text.isEmpty) {
                   return;
                 }
