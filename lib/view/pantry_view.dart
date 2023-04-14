@@ -75,8 +75,8 @@ class _PantryViewState extends State<PantryView> {
       if (query.isNotEmpty) {
         _searchResults = _pantryList
             .where((pantry) =>
-        pantry.text.toLowerCase().contains(query.toLowerCase()) ||
-            pantry.category.toLowerCase().contains(query.toLowerCase()))
+                pantry.text.toLowerCase().contains(query.toLowerCase()) ||
+                pantry.category.toLowerCase().contains(query.toLowerCase()))
             .toList();
       } else {
         _searchResults = List.from(_pantryList);
@@ -86,19 +86,41 @@ class _PantryViewState extends State<PantryView> {
 
   List<Widget> _buildAppBarActions() {
     if (_isSearching) {
-      return [        IconButton(          onPressed: () {            _stopSearch();          },          icon: const Icon(Icons.close),        ),      ];
+      return [
+        IconButton(
+          onPressed: () {
+            _stopSearch();
+          },
+          icon: const Icon(Icons.close),
+        ),
+      ];
     } else {
-      return [        IconButton(          onPressed: _startSearch,          icon: const Icon(Icons.search),        ),        PopupMenuButton(          itemBuilder: (BuildContext context) => const [            PopupMenuItem(              child: Text('Sort by time'),              value: 'time',            ),            PopupMenuItem(              child: Text('Sort by name'),              value: 'name',            ),          ],
-        onSelected: (value) {
-          setState(() {
-            if (value == 'time') {
-              _pantryList.sort((a, b) => a.time.compareTo(b.time));
-            } else if (value == 'name') {
-              _pantryList.sort((a, b) => a.text.compareTo(b.text));
-            }
-          });
-        },
-      ),
+      return [
+        IconButton(
+          onPressed: _startSearch,
+          icon: const Icon(Icons.search),
+        ),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) => const [
+            PopupMenuItem(
+              child: Text('Sort by time'),
+              value: 'time',
+            ),
+            PopupMenuItem(
+              child: Text('Sort by name'),
+              value: 'name',
+            ),
+          ],
+          onSelected: (value) {
+            setState(() {
+              if (value == 'time') {
+                _pantryList.sort((a, b) => a.time.compareTo(b.time));
+              } else if (value == 'name') {
+                _pantryList.sort((a, b) => a.text.compareTo(b.text));
+              }
+            });
+          },
+        ),
       ];
     }
   }
@@ -110,16 +132,16 @@ class _PantryViewState extends State<PantryView> {
         leading: _isSearching ? const BackButton() : null,
         title: _isSearching
             ? TextField(
-          controller: _textController,
-          autofocus: true,
-          onChanged: _searchItem,
-          decoration: const InputDecoration(
-            hintText: 'Search',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.white),
-          ),
-          style: const TextStyle(color: Colors.white),
-        )
+                controller: _textController,
+                autofocus: true,
+                onChanged: _searchItem,
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+                style: const TextStyle(color: Colors.white),
+              )
             : const Text('Pantry'),
         actions: _buildAppBarActions(),
       ),
@@ -135,15 +157,15 @@ class _PantryViewState extends State<PantryView> {
             }
             _pantryList = snapshot.data!;
             final data =
-            _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
+                _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
             return ListView.builder(
-              controller:_scrollController,
+              controller: _scrollController,
               itemCount: data.length,
               itemBuilder: (context, index) {
                 final pantry = data[index];
                 return AnimatedOpacity(
                   opacity: pantry.isDone ? 0.5 : 1.0,
-                  duration: Duration(milliseconds: 500),
+                  duration: Duration(milliseconds: 100),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -162,7 +184,7 @@ class _PantryViewState extends State<PantryView> {
                       ],
                     ),
                     margin:
-                    EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                     child: ListTile(
                       contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                       title: Text(pantry.text),
@@ -179,9 +201,6 @@ class _PantryViewState extends State<PantryView> {
                             } else {
                               showItemAdded(context);
                             }
-                            setState(() {
-                              pantry.isDone = value;
-                            });
                           }
                         },
                       ),
@@ -198,23 +217,22 @@ class _PantryViewState extends State<PantryView> {
       ),
       floatingActionButton: _isVisible
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        FloatingActionButton(
-          mini: false,
-          onPressed: () async {
-            setState(() {
-              time = TimeOfDay.now().format(context);
-            });
-            await showItemInput(context).then((value) {
-              _textController.clear();
-            });
-          },
-          child: const Icon(Icons.add),
-        ),
-      ])
+              FloatingActionButton(
+                mini: false,
+                onPressed: () async {
+                  setState(() {
+                    time = TimeOfDay.now().format(context);
+                  });
+                  await showItemInput(context).then((value) {
+                    _textController.clear();
+                  });
+                },
+                child: const Icon(Icons.add),
+              ),
+            ])
           : null,
     );
   }
-
 
   showItemInput(BuildContext context, {Pantry? pantry}) async {
     showDialog(
@@ -400,13 +418,3 @@ void _showMoreDetails(BuildContext context, Pantry pantry) {
     ),
   );
 }
-
-
-
-
-
-
-
-
-
-
