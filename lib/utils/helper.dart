@@ -14,17 +14,17 @@ String getFormattedDate(int timestamp) {
   return DateFormat('d MMM yyyy').format(date);
 }
 
-Color getLabelColor(int timestamp) {
-  final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  return labelColors[date.weekday % labelColors.length];
-}
+// Color getLabelColor(int timestamp) {
+//   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+//   return labelColors[date.weekday % labelColors.length];
+// }
 
-Color getLabelColorFromText(String text) {
-  final bytes = text.codeUnits;
-  final sum = bytes.fold(0, (a, b) => a + b);
-  final index = sum % labelColors.length;
-  return labelColors[index];
-}
+// Color getLabelColorFromText(String text) {
+//   final bytes = text.codeUnits;
+//   final sum = bytes.fold(0, (a, b) => a + b);
+//   final index = sum % labelColors.length;
+//   return labelColors[index];
+// }
 
 int lastColorIndex = -1;
 List<int> usedColorIndices = [];
