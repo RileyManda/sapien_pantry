@@ -39,9 +39,9 @@ Color getCatColorForCategory(String category) {
   final bytes = category.codeUnits;
   final sum = bytes.fold(0, (a, b) => a + b);
   int index = sum % labelColors.length;
-  while (usedColorIndices.contains(index)) {
-    index = (index + 1) % labelColors.length;
-  }
+  // while (usedColorIndices.contains(index)) {
+  //   index = (index + 1) % labelColors.length;
+  // }
 
   // Mark index as used and update lastColorIndex
   usedColorIndices.add(index);

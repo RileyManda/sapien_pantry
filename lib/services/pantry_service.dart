@@ -102,10 +102,6 @@ class PantryService {
       debugPrint('Something went wrong(Update): $e');
     }
   }
-
-
-
-
   Future<void> deleteFromPantry(String id) async {
     try {
       await firestore

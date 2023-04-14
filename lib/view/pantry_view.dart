@@ -13,98 +13,20 @@ class PantryView extends StatefulWidget {
 }
 
 class _PantryViewState extends State<PantryView> {
-  PantryService _pantryService = PantryService();
-  final textController = TextEditingController();
-  final categoryController = TextEditingController();
-  String time = '';
-  bool _isSearching = false;
-  late List<Pantry> _searchResults = [];
-  late List<Pantry> _pantryList = [];
+  final _pantryService = PantryService();
+  final _textController = TextEditingController();
+  final _categoryController = TextEditingController();
   final _scrollController = ScrollController();
+  late List<Pantry> _searchResults = [];
+  late List<Pantry> _pantryList;
+  bool _isSearching = false;
   bool _isVisible = true;
+  String time = '';
 
   @override
-  void dispose() {
-    textController.dispose();
-    categoryController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  List<Widget> _buildAppBarActions() {
-    if (_isSearching) {
-      return [
-        IconButton(
-          onPressed: () {
-            _stopSearch();
-            textController.clear();
-          },
-          icon: const Icon(Icons.close),
-        ),
-      ];
-    } else {
-      return [
-        IconButton(
-          onPressed: _startSearch,
-          icon: const Icon(Icons.search),
-        ),
-        PopupMenuButton(
-          itemBuilder: (BuildContext context) {
-            return [
-              const PopupMenuItem(
-                child: Text('Sort by time'),
-                value: 'time',
-              ),
-              const PopupMenuItem(
-                child: Text('Sort by name'),
-                value: 'name',
-              ),
-            ];
-          },
-          onSelected: (value) {
-            setState(() {
-              if (value == 'time') {
-                _pantryList.sort((a, b) => a.time.compareTo(b.time));
-              } else if (value == 'name') {
-                _pantryList.sort((a, b) => a.text.compareTo(b.text));
-              }
-            });
-          },
-        ),
-      ];
-    }
-  }
-
-  void _startSearch() {
-    setState(() {
-      _isSearching = true;
-    });
-  }
-
-  void _stopSearch() {
-    setState(() {
-      _isSearching = false;
-      _searchResults = []; // modify this line
-    });
-  }
-
-  void _searchItem(String query) {
-    setState(() {
-      if (query.isNotEmpty) {
-        _searchResults = _pantryList
-            .where((pantry) =>
-                pantry.text.toLowerCase().contains(query.toLowerCase()) ||
-                pantry.category.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      } else {
-        _searchResults = List.from(_pantryList);
-      }
-    });
-  }
-
-  @override
-  initState() {
+  void initState() {
     super.initState();
+    _pantryList = [];
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -119,17 +41,76 @@ class _PantryViewState extends State<PantryView> {
         });
       }
     });
-
-
+    _pantryService.streamPantryList().listen((pantryList) {
+      setState(() {
+        _pantryList = pantryList;
+      });
+    });
   }
 
+  @override
+  void dispose() {
+    _textController.dispose();
+    _categoryController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _startSearch() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _stopSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchResults = [];
+      _textController.clear();
+    });
+  }
+
+  void _searchItem(String query) {
+    setState(() {
+      if (query.isNotEmpty) {
+        _searchResults = _pantryList
+            .where((pantry) =>
+        pantry.text.toLowerCase().contains(query.toLowerCase()) ||
+            pantry.category.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      } else {
+        _searchResults = List.from(_pantryList);
+      }
+    });
+  }
+
+  List<Widget> _buildAppBarActions() {
+    if (_isSearching) {
+      return [        IconButton(          onPressed: () {            _stopSearch();          },          icon: const Icon(Icons.close),        ),      ];
+    } else {
+      return [        IconButton(          onPressed: _startSearch,          icon: const Icon(Icons.search),        ),        PopupMenuButton(          itemBuilder: (BuildContext context) => const [            PopupMenuItem(              child: Text('Sort by time'),              value: 'time',            ),            PopupMenuItem(              child: Text('Sort by name'),              value: 'name',            ),          ],
+        onSelected: (value) {
+          setState(() {
+            if (value == 'time') {
+              _pantryList.sort((a, b) => a.time.compareTo(b.time));
+            } else if (value == 'name') {
+              _pantryList.sort((a, b) => a.text.compareTo(b.text));
+            }
+          });
+        },
+      ),
+      ];
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: _isSearching ? const BackButton() : null,
         title: _isSearching
             ? TextField(
-          controller: textController,
+          controller: _textController,
           autofocus: true,
           onChanged: _searchItem,
           decoration: const InputDecoration(
@@ -166,12 +147,12 @@ class _PantryViewState extends State<PantryView> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      // border: Border(
-                      //   right: BorderSide(
-                      //     color: getCatColorForCategory(pantry.category),
-                      //     width: 10,
-                      //   ),
-                      // ),
+                      border: Border(
+                        right: BorderSide(
+                          color: getCatColorForCategory(pantry.category),
+                          width: 10,
+                        ),
+                      ),
                       boxShadow: const [
                         BoxShadow(
                           offset: Offset(4, 4),
@@ -224,7 +205,7 @@ class _PantryViewState extends State<PantryView> {
               time = TimeOfDay.now().format(context);
             });
             await showItemInput(context).then((value) {
-              textController.clear();
+              _textController.clear();
             });
           },
           child: const Icon(Icons.add),
@@ -246,7 +227,7 @@ class _PantryViewState extends State<PantryView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextFormField(
-                    controller: textController,
+                    controller: _textController,
                     autofocus: true,
                     decoration: const InputDecoration(
                       hintText: 'Item Name',
@@ -260,7 +241,7 @@ class _PantryViewState extends State<PantryView> {
                     },
                   ),
                   TextFormField(
-                    controller: categoryController,
+                    controller: _categoryController,
                     autofocus: true,
                     decoration: const InputDecoration(
                       hintText: 'Category',
@@ -312,22 +293,22 @@ class _PantryViewState extends State<PantryView> {
                     child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    textController.text.trim();
-                    categoryController.text.trim();
-                    if (textController.text.isEmpty) {
+                    _textController.text.trim();
+                    _categoryController.text.trim();
+                    if (_textController.text.isEmpty) {
                       return;
                     }
                     if (pantry != null) {
                       _pantryService.updatePantry(
                           pantry.id,
                           pantry.copyWith(
-                              text: textController.text,
-                              category: categoryController.text,
+                              text: _textController.text,
+                              category: _categoryController.text,
                               time: time));
                     } else {
                       _pantryService.addToPantry(
-                          textController.text,
-                          categoryController.text,
+                          _textController.text,
+                          _categoryController.text,
                           time,
                           getDateTimestamp(DateTime.now()));
                       showItemAdded(context);
