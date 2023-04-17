@@ -3,9 +3,11 @@ import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/services/pantry_service.dart';
 
 class PantryUtils {
+  static TextEditingController textController = TextEditingController();
+  static TextEditingController categoryController = TextEditingController();
   static void showMoreDetails(BuildContext context, Pantry pantry) {
-    final textController = TextEditingController(text: pantry.text);
-    final categoryController = TextEditingController(text: pantry.category);
+    textController.text = pantry.text;
+    categoryController.text = pantry.category;
     showModalBottomSheet(
       context: context,
       builder: (context) {
