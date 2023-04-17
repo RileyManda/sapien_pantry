@@ -38,8 +38,7 @@ class PantryUtils {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title:
-          Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
+          title:Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -240,6 +239,7 @@ class PantryUtils {
               ),
             ],
           ),
+
         );
       },
       isScrollControlled: true,

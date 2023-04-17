@@ -88,7 +88,6 @@ class PantryService {
         'text': pantry.text,
         'category': pantry.category,
         'date': pantry.date,
-        'time': pantry.time,
         'isDone': pantry.isDone,
         'quantity': pantry.quantity,
         'expirydate': pantry.expiryDate,
