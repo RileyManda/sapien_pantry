@@ -68,22 +68,20 @@ class _CategoryViewState extends State<CategoryView> {
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
+              child: Card(
+                child: Container(
                   color: categoryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      data['category'],
-                      style: TextStyle(
-                        color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        data['category'],
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -97,7 +95,6 @@ class _CategoryViewState extends State<CategoryView> {
             crossAxisCount: 3,
             children: categoryCards,
           );
-
         },
       ),
     );
