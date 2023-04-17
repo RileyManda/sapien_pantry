@@ -21,7 +21,7 @@ class PantryService {
   }
 
   Future<void> addToPantry(
-      String itemText, String itemCategory, String time, int date) async {
+      String itemText, String itemCategory,String time, int date,int quantity,String expiryDate,String notes) async {
     try {
       final categorySnapshot = await firestore
           .collection('users')
@@ -63,6 +63,9 @@ class PantryService {
         isDone: false,
         time: time,
         date: date,
+        quantity: quantity,
+        expiryDate: expiryDate,
+        notes: notes,
       );
 
       await pantryRef.set(pantry.toMap());
@@ -87,6 +90,9 @@ class PantryService {
         'date': pantry.date,
         'time': pantry.time,
         'isDone': pantry.isDone,
+        'quantity': pantry.quantity,
+        'expirydate': pantry.expiryDate,
+        'notes': pantry.notes,
       });
 
       // Update categories collection
