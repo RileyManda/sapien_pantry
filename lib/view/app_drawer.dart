@@ -130,6 +130,7 @@ class AppDrawer extends StatelessWidget {
           const Spacer(),
           ListTile(
             onTap: () {
+              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) =>  SettingsView()),
@@ -141,6 +142,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
+              Navigator.pop(context);
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
