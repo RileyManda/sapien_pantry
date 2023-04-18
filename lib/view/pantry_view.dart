@@ -204,7 +204,7 @@ class PantryViewState extends State<PantryView> {
                               ? Icons.check_circle
                               : Icons.circle_rounded,
                           color: pantry.isDone
-                              ? Colors.orange
+                              ? Colors.sapienshoptheme
                               : Theme.of(context).primaryColorDark,
                         ),
                       ),

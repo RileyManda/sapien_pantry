@@ -106,7 +106,7 @@ class _ShoppingViewState extends State<ShoppingView>
                           ],
                         ),
                         child: AnimatedOpacity(
-                          opacity: pantry.isDone ? 0.4 : 1.0,
+                          opacity: pantry.isDone ? 0.9 : 1.0,
                           duration: const Duration(milliseconds: 100),
                           child: Row(
                             children: [

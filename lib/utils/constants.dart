@@ -24,3 +24,8 @@ const buttonColors = [
   Colors.orangeAccent,
   Colors.redAccent,
 ];
+
+
+const messageColors = [
+  Colors.redAccent,
+];

@@ -155,7 +155,7 @@ class _GroupItemViewState extends State<GroupItemView>
                               ? Icons.check_circle
                               : Icons.circle_rounded,
                           color: pantry.isDone
-                              ? Colors.orange
+                              ? Colors.sapienshoptheme
                               : Theme.of(context).primaryColorDark,
                         ),
                       ),
@@ -178,6 +178,7 @@ class _GroupItemViewState extends State<GroupItemView>
         children: [
           FloatingActionButton(
             mini: false,
+            backgroundColor: getCatColorForCategory(widget.category),
             onPressed: () async {
               setState(() {
                 time = TimeOfDay.now().format(context);

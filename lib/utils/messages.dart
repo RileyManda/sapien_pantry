@@ -24,14 +24,6 @@ void showIsAdded(BuildContext context) {
   ));
 }
 
-void showIsDone(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    content: Text('Item has run out'),
-    backgroundColor: Colors.redAccent,
-  ));
-}
-
-
 void showItemAdded(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item added to Pantry'),
@@ -42,7 +34,7 @@ void showItemAdded(BuildContext context) {
 void showItemFinished(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item has run out & added to shopping list'),
-    backgroundColor: Colors.redAccent,
+    backgroundColor: Colors.sapienshoptheme,
   ));
 }
 

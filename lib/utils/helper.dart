@@ -23,12 +23,8 @@ Color getCatColorForCategory(String category) {
   }
 
   // Generate a new color
-  final bytes = category.codeUnits;
-  final sum = bytes.fold(0, (a, b) => a + b);
-  int index = sum % labelColors.length;
-  // while (usedColorIndices.contains(index)) {
-  //   index = (index + 1) % labelColors.length;
-  // }
+  final hash = category.hashCode;
+  int index = hash % labelColors.length;
 
   // Mark index as used and update lastColorIndex
   usedColorIndices.add(index);
@@ -39,6 +35,7 @@ Color getCatColorForCategory(String category) {
   categoryColors[category] = color;
   return color;
 }
+
 
 
 String getCategoryName(String categoryId) {
