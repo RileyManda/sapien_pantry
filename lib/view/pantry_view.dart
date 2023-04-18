@@ -20,6 +20,7 @@ class PantryViewState extends State<PantryView> {
   List<Pantry> _pantryList = [];
 
 
+
   @override
   void initState() {
     super.initState();
@@ -175,26 +176,45 @@ class PantryViewState extends State<PantryView> {
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                     title: Text(pantry.text),
-                    trailing: Checkbox(
-                      value: pantry.isDone,
-                      onChanged: (bool? value) {
-                        if (value != null) {
-                          _pantryService.updatePantry(
-                            pantry.id,
-                            pantry.copyWith(isDone: value),context,
-                          );
-                          if (!pantry.isDone) {
-                            showItemFinished(context);
-                          } else {
-                            showItemAdded(context);
-                          }
+                    trailing: InkWell(
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: () {
+                        _pantryService.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(isDone: !pantry.isDone),
+                          context,
+                        );
+                        if (!pantry.isDone) {
+                          showItemFinished(context);
+                        } else {
+                          showItemAdded(context);
                         }
                       },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        child: Icon(
+                          pantry.isDone
+                              ? Icons.check_circle
+                              : Icons.circle_rounded,
+                          color: pantry.isDone
+                              ? Colors.orange
+                              : Theme.of(context).primaryColorDark,
+                        ),
+                      ),
                     ),
                     onTap: () {
                       PantryUtils.showMoreDetails(context, pantry);
                     },
                   ),
+
+
                 ),
               );
             },
