@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
+import 'package:sapienpantry/view/settings_view.dart';
 
 import '../services/pantry_service.dart';
 
@@ -129,6 +130,10 @@ class AppDrawer extends StatelessWidget {
           const Spacer(),
           ListTile(
             onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  SettingsView()),
+              );
              //go tp settings view
             },
             leading: const Icon(Icons.settings),
