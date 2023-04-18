@@ -71,9 +71,11 @@ class _GroupItemViewState extends State<GroupItemView>
   }
   @override
   Widget build(BuildContext context) {
+    final categoryColor = getCatColorForCategory(widget.category);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
+        backgroundColor: categoryColor,
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: getItemsStream(widget.categoryId),
