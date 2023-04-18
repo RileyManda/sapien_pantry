@@ -109,6 +109,12 @@ bool updatedPantry(Pantry pantry) {
   }
   return isDone;
 }
+void updateFailed(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('Update failed-Please try again'),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
 
 
 

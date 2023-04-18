@@ -1,44 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sapienpantry/model/pantry.dart';
-import '../services/pantry_service.dart';
-import '../utils/helper.dart';
-import '../utils/messages.dart';
-import '../utils/pantry_utils.dart';
+import 'package:sapienpantry/services/pantry_service.dart';
+import 'package:sapienpantry/utils/helper.dart';
+import 'package:sapienpantry/utils/messages.dart';
+import 'package:sapienpantry/utils/pantry_utils.dart';
+
 
 class PantryView extends StatefulWidget {
   const PantryView({Key? key}) : super(key: key);
 
   @override
-  _PantryViewState createState() => _PantryViewState();
+  PantryViewState createState() => PantryViewState();
 }
 
-class _PantryViewState extends State<PantryView> {
+class PantryViewState extends State<PantryView> {
   final _pantryService = PantryService();
-  final _textController = TextEditingController();
-  final _categoryController = TextEditingController();
-  final _scrollController = ScrollController();
   late List<Pantry> _searchResults = [];
-  late List<Pantry> _pantryList;
-  bool _isSearching = false;
-  bool _isVisible = true;
-  String time = '';
+  List<Pantry> _pantryList = [];
+
 
   @override
   void initState() {
     super.initState();
     _pantryList = [];
-    _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection ==
+    PantryUtils.scrollController.addListener(() {
+      if (PantryUtils.scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         setState(() {
-          _isVisible = false;
+          PantryUtils.isVisible = false;
         });
       }
-      if (_scrollController.position.userScrollDirection ==
+      if (PantryUtils.scrollController.position.userScrollDirection ==
           ScrollDirection.forward) {
         setState(() {
-          _isVisible = true;
+          PantryUtils.isVisible = true;
         });
       }
     });
@@ -48,26 +44,17 @@ class _PantryViewState extends State<PantryView> {
       });
     });
   }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    _categoryController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
   void _startSearch() {
     setState(() {
-      _isSearching = true;
+      PantryUtils.isSearching = true;
     });
   }
 
   void _stopSearch() {
     setState(() {
-      _isSearching = false;
-      _searchResults = [];
-      _textController.clear();
+      PantryUtils.isSearching = false;
+      _searchResults= [];
+      PantryUtils.textController.clear();
     });
   }
 
@@ -86,7 +73,7 @@ class _PantryViewState extends State<PantryView> {
   }
 
   List<Widget> _buildAppBarActions() {
-    if (_isSearching) {
+    if (PantryUtils.isSearching) {
       return [
         IconButton(
           onPressed: () {
@@ -104,12 +91,12 @@ class _PantryViewState extends State<PantryView> {
         PopupMenuButton(
           itemBuilder: (BuildContext context) => const [
             PopupMenuItem(
-              child: Text('Sort by time'),
               value: 'time',
+              child: Text('Sort by time'),
             ),
             PopupMenuItem(
-              child: Text('Sort by name'),
               value: 'name',
+              child: Text('Sort by name'),
             ),
           ],
           onSelected: (value) {
@@ -130,10 +117,10 @@ class _PantryViewState extends State<PantryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: _isSearching ? const BackButton() : null,
-        title: _isSearching
+        leading: PantryUtils.isSearching ? const BackButton() : null,
+        title: PantryUtils.isSearching
             ? TextField(
-                controller: _textController,
+                controller: PantryUtils.textController,
                 autofocus: true,
                 onChanged: _searchItem,
                 decoration: const InputDecoration(
@@ -146,87 +133,85 @@ class _PantryViewState extends State<PantryView> {
             : const Text('Pantry'),
         actions: _buildAppBarActions(),
       ),
-      body: Container(
-        child: StreamBuilder<List<Pantry>>(
-          stream: _pantryService.streamPantryList(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text('Something went wrong.'));
-            }
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
-            _pantryList = snapshot.data!;
-            final data =
-                _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
-            return ListView.builder(
-              controller: _scrollController,
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                final pantry = data[index];
-                return AnimatedOpacity(
-                  opacity: pantry.isDone ? 0.5 : 1.0,
-                  duration: Duration(milliseconds: 100),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                        right: BorderSide(
-                          color: getCatColorForCategory(pantry.category),
-                          width: 10,
-                        ),
+      body: StreamBuilder<List<Pantry>>(
+        stream: _pantryService.streamPantryList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Something went wrong.'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          _pantryList = snapshot.data!;
+          final data =
+              _searchResults.isNotEmpty ? _searchResults : snapshot.data!;
+          return ListView.builder(
+            controller: PantryUtils.scrollController,
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              final pantry = data[index];
+              return AnimatedOpacity(
+                opacity: pantry.isDone ? 0.5 : 1.0,
+                duration: const Duration(milliseconds: 100),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      right: BorderSide(
+                        color: getCatColorForCategory(pantry.category),
+                        width: 10,
                       ),
-                      boxShadow: const [
-                        BoxShadow(
-                          offset: Offset(4, 4),
-                          blurRadius: 2.0,
-                          color: Colors.black12,
-                        ),
-                      ],
                     ),
-                    margin:
-                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                      title: Text(pantry.text),
-                      trailing: Checkbox(
-                        value: pantry.isDone,
-                        onChanged: (bool? value) {
-                          if (value != null) {
-                            _pantryService.updatePantry(
-                              pantry.id,
-                              pantry.copyWith(isDone: value),
-                            );
-                            if (!pantry.isDone) {
-                              showItemFinished(context);
-                            } else {
-                              showItemAdded(context);
-                            }
-                          }
-                        },
+                    boxShadow: const [
+                      BoxShadow(
+                        offset: Offset(4, 4),
+                        blurRadius: 2.0,
+                        color: Colors.black12,
                       ),
-                      onTap: () {
-                        PantryUtils.showMoreDetails(context, pantry);
+                    ],
+                  ),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    title: Text(pantry.text),
+                    trailing: Checkbox(
+                      value: pantry.isDone,
+                      onChanged: (bool? value) {
+                        if (value != null) {
+                          _pantryService.updatePantry(
+                            pantry.id,
+                            pantry.copyWith(isDone: value),context,
+                          );
+                          if (!pantry.isDone) {
+                            showItemFinished(context);
+                          } else {
+                            showItemAdded(context);
+                          }
+                        }
                       },
                     ),
+                    onTap: () {
+                      PantryUtils.showMoreDetails(context, pantry);
+                    },
                   ),
-                );
-              },
-            );
-          },
-        ),
+                ),
+              );
+            },
+          );
+        },
       ),
-      floatingActionButton: _isVisible
+      floatingActionButton: PantryUtils.isVisible
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               FloatingActionButton(
                 mini: false,
                 onPressed: () async {
                   setState(() {
-                    time = TimeOfDay.now().format(context);
+                    PantryUtils.time = TimeOfDay.now().format(context);
                   });
-                  await showItemInput(context).then((value) {
-                    _textController.clear();
-                  });
+                  PantryUtils.showItemInput(context, setStateCallback: () {  });
+                  PantryUtils.textController.clear();
+
                 },
                 child: const Icon(Icons.add),
               ),
@@ -235,116 +220,5 @@ class _PantryViewState extends State<PantryView> {
     );
   }
 
-  showItemInput(BuildContext context, {Pantry? pantry}) async {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title:
-                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Item'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _textController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Item Name',
-                      labelText: 'Item Name',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an item name';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _categoryController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Category',
-                      labelText: 'Category',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a category';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  OutlinedButton(
-                    onPressed: () async {
-                      final newTime = await showTimePicker(
-                          context: context, initialTime: TimeOfDay.now());
-                      if (newTime != null) {
-                        setState(() {
-                          time = newTime.format(context);
-                        });
-                      }
-                    },
-                    child: Text('Time : $time'),
-                  ),
-                ],
-              ),
-              actions: [
-                if (pantry != null)
-                  TextButton.icon(
-                      onPressed: () {
-                        _pantryService.deleteFromPantry(pantry.id);
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.redAccent,
-                      ),
-                      label: const Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-                ElevatedButton(
-                  onPressed: () {
-                    _textController.text.trim();
-                    _categoryController.text.trim();
-                    if (_textController.text.isEmpty) {
-                      return;
-                    }
-                    if (pantry != null) {
-                      _pantryService.updatePantry(
-                          pantry.id,
-                          pantry.copyWith(
-                              text: _textController.text,
-                              category: _categoryController.text,
-                              time: time));
-                    } else {
-                      _pantryService.addToPantry(
-                          _textController.text,
-                          _categoryController.text,
-                          time,
-                          getDateTimestamp(DateTime.now()));
-                      showItemAdded(context);
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.save),
-                      const SizedBox(width: 8.0),
-                      Text(pantry == null ? 'Add' : 'Update'),
-                    ],
-                  ),
-                )
-              ],
-            ));
-  }
 }
 
