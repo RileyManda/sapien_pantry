@@ -8,7 +8,7 @@ const pPrimaryColor = Colors.sapientheme;
 const shoppingColor = Colors.sapienshoptheme;
 const kCategoriesCacheKey = 'categories_cache';
 const kCategoriesCacheTimeKey = 'categories_cache_time';
-
+const itemAddedColor = Colors.sapientheme;
 final firebaseAuth = FirebaseAuth.instance;
 final firestore = FirebaseFirestore.instance;
 final authController = AuthController.instance;
