@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import '../controller/auth_controller.dart';
 import '../model/category.dart';
 import '../model/pantry.dart';
+import 'dart:core';
+
+import '../utils/messages.dart';
 
 class PantryService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final AuthController authController = AuthController();
-
+  static TextEditingController expiryDateController = TextEditingController();
   Stream<List<Pantry>> get pantryList {
     return _pantryCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) => Pantry.fromMap(doc as DocumentSnapshot<Map<String, dynamic>>)).toList();
@@ -64,7 +67,7 @@ class PantryService {
         time: time,
         date: date,
         quantity: quantity,
-        expiryDate: expiryDate,
+        expiryDate: DateTime.parse(expiryDate),
         notes: notes,
       );
 
@@ -74,9 +77,7 @@ class PantryService {
     }
   }
 
-
-
-  Future<void> updatePantry(String id, Pantry pantry) async {
+  Future<void> updatePantry(String id, Pantry pantry, BuildContext context) async {
     try {
       // Update pantry collection
       await firestore
@@ -84,15 +85,7 @@ class PantryService {
           .doc(authController.user!.uid)
           .collection('pantry')
           .doc(id)
-          .update({
-        'text': pantry.text,
-        'category': pantry.category,
-        'date': pantry.date,
-        'isDone': pantry.isDone,
-        'quantity': pantry.quantity,
-        'expirydate': pantry.expiryDate,
-        'notes': pantry.notes,
-      });
+          .update(pantry.toMap());
 
       // Update categories collection
       await firestore
@@ -100,13 +93,49 @@ class PantryService {
           .doc(authController.user!.uid)
           .collection('categories')
           .doc(pantry.catId)
-          .update({
-        'category': pantry.category,
-      });
+          .update({'category': pantry.category});
     } catch (e) {
+      updateFailed(context);
       debugPrint('Something went wrong(Update): $e');
     }
   }
+
+
+  // Future<void> updatePantry(String id, Pantry pantry, BuildContext context) async {
+  //   try {
+  //     // String expiryDateString = expiryDateController.text ?? DateTime.now().toIso8601String();
+  //
+  //
+  //     // Update pantry collection
+  //     await firestore
+  //         .collection('users')
+  //         .doc(authController.user!.uid)
+  //         .collection('pantry')
+  //         .doc(id)
+  //         .update({
+  //       'text': pantry.text,
+  //       'category': pantry.category,
+  //       'date': pantry.date,
+  //       'isDone': pantry.isDone,
+  //       'quantity': pantry.quantity,
+  //       'expirydate': pantry.expiryDate?.toIso8601String(),
+  //       'notes': pantry.notes,
+  //     });
+  //
+  //     // Update categories collection
+  //     await firestore
+  //         .collection('users')
+  //         .doc(authController.user!.uid)
+  //         .collection('categories')
+  //         .doc(pantry.catId)
+  //         .update({
+  //       'category': pantry.category,
+  //     });
+  //   } catch (e) {
+  //     updateFailed(context);
+  //     debugPrint('Something went wrong(Update): $e');
+  //   }
+  // }
   Future<void> deleteFromPantry(String id) async {
     try {
       await firestore

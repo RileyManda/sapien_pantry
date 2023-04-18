@@ -9,25 +9,23 @@ class Pantry {
   final String catId;
   late final bool isDone;
   final String time;
-  final int date;// new variable
+  final int date;
   final int? quantity;
-  final String? expiryDate;
+  final DateTime? expiryDate;
   final String? notes;
 
-  Pantry(
-      {required this.id,
-      required this.text,
-      required this.category,
-      required this.catId,
-      required this.isDone,
-      required this.time,
-      required this.date,
-        this.quantity,
-        this.expiryDate,
-      this.notes,
-
-       // nullable variable
-      });
+  Pantry({
+    required this.id,
+    required this.text,
+    required this.category,
+    required this.catId,
+    required this.isDone,
+    required this.time,
+    required this.date,
+    this.quantity,
+    this.expiryDate,
+    this.notes,
+  });
 
   Pantry copyWith({
     String? text,
@@ -37,59 +35,60 @@ class Pantry {
     String? time,
     int? date,
     int? quantity,
-    String? expiryDate,
+    DateTime? expiryDate,
     String? notes,
-
-
   }) =>
       Pantry(
-          id: id,
-          text: text ?? this.text,
-          category: category ?? this.category,
-          catId: catId ?? this.catId,
-          isDone: isDone ?? this.isDone,
-          time: time ?? this.time,
-          date: date ?? this.date,
-          quantity: quantity ?? this.quantity,
-          expiryDate: expiryDate ?? this.expiryDate,
-          notes: notes ?? this.notes
-          // use the passed-in value, or the existing value if null
-          );
+        id: id,
+        text: text ?? this.text,
+        category: category ?? this.category,
+        catId: catId ?? this.catId,
+        isDone: isDone ?? this.isDone,
+        time: time ?? this.time,
+        date: date ?? this.date,
+        quantity: quantity ?? this.quantity,
+        expiryDate: expiryDate ?? this.expiryDate,
+        notes: notes ?? this.notes,
+      );
 
   factory Pantry.fromMap(
-          DocumentSnapshot<Map<String, dynamic>> documentSnapshot) =>
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
+      ) =>
       Pantry(
-          id: documentSnapshot.id,
-          text: documentSnapshot.data()!['text'],
-          category: documentSnapshot.data()!['category'],
-          catId: documentSnapshot.data()!['catId'],
-          isDone: documentSnapshot.data()!['isDone'],
-          time: documentSnapshot.data()!['time'],
-          date: documentSnapshot.data()!['date'],
-          quantity: documentSnapshot.data()!['quantity'],
-          expiryDate: documentSnapshot.data()!['expiryDate'],
-          notes: documentSnapshot.data()!['notes']
+        id: documentSnapshot.id,
+        text: documentSnapshot.data()!['text'],
+        category: documentSnapshot.data()!['category'],
+        catId: documentSnapshot.data()!['catId'],
+        isDone: documentSnapshot.data()!['isDone'],
+        time: documentSnapshot.data()!['time'],
+        date: documentSnapshot.data()!['date'],
+        quantity: documentSnapshot.data()!['quantity'],
+        expiryDate: documentSnapshot.data()!['expiryDate'] != null
+            ? DateTime.parse(documentSnapshot.data()!['expiryDate'])
+            : null,
+        notes: documentSnapshot.data()!['notes'],
 
-          // populate info from the snapshot data, which may be null
-          );
+        // populate info from the snapshot data, which may be null
+      );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'text': text,
-        'category': category,
-        'catId': catId,
-        'isDone': isDone,
-        'time': time,
-        'date': date,
-        'quantity': quantity,
-        'expiryDate': expiryDate,
-        'notes': notes,
+    'id': id,
+    'text': text,
+    'category': category,
+    'catId': catId,
+    'isDone': isDone,
+    'time': time,
+    'date': date,
+    'quantity': quantity,
+    'expiryDate': expiryDate?.toIso8601String(),
+    'notes': notes,
 
-        // include info in the map
-      };
+    // include info in the map
+  };
 
   @override
   String toString() {
     return '$text - $category - $date - $time - $isDone - $quantity - $expiryDate - $notes';
   }
 }
+
