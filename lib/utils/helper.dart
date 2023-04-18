@@ -1,8 +1,6 @@
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
-import 'package:sapienpantry/utils/constants.dart';
-
-import '../model/pantry.dart';
+import 'color_generator.dart';
 
 int getDateTimestamp(DateTime dateTime) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day)
@@ -14,17 +12,6 @@ String getFormattedDate(int timestamp) {
   return DateFormat('d MMM yyyy').format(date);
 }
 
-Color getLabelColor(int timestamp) {
-  final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-  return labelColors[date.weekday % labelColors.length];
-}
-
-Color getLabelColorFromText(String text) {
-  final bytes = text.codeUnits;
-  final sum = bytes.fold(0, (a, b) => a + b);
-  final index = sum % labelColors.length;
-  return labelColors[index];
-}
 
 int lastColorIndex = -1;
 List<int> usedColorIndices = [];
@@ -36,12 +23,8 @@ Color getCatColorForCategory(String category) {
   }
 
   // Generate a new color
-  final bytes = category.codeUnits;
-  final sum = bytes.fold(0, (a, b) => a + b);
-  int index = sum % labelColors.length;
-  while (usedColorIndices.contains(index)) {
-    index = (index + 1) % labelColors.length;
-  }
+  final hash = category.hashCode;
+  int index = hash % labelColors.length;
 
   // Mark index as used and update lastColorIndex
   usedColorIndices.add(index);
@@ -54,6 +37,7 @@ Color getCatColorForCategory(String category) {
 }
 
 
+
 String getCategoryName(String categoryId) {
   return "Category $categoryId";
 }
@@ -63,6 +47,8 @@ Color getItemColor(int timestamp) {
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return labelColors[date.weekday % labelColors.length];
 }
+
+
 
 
 

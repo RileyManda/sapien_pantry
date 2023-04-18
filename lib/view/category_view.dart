@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sapienpantry/services/pantry_service.dart';
+import '../utils/color_generator.dart';
 import '../utils/constants.dart';
 import '../utils/helper.dart';
 import 'grouped_view.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
-
   @override
   _CategoryViewState createState() => _CategoryViewState();
 }
@@ -51,7 +51,6 @@ class _CategoryViewState extends State<CategoryView> {
               }
             }
           }
-
           List<Widget> categoryCards = documents
               .map((DocumentSnapshot<Map<String, dynamic>> document) {
             Map<String, dynamic>? data = document.data();
@@ -68,22 +67,20 @@ class _CategoryViewState extends State<CategoryView> {
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
+              child: Card(
+                child: Container(
                   color: categoryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      data['category'],
-                      style: TextStyle(
-                        color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        data['category'],
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -97,7 +94,6 @@ class _CategoryViewState extends State<CategoryView> {
             crossAxisCount: 3,
             children: categoryCards,
           );
-
         },
       ),
     );
