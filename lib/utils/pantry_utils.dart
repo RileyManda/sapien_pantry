@@ -93,7 +93,7 @@ class PantryUtils {
                 OutlinedButton(
 
                     onPressed: () => _selectDate(context),
-                  child: Text("Expiry date :${selectedDate.toLocal()}"),
+                  child: Text("Expiry Date :${selectedDate.toLocal()}"),
                 ),
                 const SizedBox(
                   height: 5,
@@ -117,7 +117,9 @@ class PantryUtils {
                     hintText: 'Notes',
                     labelText: 'Notes',
                   ),
+                  maxLines: 2,
                 ),
+
               ],
             ),
           ),
@@ -251,11 +253,15 @@ class PantryUtils {
                           const SizedBox(height: 16.0),
                           TextFormField(
                             controller: notesController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Notes',
-                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent, width: 0),
+                              ),
                             ),
+                              maxLines: 2
                           ),
+
                           SizedBox(height: 16.0),
                           Row(
                             children: [
