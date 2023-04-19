@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:sapienpantry/utils/messages.dart';
+import 'package:share/share.dart';
 import '../utils/constants.dart';
 
 class SettingsView extends StatefulWidget {
@@ -46,6 +47,7 @@ class _SettingsViewState extends State<SettingsView> {
             title: Text('Delete Account'),
             subtitle: Text('Delete your account and all data'),
             onTap: () {
+              showComingSoon(context);
               // Show delete confirmation dialog
             },
           ),
@@ -54,7 +56,7 @@ class _SettingsViewState extends State<SettingsView> {
             title: Text('Share App'),
             subtitle: Text('Share the app with friends'),
             onTap: () {
-              // Share app link using share package
+              Share.share('Check out this awesome app sapienpantry: https://play.google.com/store.apps/details?id=com.cixhub.sapienpantry');
             },
           ),
           ListTile(
