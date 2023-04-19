@@ -48,8 +48,8 @@ class AppDrawer extends StatelessWidget {
           ),
                ListTile(
             leading: const Icon(Icons.set_meal_sharp),
-            iconColor: Colors.blueAccent,
-            title: const Text('Menues'),
+            iconColor: Colors.deepOrangeAccent,
+            title: const Text('Recipies'),
             onTap: () {
               Navigator.push(
                 context,
