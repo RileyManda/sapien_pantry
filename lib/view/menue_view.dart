@@ -2,17 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../services/secrets.dart';
-
-const apiID = 'c791d1fb';
-const apiKey = '2d39fc144cf2fb47a81e9cb398c3010d';
-const apiUrlFish =
-    'https://api.edamam.com/api/recipes/v2?type=public&q=%22fish%22&app_id=$apiID&app_key=$apiKey';
-const apiUrlChicken =
-    'https://api.edamam.com/api/recipes/v2?type=public&q=%22chicken%22&app_id=$apiID&app_key=$apiKey';
-const apiUrlVegetarian =
-    'https://api.edamam.com/api/recipes/v2?type=public&q=%22vegetarian%22&app_id=$apiID&app_key=$apiKey';
 
 class MenuView extends StatefulWidget {
   @override
