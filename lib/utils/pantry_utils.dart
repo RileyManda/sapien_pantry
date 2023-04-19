@@ -194,7 +194,7 @@ class PantryUtils {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: Text(
                     pantry.text,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -203,7 +203,7 @@ class PantryUtils {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
