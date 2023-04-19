@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
+import 'package:sapienpantry/view/menue_view.dart';
 import 'package:sapienpantry/view/settings_view.dart';
-
 import '../services/pantry_service.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -52,10 +51,10 @@ class AppDrawer extends StatelessWidget {
             iconColor: Colors.blueAccent,
             title: const Text('Menues'),
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const MenuView()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  MenuView()),
+              );
             },
           ),
           ListTile(
@@ -89,7 +88,7 @@ class AppDrawer extends StatelessWidget {
                     builder: (BuildContext context, StateSetter setState) {
                       bool deletionInProgress = false;
                       return AlertDialog(
-                        title: Text('Delete Confirmation'),
+                        title: const Text('Delete Confirmation'),
                         content: deletionInProgress
                             ? LinearProgressIndicator()
                             : const Text(
@@ -125,7 +124,6 @@ class AppDrawer extends StatelessWidget {
                 },
               );
             },
-
           ),
           const Spacer(),
           ListTile(
