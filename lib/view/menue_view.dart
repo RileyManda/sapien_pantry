@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../services/secrets.dart';
+
 const apiID = 'c791d1fb';
 const apiKey = '2d39fc144cf2fb47a81e9cb398c3010d';
 const apiUrlFish =
@@ -19,18 +21,15 @@ class MenuView extends StatefulWidget {
 
 class _MenuViewState extends State<MenuView>
     with SingleTickerProviderStateMixin {
-  late Future<List<dynamic>> _fishRecipesFuture;
-  late Future<List<dynamic>> _chickenRecipesFuture;
-  late Future<List<dynamic>> _vegetarianRecipesFuture;
+  late Future<List<dynamic>> _recipesFuture;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _fishRecipesFuture = _getRecipes(apiUrlFish);
-    _chickenRecipesFuture = _getRecipes(apiUrlChicken);
-    _vegetarianRecipesFuture = _getRecipes(apiUrlVegetarian);
+    _recipesFuture =
+        _getRecipes('https://api.edamam.com/search');
   }
 
   @override
@@ -40,477 +39,221 @@ class _MenuViewState extends State<MenuView>
   }
 
   Future<List<dynamic>> _getRecipes(String url) async {
-    final response = await http.get(Uri.parse(url));
-    final data = json.decode(response.body);
-    return data['hits'];
+    final fishRecipesResponse = await http.get(Uri.parse(
+        '$url?q=fish&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
+    final chickenRecipesResponse = await http.get(Uri.parse(
+        '$url?q=chicken&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
+    final vegetarianRecipesResponse = await http.get(Uri.parse(
+        '$url?q=vegetarian&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
+    if (fishRecipesResponse.statusCode == 200 &&
+        chickenRecipesResponse.statusCode == 200 &&
+        vegetarianRecipesResponse.statusCode == 200) {
+      final fishRecipes = json.decode(fishRecipesResponse.body)['hits'];
+      final chickenRecipes = json.decode(chickenRecipesResponse.body)['hits'];
+      final vegetarianRecipes = json.decode(vegetarianRecipesResponse.body)['hits'];
+      return [fishRecipes, chickenRecipes, vegetarianRecipes];
+    } else {
+      throw Exception('Failed to load recipes');
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Food Menus'),
-          bottom: TabBar(
-            isScrollable: true,
-            controller: _tabController,
-            indicatorSize: TabBarIndicatorSize.tab,
-            tabs: const [
-              Tab(
-                child: SizedBox(
-                  height: 40,
-                  child: Center(
-                    child: Text(
-                      'Fish',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              Tab(
-                child: SizedBox(
-                  height: 40,
-                  child: Center(
-                    child: Text(
-                      'Chicken',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              Tab(
-                child: SizedBox(
-                  height: 40,
-                  child: Center(
-                    child: Text(
-                      'Vegetarian',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+      appBar: AppBar(
+        title: Text('Food Menus'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(
+              text: 'Fish',
+            ),
+            Tab(
+              text: 'Chicken',
+            ),
+            Tab(
+              text: 'Vegetarian',
+            ),
+          ],
         ),
-        body: TabBarView(controller: _tabController, children: [
-          FutureBuilder(
-            future: _fishRecipesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error loading fish recipes'),
-                );
-              } else {
-                List<dynamic> recipes = snapshot.data as List<dynamic>;
-                return ListView.builder(
-                  itemCount: recipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe =
-                        recipes[index]['recipe'] as Map<String, dynamic>;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: GestureDetector(
-                        onTap: () =>
-                            _showIngredientsBottomSheet(context, recipe),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(40),
-                                      child: Image.network(
-                                        recipe['image'],
-                                        height: 80,
-                                        width: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        recipe['label'],
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    recipe['image'],
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.timer),
-                                        SizedBox(width: 4),
-                                        Text('${recipe['totalTime']} min'),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.restaurant),
-                                        SizedBox(width: 4),
-                                        Text('${recipe['yield']} servings'),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  children: [
-                                    ...List.generate(
-                                      min(recipe['healthLabels'].length, 5),
-                                      (index) {
-                                        return Chip(
-                                          label: Text(
-                                            recipe['healthLabels'][index],
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
-          FutureBuilder(
-            future: _chickenRecipesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error loading fish recipes'),
-                );
-              } else {
-                List<dynamic> recipes = snapshot.data as List<dynamic>;
-                return ListView.builder(
-                  itemCount: recipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe =
-                        recipes[index]['recipe'] as Map<String, dynamic>;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: GestureDetector(
-                        onTap: () =>
-                            _showIngredientsBottomSheet(context, recipe),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(40),
-                                      child: Image.network(
-                                        recipe['image'],
-                                        height: 80,
-                                        width: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        recipe['label'],
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    recipe['image'],
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.timer),
-                                        SizedBox(width: 4),
-                                        Text('${recipe['totalTime']} min'),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.restaurant),
-                                        SizedBox(width: 4),
-                                        Text('${recipe['yield']} servings'),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  children: [
-                                    ...List.generate(
-                                      min(recipe['healthLabels'].length, 5),
-                                      (index) {
-                                        return Chip(
-                                          label: Text(
-                                            recipe['healthLabels'][index],
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
-          FutureBuilder(
-            future: _vegetarianRecipesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error loading Vegetarian recipes'),
-                );
-              } else {
-                List<dynamic> recipes = snapshot.data as List<dynamic>;
-                return ListView.builder(
-                  itemCount: recipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe =
-                        recipes[index]['recipe'] as Map<String, dynamic>;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: GestureDetector(
-                        onTap: () =>
-                            _showIngredientsBottomSheet(context, recipe),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(40),
-                                      child: Image.network(
-                                        recipe['image'],
-                                        height: 80,
-                                        width: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        recipe['label'],
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    recipe['image'],
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.timer),
-                                        SizedBox(width: 4),
-                                        Text('${recipe['totalTime']} min'),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.restaurant),
-                                        SizedBox(width: 4),
-                                        Text('${recipe['yield']} servings'),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  children: [
-                                    ...List.generate(
-                                      min(recipe['healthLabels'].length, 5),
-                                      (index) {
-                                        return Chip(
-                                          label: Text(
-                                            recipe['healthLabels'][index],
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          )
-        ]));
+      ),
+      body: FutureBuilder<List<dynamic>>(
+        future: _recipesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error loading recipes'),
+            );
+          } else {
+            final recipes = snapshot.data!;
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                _buildRecipesList(recipes[0]),
+                _buildRecipesList(recipes[1]),
+                _buildRecipesList(recipes[2]),
+              ],
+            );
+          }
+        },
+      ),
+    );
   }
-}
 
-void _showIngredientsBottomSheet(BuildContext context, dynamic recipe) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                recipe['label'],
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+  Widget _buildRecipesList(List<dynamic> recipes) {
+    return ListView.builder(
+      itemCount: recipes.length,
+      itemBuilder: (context, index) {
+        final recipe = recipes[index]['recipe'] as Map<String, dynamic>;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: GestureDetector(
+            onTap: () => _showIngredientsBottomSheet(context, recipe),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              SizedBox(height: 8),
-              Text(
-                'Ingredients:',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Image.network(
+                            recipe['image'],
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            recipe['label'],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        recipe['image'],
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.timer),
+                            SizedBox(width: 4),
+                            Text('${recipe['totalTime']} min'),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.restaurant),
+                            SizedBox(width: 4),
+                            Text('${recipe['yield']} servings'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        ...List.generate(
+                          min(recipe['healthLabels'].length, 5),
+                              (index) {
+                            return Chip(
+                              label: Text(
+                                recipe['healthLabels'][index],
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ),
-              SizedBox(height: 8),
-              ...List.generate(recipe['ingredientLines'].length, (index) {
-                return Text(
-                  '- ${recipe['ingredientLines'][index]}',
-                  style: TextStyle(fontSize: 16),
-                );
-              }),
-            ],
+            ),
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
+  }
+
+
+  void _showIngredientsBottomSheet(BuildContext context, dynamic recipe) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  recipe['label'],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Ingredients:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                ...List.generate(recipe['ingredientLines'].length, (index) {
+                  return Text(
+                    '- ${recipe['ingredientLines'][index]}',
+                    style: TextStyle(fontSize: 16),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
