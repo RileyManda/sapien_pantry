@@ -260,7 +260,9 @@ class PantryUtils {
                           Row(
                             children: [
                               if (pantry != null)
-                                TextButton.icon(
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: TextButton.icon(
                                     onPressed: () {
                                       _pantryService.deleteFromPantry(pantry.id);
                                       Navigator.pop(context);
@@ -272,56 +274,65 @@ class PantryUtils {
                                     label: const Text(
                                       'Delete',
                                       style: TextStyle(color: Colors.black54),
-                                    )),
-                              ElevatedButton(
-                                onPressed: () {
-                                  textController.text.trim();
-                                  categoryController.text.trim();
-                                  quantityController.text.trim();
-                                  notesController.text.trim();
-                                  if (textController.text.isEmpty) {
-                                    return;
-                                  }
-                                  if (pantry != null) {
-                                    try {
-                                      _pantryService.updatePantry(
-                                          pantry.id,
-                                          pantry.copyWith(
-                                              text: textController.text,
-                                              category: categoryController.text,
-                                              time: time,
-                                              expiryDate: DateTime.tryParse(expiryDateController.text),
-                                              quantity: int.tryParse(quantityController.text),
-                                              notes: notesController.text
-                                          ),
-                                          context
-                                      );
-                                    } catch (e) {
-                                      // handle the exception
+                                    ),
+                                  ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    textController.text.trim();
+                                    categoryController.text.trim();
+                                    quantityController.text.trim();
+                                    notesController.text.trim();
+                                    if (textController.text.isEmpty) {
+                                      return;
+                                    }
+                                    if (pantry != null) {
+                                      try {
+                                        _pantryService.updatePantry(
+                                            pantry.id,
+                                            pantry.copyWith(
+                                                text: textController.text,
+                                                category: categoryController.text,
+                                                time: time,
+                                                expiryDate: DateTime.tryParse(expiryDateController.text),
+                                                quantity: int.tryParse(quantityController.text),
+                                                notes: notesController.text
+                                            ),
+                                            context
+                                        );
+                                      } catch (e) {
+                                        // handle the exception
+                                      }
+
                                     }
 
-                                  }
-
-                                  Navigator.pop(context);
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.save),
-                                    const SizedBox(width: 8.0),
-                                    Text(pantry == null ? 'Add' : 'Update'),
-                                  ],
+                                    Navigator.pop(context);
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Icon(Icons.save),
+                                      SizedBox(width: 8.0),
+                                      Text('Update'),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Cancel and close modal
-                                  Navigator.pop(context); // Close the bottom sheet
-                                },
-                                child: Text('Cancel'),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Cancel and close modal
+                                    Navigator.pop(context); // Close the bottom sheet
+                                  },
+                                  child: Text('Cancel'),
+                                ),
                               ),
                             ],
                           ),
+
                         ],
                       ),
                     ),
