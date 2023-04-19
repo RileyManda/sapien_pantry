@@ -53,7 +53,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  MenuView()),
+                MaterialPageRoute(builder: (context) => MenuView()),
               );
             },
           ),
@@ -90,7 +90,7 @@ class AppDrawer extends StatelessWidget {
                       return AlertDialog(
                         title: const Text('Delete Confirmation'),
                         content: deletionInProgress
-                            ? LinearProgressIndicator()
+                            ? const LinearProgressIndicator()
                             : const Text(
                           'Are you sure you want to delete all completed items in your Pantry and clear your shopping list?',
                         ),
