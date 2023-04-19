@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
+import 'package:sapienpantry/view/menue_view.dart';
 import 'package:sapienpantry/view/settings_view.dart';
-
 import '../services/pantry_service.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -48,14 +47,14 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
                ListTile(
-            leading: const Icon(Icons.menu_book),
-            iconColor: Colors.blueAccent,
-            title: const Text('Menues'),
+            leading: const Icon(Icons.set_meal_sharp),
+            iconColor: Colors.deepOrangeAccent,
+            title: const Text('Recipies'),
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const MenuView()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MenuView()),
+              );
             },
           ),
           ListTile(
@@ -89,9 +88,9 @@ class AppDrawer extends StatelessWidget {
                     builder: (BuildContext context, StateSetter setState) {
                       bool deletionInProgress = false;
                       return AlertDialog(
-                        title: Text('Delete Confirmation'),
+                        title: const Text('Delete Confirmation'),
                         content: deletionInProgress
-                            ? LinearProgressIndicator()
+                            ? const LinearProgressIndicator()
                             : const Text(
                           'Are you sure you want to delete all completed items in your Pantry and clear your shopping list?',
                         ),
@@ -125,7 +124,6 @@ class AppDrawer extends StatelessWidget {
                 },
               );
             },
-
           ),
           const Spacer(),
           ListTile(

@@ -6,7 +6,6 @@ class SettingsView extends StatefulWidget {
   @override
   _SettingsViewState createState() => _SettingsViewState();
 }
-
 class _SettingsViewState extends State<SettingsView> {
   bool _darkModeEnabled = false;
 
