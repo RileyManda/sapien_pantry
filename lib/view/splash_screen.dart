@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/controller/auth_controller.dart';
 import 'package:sapienpantry/services/connectivity_service.dart';
+import 'package:sapienpantry/view/onboarding_page.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
+
+import '../utils/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -13,17 +16,31 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   bool _connected = false;
+  bool _isFirstRun = true; // default to true until checked
 
   @override
   void initState() {
     super.initState();
+    checkIsFirstRun();
     checkInternetConnection();
+  }
+  Future<void> checkIsFirstRun() async {
+    final isFirstRun = await SharedPreferencesHelper().isFirstRun();
+    setState(() {
+      _isFirstRun = isFirstRun;
+    });
   }
 
   Future<void> checkInternetConnection() async {
     _connected = await ConnectivityService.instance.checkConnection(context);
     if (_connected) {
-      Get.put(AuthController());
+      if (_isFirstRun) {
+        // navigate to welcome screen
+        Get.offAll(() => const OnBoardingPage());
+      } else {
+        // navigate to login screen or dashboard depending on auth state
+        Get.put(AuthController());
+      }
     }
   }
 

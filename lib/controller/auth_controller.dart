@@ -5,6 +5,9 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/dashboard.dart';
 import 'package:sapienpantry/view/login_view.dart';
 
+import '../view/onboarding_page.dart';
+import '../widgets/image_loader.dart';
+
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
   final Rx<User?> _user = Rx<User?>(firebaseAuth.currentUser);
@@ -67,7 +70,7 @@ class AuthController extends GetxController {
 
   onAuthStateChanged(User? userx) {
     if (userx == null) {
-      Get.offAll(() => const LoginScreen());
+      Get.offAll(() =>  LoginScreen());
     } else {
       Get.offAll(() =>  Dashboard());
     }
