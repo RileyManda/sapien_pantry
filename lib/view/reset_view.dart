@@ -7,6 +7,8 @@ import 'package:sapienpantry/view/login_view.dart';
 import 'package:sapienpantry/view/register_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
+import '../utils/messages.dart';
+
 class ResetPassword extends StatefulWidget {
   const ResetPassword({Key? key}) : super(key: key);
 
@@ -62,12 +64,12 @@ class _ResetPasswordState extends State<ResetPassword> {
                     margin: const EdgeInsets.all(8.0),
                     height: 60,
                     decoration: BoxDecoration(
-                      color: authController.isAuthenticating
+                      color: authController.isReset
                           ? pPrimaryColor
                           : pPrimaryColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: authController.isAuthenticating
+                    child: authController.isReset
                         ? const Center(
                       child: CircularProgressIndicator(
                         valueColor:
@@ -83,15 +85,9 @@ class _ResetPasswordState extends State<ResetPassword> {
                               .resetPassword(emailController.text);
                           if (result) {
                             Get.offAll(() => const LoginScreen());
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('A reset link has been sent to your email'),
-                            ));
-                          } else {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('Failed to reset password'),
-                            ));
+                            resetEmailSent(context);
+                          }else{
+                            resetEmailFailed(context);
                           }
                         }
                       },

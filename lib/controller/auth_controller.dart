@@ -11,6 +11,9 @@ class AuthController extends GetxController {
   User? get user => _user.value;
   final Rx<bool> _isAuthenticating = Rx<bool>(false);
   bool get isAuthenticating => _isAuthenticating.value;
+
+  final Rx<bool> _isReset = Rx<bool>(false);
+  bool get isReset => _isReset.value;
   @override
   void onReady() {
     _user.bindStream(firebaseAuth.authStateChanges());
@@ -47,15 +50,16 @@ class AuthController extends GetxController {
   }
   Future<bool> resetPassword(String email) async {
     try {
+      _isReset.value = true;
       await firebaseAuth.sendPasswordResetEmail(email: email);
+      _isReset.value = false;
       return true;
     } catch (e) {
-      print(e);
+      _isReset.value = false;
+      debugPrint('$e');
       return false;
     }
   }
-
-
 
   signOut() async {
     await firebaseAuth.signOut();
