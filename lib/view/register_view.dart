@@ -4,15 +4,8 @@ import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/login_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/login_view.dart';
-import 'package:sapienpantry/widgets/app_logo.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
-
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
@@ -91,39 +84,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: authController.isAuthenticating
                         ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white),
-                      ),
-                    )
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
                         : MaterialButton(
-                      onPressed: () async {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (formKey.currentState!.validate()) {
-                          debugPrint('Ok');
-                          final result = await authController.register(
-                            emailController.text,
-                            passwordController.text,
-                          );
-                          if (!result) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('Something went wrong'),
-                                backgroundColor: Colors.red,
-                              ));
-                            }
-                          }
-                        } else {
-                          debugPrint('Not Ok');
-                        }
-                      },
-                      child: const Text(
-                        'Register',
-                        style:
-                        TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                    ),
+                            onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              if (formKey.currentState!.validate()) {
+                                debugPrint('Ok');
+                                final result = await authController.register(
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                                if (!result) {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text('Something went wrong'),
+                                      backgroundColor: Colors.red,
+                                    ));
+                                  }
+                                }
+                              } else {
+                                debugPrint('Not Ok');
+                              }
+                            },
+                            child: const Text(
+                              'Register',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                          ),
                   );
                 }),
                 Padding(
@@ -140,7 +133,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 )
               ],
-
             ),
           ),
         ),

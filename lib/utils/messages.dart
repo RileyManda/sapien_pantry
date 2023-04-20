@@ -1,10 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:sapienpantry/model/pantry.dart';
+
+import 'constants.dart';
 
 void showComingSoon(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Feature coming soon'),
-    backgroundColor: Colors.grey,
+    backgroundColor: pPrimaryColor,
   ));
 }
 
@@ -21,25 +24,17 @@ void showIsAdded(BuildContext context) {
   ));
 }
 
-void showIsDone(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    content: Text('Item has run out'),
-    backgroundColor: Colors.redAccent,
-  ));
-}
-
-
 void showItemAdded(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item added to Pantry'),
-    backgroundColor: Colors.green,
+    backgroundColor: itemAddedColor,
   ));
 }
 
 void showItemFinished(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Item has run out & added to shopping list'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.sapienshoptheme,
   ));
 }
 
@@ -47,14 +42,21 @@ void showItemFinished(BuildContext context) {
 void noItemsShopping(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('No Items found in your Shopping List'),
-    backgroundColor: Colors.deepOrangeAccent,
+    backgroundColor: Colors.grey,
   ));
 }
 
 void emptyPantry(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Your Pantry is Empty'),
-    backgroundColor: Colors.orangeAccent,
+    backgroundColor: Colors.grey,
+  ));
+}
+
+void noCategories(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('You have not created any categories '),
+    backgroundColor: Colors.grey,
   ));
 }
 
@@ -83,6 +85,21 @@ void showIsConnected(BuildContext context, String message) {
       duration: const Duration(seconds: 3),
     ),
   );
+}
+
+
+void deleteCompleted(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('Items deleted successfully'),
+    backgroundColor: Colors.orangeAccent,
+  ));
+}
+
+void updateFailed(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    content: Text('Update failed-Please try again'),
+    backgroundColor: Colors.orangeAccent,
+  ));
 }
 
 
