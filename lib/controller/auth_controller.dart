@@ -45,6 +45,17 @@ class AuthController extends GetxController {
       return false;
     }
   }
+  Future<bool> resetPassword(String email) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+
 
   signOut() async {
     await firebaseAuth.signOut();

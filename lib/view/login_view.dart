@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/register_view.dart';
+import 'package:sapienpantry/view/reset_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,7 +10,6 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
-
 class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
@@ -120,17 +120,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 }),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text('Dont have an account?'),
-                      TextButton(
-                          onPressed: () {
-                            Get.off(() => const RegisterScreen());
-                          },
-                          child: const Text('Register Now'))
+                      Row(
+                        children: [
+                          const Text('Dont have an account?'),
+                          TextButton(
+                            onPressed: () {
+                              Get.off(() => const RegisterScreen());
+                            },
+                            child: const Text('Register Now'),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('Forgot your password?'),
+                          TextButton(
+                            onPressed: () async {
+                              Get.off(() => const ResetPassword());
+                            },
+                            child: const Text('Reset Password'),
+                          )
+
+                        ],
+                      ),
                     ],
                   ),
                 )
+
               ],
             ),
           ),
