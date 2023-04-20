@@ -4,6 +4,7 @@ import 'package:sapienpantry/controller/auth_controller.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/login_view.dart';
+import 'package:sapienpantry/view/register_view.dart';
 import 'package:sapienpantry/widgets/app_logo.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -84,7 +85,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             Get.offAll(() => const LoginScreen());
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
-                              content: Text('Password reset link has been sent to your email'),
+                              content: Text('A reset link has been sent to your email'),
                             ));
                           } else {
                             ScaffoldMessenger.of(context)
@@ -95,15 +96,46 @@ class _ResetPasswordState extends State<ResetPassword> {
                         }
                       },
                       child: const Text(
-                        'RESET PASSWORD',
+                        'Reset Password',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                         ),
                       ),
                     ),
+
                   );
                 }),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          const Text('Return to'),
+                          TextButton(
+                            onPressed: () {
+                              Get.off(() => const LoginScreen());
+                            },
+                            child: const Text('Login'),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('Dont have an account?'),
+                          TextButton(
+                            onPressed: () {
+                              Get.off(() => const RegisterScreen());
+                            },
+                            child: const Text('SignUp'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
