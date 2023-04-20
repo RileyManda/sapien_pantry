@@ -1,121 +1,127 @@
-import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sapienpantry/model/category.dart';
-import 'package:sapienpantry/model/item.dart';
-import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/utils/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sapienpantry/services/pantry_service.dart';
+import '../utils/color_generator.dart';
+import '../utils/constants.dart';
+import '../utils/helper.dart';
 import 'grouped_view.dart';
 
-
-
 class CategoryView extends StatefulWidget {
-  const CategoryView({Key? key}) : super(key: key);
-
+  const CategoryView({super.key});
   @override
-  State<CategoryView> createState() => _CategoryViewState();
+  _CategoryViewState createState() => _CategoryViewState();
 }
 
-class _CategoryViewState extends State<CategoryView>
-    with SingleTickerProviderStateMixin {
-  late Stream<QuerySnapshot<Map<String, dynamic>>> _categoriesStream;
-
-  @override
-  void initState() {
-    _categoriesStream = getCategoriesStream();
-    super.initState();
-  }
-
-  Stream<QuerySnapshot<Map<String, dynamic>>> getCategoriesStream() {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authController.user!.uid)
-        .collection('categories')
-        .snapshots();
-  }
+class _CategoryViewState extends State<CategoryView> {
+  final PantryService _pantryService = PantryService();
+  Map<String, Color> _categoryColors = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
+        backgroundColor: _categoryColors.isNotEmpty
+            ? _categoryColors.values.first
+            : pPrimaryColor,
       ),
-      body: Container(
-        color: Colors.grey.shade100,
-        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: _categoriesStream,
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            }
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.data == null || snapshot.data!.size == 0) {
-              return const Center(
-                child: Text('You have not created any categories.'),
-              );
-            }
-            // Get the list of categories from the QuerySnapshot
-            final categories = snapshot.data!.docs
-                .map((doc) => Category.fromMap(doc.data()))
-                .toList();
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: _pantryService.getCategories(),
+        builder: (BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong');
+          }
 
-            // Build a list of Container widgets for each category
-            return categoryGridView(categories);
-          },
-        ),
-      ),
-    );
-  }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-  Widget categoryGridView(List<Category> categories) {
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(4),
-      crossAxisSpacing: 4,
-      mainAxisSpacing: 4,
-      crossAxisCount: 3,
-      children: categories.map((category) {
-        final color =
-            categoryColors[category.id] ?? getCatColorForCategory(category.id);
-        return GestureDetector(
-          onTap: () {
-            // Navigate to the ItemsView passing the category id
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                // builder: (context) => ItemView(categoryId: category.id),
-                builder: (context) => GroupItemView(categoryId: category.id),
-              ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(
-                category.category,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+          List<DocumentSnapshot<Map<String, dynamic>>> documents =
+              snapshot.data!.docs;
+
+          // Update the category colors
+          for (DocumentSnapshot<Map<String, dynamic>> document in documents) {
+            Map<String, dynamic>? data = document.data();
+            if (data != null) {
+              String category = data['category'];
+              if (!_categoryColors.containsKey(category)) {
+                Color categoryColor = generateColorForString(category);
+                _categoryColors[category] = categoryColor;
+              }
+            }
+          }
+          List<Widget> categoryCards = documents
+              .map((DocumentSnapshot<Map<String, dynamic>> document) {
+            Map<String, dynamic>? data = document.data();
+
+            Color categoryColor = _categoryColors[data!['category']]!;
+
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GroupItemView(
+                        categoryId: document.id, category: data['category']),
+                  ),
+                );
+              },
+              child: Card(
+                child: Container(
+                  color: categoryColor,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        data['category'],
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
-      }).toList(),
+            );
+          }).toList();
 
-
+          return GridView.count(
+            primary: false,
+            padding: const EdgeInsets.all(4),
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            crossAxisCount: 3,
+            children: categoryCards,
+          );
+        },
+      ),
     );
   }
 
 
-}
 
+        // Helper function to generate a color for a string
+  Color generateColorForString(String str) {
+    final bytes = str.codeUnits;
+    final sum = bytes.fold(0, (a, b) => a + b);
+    final index = sum % labelColors.length;
+    return labelColors[index];
+  }
+
+  // Helper function to update the category colors
+  void _updateCategoryColors(
+      List<DocumentSnapshot<Map<String, dynamic>>> documents) {
+    for (DocumentSnapshot<Map<String, dynamic>> document in documents) {
+      Map<String, dynamic>? data = document.data();
+      if (data != null) {
+        String category = data['category'];
+        if (!_categoryColors.containsKey(category)) {
+          Color categoryColor = generateColorForString(category);
+          _categoryColors[category] = categoryColor;
+        }
+      }
+    }
+    setState(() {});
+  }
+}

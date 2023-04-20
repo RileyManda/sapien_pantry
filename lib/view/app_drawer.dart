@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/view/category_view.dart';
+import 'package:sapienpantry/utils/messages.dart';
+import 'package:sapienpantry/view/menue_view.dart';
+import 'package:sapienpantry/view/settings_view.dart';
+import '../services/pantry_service.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
@@ -19,47 +22,39 @@ class AppDrawer extends StatelessWidget {
             color: pPrimaryColor,
             // padding: const EdgeInsets.all(16.0),
             padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${authController.user!.email}',
-                  style: const TextStyle(
+            child: Center(
+              child: Column(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.person,
+                    size: 60,
                     color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Text(
+                    '${authController.user!.email}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.space_dashboard),
-            iconColor: Colors.amber,
-            title: const Text('Categories'),
+               ListTile(
+            leading: const Icon(Icons.set_meal_sharp),
+            iconColor: Colors.deepOrangeAccent,
+            title: const Text('Recipies'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const CategoryView()),
+                MaterialPageRoute(builder: (context) => MenuView()),
               );
-            },
-          ),
-               ListTile(
-            leading: const Icon(Icons.menu_book),
-            iconColor: Colors.blueAccent,
-            title: const Text('Menues'),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const MenuView()),
-              // );
             },
           ),
           ListTile(
@@ -93,9 +88,9 @@ class AppDrawer extends StatelessWidget {
                     builder: (BuildContext context, StateSetter setState) {
                       bool deletionInProgress = false;
                       return AlertDialog(
-                        title: Text('Delete Confirmation'),
+                        title: const Text('Delete Confirmation'),
                         content: deletionInProgress
-                            ? LinearProgressIndicator()
+                            ? const LinearProgressIndicator()
                             : const Text(
                           'Are you sure you want to delete all completed items in your Pantry and clear your shopping list?',
                         ),
@@ -115,12 +110,9 @@ class AppDrawer extends StatelessWidget {
                                 setState(() {
                                   deletionInProgress = true;
                                 });
-                                await pantryController.deleteCompleted();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Items deleted successfully'),
-                                  ),
-                                );
+                                final PantryService _pantryService = PantryService();
+                                await _pantryService.deleteCompleted();
+                                deleteCompleted(context);
                                 Navigator.of(context).pop();
                               }
                             },
@@ -132,11 +124,15 @@ class AppDrawer extends StatelessWidget {
                 },
               );
             },
-
           ),
           const Spacer(),
           ListTile(
             onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  SettingsView()),
+              );
              //go tp settings view
             },
             leading: const Icon(Icons.settings),
@@ -144,6 +140,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
+              Navigator.pop(context);
               showDialog(
                 context: context,
                 builder: (BuildContext context) {

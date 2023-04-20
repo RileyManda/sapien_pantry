@@ -5,7 +5,7 @@ import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/model/shopping.dart';
-
+import '../services/pantry_service.dart';
 import '../utils/messages.dart';
 
 class ShoppingView extends StatefulWidget {
@@ -18,6 +18,7 @@ class _ShoppingViewState extends State<ShoppingView>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
   final categoryController = TextEditingController();
+  final PantryService _pantryService = PantryService();
   String time = '';
   late Shopping shopping;
   int shopping_notification = 0;
@@ -25,6 +26,7 @@ class _ShoppingViewState extends State<ShoppingView>
   @override
   initState() {
     super.initState();
+
   }
 
   @override
@@ -43,12 +45,7 @@ class _ShoppingViewState extends State<ShoppingView>
       body: Container(
         color: Colors.grey.shade100,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: firestore
-                .collection('users')
-                .doc(authController.user!.uid)
-                .collection('pantry')
-                .where('isDone', isEqualTo: true)
-                .snapshots(),
+            stream:_pantryService.getShoppingList(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Something went wrong');
@@ -61,21 +58,19 @@ class _ShoppingViewState extends State<ShoppingView>
                   child: Text('Your shopping List is empty'),
                 );
               }
-              final pantryList =
+              final shoppingList =
                   snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
 
               return GroupedListView(
-                semanticChildCount: pantryList.length,
+                semanticChildCount: shoppingList.length,
                 sort: true,
                 order: GroupedListOrder.ASC,
-                elements: pantryList,
+                elements: shoppingList,
                 useStickyGroupSeparators: true,
                 groupBy: (Pantry pantry) => pantry.time,
                 groupHeaderBuilder: (Pantry pantry) => Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(left: 20),
                   child: Text(
-                    //TODO: display items by category name in ascending order.
-                    // getLabelColorFromText(pantry.category).toString(),
                     getFormattedDate(pantry.date).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,
@@ -92,14 +87,14 @@ class _ShoppingViewState extends State<ShoppingView>
                         textController.text = pantry.text;
                         textController.text = pantry.category;
                         time = pantry.time;
-                        createShoppingList(context, pantry: pantry);
+                        // createShoppingList(context, pantry: pantry);
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getLabelColor(pantry.date),
+                            color: getCatColorForCategory(pantry.id),
                             width: 10,
                           )),
                           boxShadow: const [
@@ -111,7 +106,7 @@ class _ShoppingViewState extends State<ShoppingView>
                           ],
                         ),
                         child: AnimatedOpacity(
-                          opacity: pantry.isDone ? 0.4 : 1.0,
+                          opacity: pantry.isDone ? 0.9 : 1.0,
                           duration: const Duration(milliseconds: 100),
                           child: Row(
                             children: [
@@ -177,96 +172,5 @@ class _ShoppingViewState extends State<ShoppingView>
             }),
       ),
     );
-  }
-
-  createShoppingList(BuildContext context, {Pantry? pantry}) async {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(pantry == null ? 'Add to Shopping List' : 'Update'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
-                    controller: textController,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                  ),
-                  TextField(
-                    // controller: catController,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  OutlinedButton(
-                    onPressed: () async {
-                      final newTime = await showTimePicker(
-                          context: context, initialTime: TimeOfDay.now());
-                      if (newTime != null) {
-                        setState(() {
-                          time = newTime.format(context);
-                        });
-                      }
-                    },
-                    child: Text('Time : $time'),
-                  ),
-                ],
-              ),
-              actions: [
-                if (pantry != null)
-                  TextButton.icon(
-                      onPressed: () {
-                        pantryController.deleteFromPantry(pantry.id);
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.redAccent,
-                      ),
-                      label: const Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-                ElevatedButton(
-                  onPressed: () {
-                    if (textController.text.isEmpty) {
-                      return;
-                    }
-                    // if (category.isEmpty) {
-                    //   return;
-                    // }
-                    if (pantry != null) {
-                      pantryController.updatePantry(
-                          pantry.id,
-                          pantry.copyWith(
-                              text: textController.text,
-                              category: textController.text,
-                              time: time));
-                    } else {
-                      pantryController.addToPantry(
-                          textController.text,
-                          textController.text,
-                          time,
-                          getDateTimestamp(DateTime.now()));
-                      itemPurchased(context);
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text(pantry == null ? 'Add Item' : 'Update'),
-                )
-              ],
-            ));
   }
 }

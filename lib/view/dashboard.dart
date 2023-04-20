@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
@@ -5,7 +6,10 @@ import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
-import '../utils/messages.dart';
+import 'package:sapienpantry/view/category_view.dart';
+import 'package:sapienpantry/utils/messages.dart';
+
+import '../utils/pantry_utils.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -16,7 +20,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   final textController = TextEditingController();
-  final catController = TextEditingController();
+  final categoryController = TextEditingController();
   String time = '';
   late AnimationController _animationController;
   // animate the icon of the main FAB
@@ -26,6 +30,7 @@ class _DashboardState extends State<Dashboard>
   bool _isExpanded = false;
   int pantryNotification = 0;
   int _itemsDone = 0;
+  late StreamController<int> _itemsDoneStreamController;
 
   @override
   initState() {
@@ -45,6 +50,12 @@ class _DashboardState extends State<Dashboard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    _itemsDoneStreamController = StreamController<int>();
+    _itemsDoneStreamController.stream.listen((count) {
+      setState(() {
+        _itemsDone = count;
+      });
+    });
     updateItemsDone();
     super.initState();
   }
@@ -52,8 +63,9 @@ class _DashboardState extends State<Dashboard>
   @override
   void dispose() {
     textController.dispose();
-    catController.dispose();
+    categoryController.dispose();
     _animationController.dispose();
+    _itemsDoneStreamController.close();
     super.dispose();
   }
 
@@ -67,10 +79,6 @@ class _DashboardState extends State<Dashboard>
     _isExpanded = !_isExpanded;
   }
   void updateItemsDone() {
-    setState(() {
-      _itemsDone = 0;
-    });
-
     firestore
         .collection('users')
         .doc(authController.user!.uid)
@@ -78,9 +86,7 @@ class _DashboardState extends State<Dashboard>
         .where('isDone', isEqualTo: true)
         .snapshots()
         .listen((snapshot) {
-      setState(() {
-        _itemsDone = snapshot.size;
-      });
+      _itemsDoneStreamController.add(snapshot.size);
     });
   }
 
@@ -106,28 +112,28 @@ class _DashboardState extends State<Dashboard>
                   }),
               pantryNotification != 0
                   ? Positioned(
-                      right: 11,
-                      top: 11,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 14,
-                          minHeight: 14,
-                        ),
-                        child: Text(
-                          '$pantryNotification',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
+                right: 11,
+                top: 11,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 14,
+                    minHeight: 14,
+                  ),
+                  child: Text(
+                    '$pantryNotification',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
                   : Container(),
             ],
           ),
@@ -215,12 +221,31 @@ class _DashboardState extends State<Dashboard>
                 ),
               ),
             ),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CategoryView()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(Icons.space_dashboard, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
           ],
         ),
       ),
       //animated float
       floatingActionButton:
-          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         Transform(
           transform: Matrix4.translationValues(
             0.0,
@@ -269,10 +294,7 @@ class _DashboardState extends State<Dashboard>
               setState(() {
                 time = TimeOfDay.now().format(context);
               });
-              await showItemInput(context).then((value) {
-                textController.clear();
-                catController.clear();
-              });
+              PantryUtils.showItemInput(context, setStateCallback: () {  });
             },
             child: const Icon(Icons.inventory),
           ),
@@ -290,104 +312,6 @@ class _DashboardState extends State<Dashboard>
 
       // animated float end
     );
-  }
-
-  showItemInput(BuildContext context, {Pantry? pantry}) async {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title:
-                  Text(pantry == null ? 'Add Item to Pantry' : 'Update Pantry'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: textController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        hintText:'Item Name',
-                        labelText: 'Item Name',
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(5))
-                    ),
-                  ),
-                  TextFormField(
-                    controller: catController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        hintText:'Category',
-                        labelText: 'Category Name',
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(5))
-
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  OutlinedButton(
-                    onPressed: () async {
-                      final newTime = await showTimePicker(
-                          context: context, initialTime: TimeOfDay.now());
-                      if (newTime != null) {
-                        setState(() {
-                          time = newTime.format(context);
-                        });
-                      }
-                    },
-                    child: Text('Time : $time'),
-                  ),
-                ],
-              ),
-              actions: [
-                if (pantry != null)
-                  TextButton.icon(
-                      onPressed: () {
-                        pantryController.deleteFromPantry(pantry.id);
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.redAccent,
-                      ),
-                      label: const Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-                ElevatedButton(
-                  onPressed: () {
-                    if (textController.text.isEmpty) {
-                      return;
-                      // TODO show error on field
-                    }
-                    if (catController.text.isEmpty) {
-                      return;
-                    }
-                    if (pantry != null) {
-                      pantryController.updatePantry(
-                          pantry.id,
-                          pantry.copyWith(
-                              text: textController.text,category: catController.text, time: time));
-                    } else {
-                      pantryController.addToPantry(textController.text,catController.text, time,
-                          getDateTimestamp(DateTime.now()));
-                      showIsAdded(context);
-                      setState(() {
-                        pantryNotification++;
-                      });
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text(pantry == null ? 'Add' : 'Update'),
-                )
-              ],
-            ));
   }
 
 
