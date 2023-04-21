@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:lottie/lottie.dart';
 import '../controller/auth_controller.dart';
-import 'login_view.dart';
 
 class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage({Key? key}) : super(key: key);
@@ -23,7 +22,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   Widget _buildFullscreenImage() {
     return Lottie.asset(
       ("assets/welcomeanim.json"),
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       height: double.infinity,
       width: double.infinity,
       alignment: Alignment.center,
@@ -75,21 +74,21 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         PageViewModel(
           title: "Pantry",
           body:
-          "Add,Delete and Update the items from your Pantry",
+          "Add,Delete & Update the items in your Pantry.",
           image: _buildImage("pantry.json"),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Shopping",
           body:
-          "SapienPantry Automatically creates a shopping list for you",
+          "SapienPantry will Automatically create a shopping list for you.",
           image: _buildImage("shoppinglist.json"),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Analytics",
           body:
-          "Get an insight into your consumption and expenses on all items in your Pantry",
+          "Get insights into your consumption and expenses on all items in your Pantry.",
           image: _buildImage("analytics.json"),
           decoration: pageDecoration,
         ),
@@ -97,7 +96,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         PageViewModel(
           title: "Notifications",
           body:
-          "get notiifcations when Items are finished in your Pantry",
+          "Get notifications when Items are finished in your Pantry.",
           image: _buildImage("notifications.json"),
           decoration: pageDecoration,
         ),
@@ -105,7 +104,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         PageViewModel(
           title: "Recepes",
           body:
-          "No need to look far for healthy recepes.SapeinPantry has them",
+          "No need to look far for healthy recepes. SapienPantry has them.",
           image: _buildImage("recepes.json"),
           decoration: pageDecoration,
         ),
@@ -134,12 +133,11 @@ class OnBoardingPageState extends State<OnBoardingPage> {
             bodyAlignment: Alignment.bottomCenter,
             imageAlignment: Alignment.topCenter,
           ),
-          image: _buildImage("welcomeanim.json"),
+          image: _buildFullscreenImage(),
           reverse: true,
         ),
       ],
       onDone: () => _onIntroEnd(context),
-      //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
       showSkipButton: false,
       skipOrBackFlex: 0,
       nextFlex: 0,
