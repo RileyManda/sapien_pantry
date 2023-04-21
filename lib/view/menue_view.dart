@@ -16,7 +16,6 @@ class _MenuViewState extends State<MenuView>
     with SingleTickerProviderStateMixin {
   late Future<List<dynamic>> _recipesFuture;
   late TabController _tabController;
-  RecepeUtils _recepe_utils = RecepeUtils();
 
   @override
   void initState() {
@@ -124,7 +123,7 @@ class _MenuViewState extends State<MenuView>
         title: Text('Recepes'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(
               text: 'Fish',
             ),
@@ -163,7 +162,6 @@ class _MenuViewState extends State<MenuView>
       ),
     );
   }
-
   Widget _buildRecipesList(List<dynamic> recipes) {
     return Expanded(
       child: ListView.builder(
@@ -275,7 +273,5 @@ class _MenuViewState extends State<MenuView>
       ),
     );
   }
-
-
 
 }

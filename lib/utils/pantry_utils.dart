@@ -93,7 +93,7 @@ class PantryUtils {
                 OutlinedButton(
 
                     onPressed: () => _selectDate(context),
-                  child: Text("${selectedDate.toLocal()}"),
+                  child: Text("Expiry Date:${selectedDate.toLocal()}"),
                 ),
                 const SizedBox(
                   height: 5,
