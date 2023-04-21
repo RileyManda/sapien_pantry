@@ -55,7 +55,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(top: 16, right: 16),
-            child: _buildImage("welcomeanim.json", 100),
+            child: _buildImage("fruits.json", 100),
           ),
         ),
       ),

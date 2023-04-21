@@ -64,6 +64,7 @@ flutter:
     - assets/notifications.json
     - assets/recepes.json
     - assets/pantry.json
+    - assets/fruits.json
 
 
 flutter_icons:
