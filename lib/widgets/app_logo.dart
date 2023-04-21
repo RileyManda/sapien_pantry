@@ -17,11 +17,10 @@ class AppLogo extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
-      children:  [
+      children: [
         SizedBox(
           height: 50,
         ),
@@ -39,6 +38,4 @@ class AppLogo extends StatelessWidget {
       ],
     );
   }
-
-
 }
