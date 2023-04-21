@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../controller/auth_controller.dart';
 import '../model/category.dart';
@@ -100,42 +101,6 @@ class PantryService {
     }
   }
 
-
-  // Future<void> updatePantry(String id, Pantry pantry, BuildContext context) async {
-  //   try {
-  //     // String expiryDateString = expiryDateController.text ?? DateTime.now().toIso8601String();
-  //
-  //
-  //     // Update pantry collection
-  //     await firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('pantry')
-  //         .doc(id)
-  //         .update({
-  //       'text': pantry.text,
-  //       'category': pantry.category,
-  //       'date': pantry.date,
-  //       'isDone': pantry.isDone,
-  //       'quantity': pantry.quantity,
-  //       'expirydate': pantry.expiryDate?.toIso8601String(),
-  //       'notes': pantry.notes,
-  //     });
-  //
-  //     // Update categories collection
-  //     await firestore
-  //         .collection('users')
-  //         .doc(authController.user!.uid)
-  //         .collection('categories')
-  //         .doc(pantry.catId)
-  //         .update({
-  //       'category': pantry.category,
-  //     });
-  //   } catch (e) {
-  //     updateFailed(context);
-  //     debugPrint('Something went wrong(Update): $e');
-  //   }
-  // }
   Future<void> deleteFromPantry(String id) async {
     try {
       await firestore
@@ -207,6 +172,41 @@ class PantryService {
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
+
+
+  Future<void> deleteUserData() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    // Reauthenticate the user
+    final authCredential = EmailAuthProvider.credential(email: user.email!, password: 'password');
+    await user.reauthenticateWithCredential(authCredential);
+
+    // Delete all documents in the 'data' subcollection
+    final dataRef = userRef.collection('data');
+    final snapshots = await dataRef.get();
+    final batch = FirebaseFirestore.instance.batch();
+    for (final doc in snapshots.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+
+    // Delete the user document
+    await userRef.delete();
+
+    // Delete the user's authentication credentials
+    await user.delete();
+  }
+
+
+
+
+
+
+
+
+
+
 
 
 

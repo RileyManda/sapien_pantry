@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../services/menu_db_helper.dart';
 import '../services/secrets.dart';
+import '../utils/recepe_utils.dart';
 
 class MenuView extends StatefulWidget {
   @override
@@ -20,13 +23,33 @@ class _MenuViewState extends State<MenuView>
     _tabController = TabController(length: 3, vsync: this);
     _recipesFuture =
         _getRecipes('https://api.edamam.com/search');
+    _requestPermission();
   }
-
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
+  void _requestPermission() async {
+    var status = await Permission.storage.request();
+    if (status != PermissionStatus.granted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Permission Denied'),
+          content: Text('Loading Recipes requires access to local storage. Without this permission, recipes will not load.'),
+          actions: [
+            MaterialButton(
+              child: Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+
 
   Future<List<dynamic>> _getRecipes(String url) async {
     final fishRecipesResponse = await http.get(Uri.parse(
@@ -41,10 +64,55 @@ class _MenuViewState extends State<MenuView>
       final fishRecipes = json.decode(fishRecipesResponse.body)['hits'];
       final chickenRecipes = json.decode(chickenRecipesResponse.body)['hits'];
       final vegetarianRecipes = json.decode(vegetarianRecipesResponse.body)['hits'];
-      return [fishRecipes, chickenRecipes, vegetarianRecipes];
+
+      // Save the recipes to the database
+      // Save the recipes to the database
+      final menuDb = MenuDb();
+      try {
+        final database = await menuDb.database;
+        await database.transaction((txn) async {
+          for (var recipe in fishRecipes) {
+            final recipeMap = {
+              MenuDb.columnName: recipe['recipe']['label'],
+              MenuDb.columnImage: recipe['recipe']['image'],
+              MenuDb.columnTotalTime: recipe['recipe']['totalTime'],
+              MenuDb.columnYield: recipe['recipe']['yield'],
+              MenuDb.columnHealthLabels: recipe['recipe']['healthLabels'].join(', ')
+            };
+            await txn.insert(MenuDb.table, recipeMap);
+          }
+          for (var recipe in chickenRecipes) {
+            final recipeMap = {
+              MenuDb.columnName: recipe['recipe']['label'],
+              MenuDb.columnImage: recipe['recipe']['image'],
+              MenuDb.columnTotalTime: recipe['recipe']['totalTime'],
+              MenuDb.columnYield: recipe['recipe']['yield'],
+              MenuDb.columnHealthLabels: recipe['recipe']['healthLabels'].join(', ')
+            };
+            await txn.insert(MenuDb.table, recipeMap);
+          }
+          for (var recipe in vegetarianRecipes) {
+            final recipeMap = {
+              MenuDb.columnName: recipe['recipe']['label'],
+              MenuDb.columnImage: recipe['recipe']['image'],
+              MenuDb.columnTotalTime: recipe['recipe']['totalTime'],
+              MenuDb.columnYield: recipe['recipe']['yield'],
+              MenuDb.columnHealthLabels: recipe['recipe']['healthLabels'].join(', ')
+            };
+            await txn.insert(MenuDb.table, recipeMap);
+          }
+        });
+
+        // Return the recipes as a list
+        return [fishRecipes, chickenRecipes, vegetarianRecipes];
+      } catch (e) {
+        throw Exception('Failed to save recipes to database');
+      }
+
     } else {
       throw Exception('Failed to load recipes');
     }
+    return []; // return an empty list if no recipes are found
   }
 
 
@@ -52,10 +120,10 @@ class _MenuViewState extends State<MenuView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Food Menus'),
+        title: Text('Recepes'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(
               text: 'Fish',
             ),
@@ -94,156 +162,116 @@ class _MenuViewState extends State<MenuView>
       ),
     );
   }
-
   Widget _buildRecipesList(List<dynamic> recipes) {
-    return ListView.builder(
-      itemCount: recipes.length,
-      itemBuilder: (context, index) {
-        final recipe = recipes[index]['recipe'] as Map<String, dynamic>;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: GestureDetector(
-            onTap: () => _showIngredientsBottomSheet(context, recipe),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(40),
-                          child: Image.network(
-                            recipe['image'],
-                            height: 80,
-                            width: 80,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            recipe['label'],
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+    return Expanded(
+      child: ListView.builder(
+        itemCount: recipes.length,
+        itemBuilder: (context, index) {
+          final recipe = recipes[index]['recipe'] as Map<String, dynamic>;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: GestureDetector(
+              onTap: () =>  RecepeUtils.showIngredientsBottomSheet(context, recipe),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: Image.network(
+                              recipe['image'],
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        recipe['image'],
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              recipe['label'],
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.timer),
-                            SizedBox(width: 4),
-                            Text('${recipe['totalTime']} min'),
-                          ],
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          recipe['image'],
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                        Row(
-                          children: [
-                            Icon(Icons.restaurant),
-                            SizedBox(width: 4),
-                            Text('${recipe['yield']} servings'),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 16),
-                    child: Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: [
-                        ...List.generate(
-                          min(recipe['healthLabels'].length, 5),
-                              (index) {
-                            return Chip(
-                              label: Text(
-                                recipe['healthLabels'][index],
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                    SizedBox(height: 8),
+                    Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.timer),
+                              SizedBox(width: 4),
+                              Text('${recipe['totalTime']} min'),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.restaurant),
+                              SizedBox(width: 4),
+                              Text('${recipe['yield']} servings'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
+                    SizedBox(height: 8),
+                    Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 16),
+                      child: Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: [
+                          ...List.generate(
+                            min(recipe['healthLabels'].length, 5),
+                                (index) {
+                              return Chip(
+                                label: Text(
+                                  recipe['healthLabels'][index],
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
-
-  void _showIngredientsBottomSheet(BuildContext context, dynamic recipe) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  recipe['label'],
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Ingredients:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                ...List.generate(recipe['ingredientLines'].length, (index) {
-                  return Text(
-                    '- ${recipe['ingredientLines'][index]}',
-                    style: TextStyle(fontSize: 16),
-                  );
-                }),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }

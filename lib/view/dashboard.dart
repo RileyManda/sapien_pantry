@@ -268,17 +268,17 @@ class _DashboardState extends State<Dashboard>
             _translateButton.value * 3,
             0,
           ),
-          child: FloatingActionButton(
-            heroTag: null,
-            mini: true,
-            backgroundColor: buttonColors.elementAt(1),
-            onPressed: () {
-              showComingSoon(context);
-            },
-            child: const Icon(
-              Icons.call,
-            ),
-          ),
+          // child: FloatingActionButton(
+          //   heroTag: null,
+          //   mini: true,
+          //   backgroundColor: buttonColors.elementAt(1),
+          //   onPressed: () {
+          //     showComingSoon(context);
+          //   },
+          //   child: const Icon(
+          //     Icons.call,
+          //   ),
+          // ),
         ),
         Transform(
           transform: Matrix4.translationValues(

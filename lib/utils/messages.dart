@@ -1,7 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:sapienpantry/model/pantry.dart';
-
 import 'constants.dart';
 
 void showComingSoon(BuildContext context) {
@@ -86,8 +83,6 @@ void showIsConnected(BuildContext context, String message) {
     ),
   );
 }
-
-
 void deleteCompleted(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     content: Text('Items deleted successfully'),
@@ -101,6 +96,28 @@ void updateFailed(BuildContext context) {
     backgroundColor: Colors.orangeAccent,
   ));
 }
+
+void resetEmailSent(BuildContext context) {
+  ScaffoldMessenger.of(context)
+      .showSnackBar(const SnackBar(
+    content: Text('A password reset link has been sent to your email'),
+    backgroundColor: pPrimaryColor,
+    duration: Duration(seconds: 5),
+  ));
+}
+
+void resetEmailFailed(BuildContext context) {
+  ScaffoldMessenger.of(context)
+      .showSnackBar(const SnackBar(
+    content: Text('Failed to reset password'),
+    backgroundColor: Colors.deepOrange,
+    duration: Duration(seconds: 5),
+  ));
+}
+
+
+
+
 
 
 
