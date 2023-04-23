@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/utils/constants.dart';
-import 'package:sapienpantry/utils/helper.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
+import 'package:sapienpantry/view/pantry_analytics.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
 import 'package:sapienpantry/view/category_view.dart';
 import 'package:sapienpantry/utils/messages.dart';
-
+import '../model/pantry.dart';
 import '../utils/pantry_utils.dart';
 
 class Dashboard extends StatefulWidget {
@@ -31,6 +30,9 @@ class _DashboardState extends State<Dashboard>
   int pantryNotification = 0;
   int _itemsDone = 0;
   late StreamController<int> _itemsDoneStreamController;
+
+
+
 
   @override
   initState() {
@@ -87,6 +89,7 @@ class _DashboardState extends State<Dashboard>
         .snapshots()
         .listen((snapshot) {
       _itemsDoneStreamController.add(snapshot.size);
+
     });
   }
 
@@ -174,74 +177,80 @@ class _DashboardState extends State<Dashboard>
         ],
       ),
       drawer: const AppDrawer(),
-      body: Container(
-        color: Colors.grey.shade100,
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(4),
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-          crossAxisCount: 3,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PantryView()),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: pPrimaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(Icons.inventory, color: Colors.white, size: 24),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ShoppingView()),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.sapienshoptheme,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(Icons.local_grocery_store,
-                      color: Colors.white, size: 24),
-                ),
-              ),
-            ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.grey.shade100,
+              child: GridView.count(
+                primary: false,
+                padding: const EdgeInsets.all(4),
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
+                crossAxisCount: 3,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PantryView()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: pPrimaryColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.inventory, color: Colors.white, size: 24),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ShoppingView()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.sapienshoptheme,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.local_grocery_store,
+                            color: Colors.white, size: 24),
+                      ),
+                    ),
+                  ),
 
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CategoryView()),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.teal,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(Icons.space_dashboard, color: Colors.white, size: 24),
-                ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CategoryView()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.space_dashboard, color: Colors.white, size: 24),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       //animated float
       floatingActionButton:
@@ -313,12 +322,6 @@ class _DashboardState extends State<Dashboard>
       // animated float end
     );
   }
-
-
-
-
-
-
-
-
 }
+
+

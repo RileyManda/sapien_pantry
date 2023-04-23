@@ -72,7 +72,7 @@ class _MenuViewState extends State<MenuView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recepes'),
+        title: Text('Recipes'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -115,114 +115,112 @@ class _MenuViewState extends State<MenuView>
     );
   }
   Widget _buildRecipesList(List<dynamic> recipes) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: recipes.length,
-        itemBuilder: (context, index) {
-          final recipe = recipes[index]['recipe'] as Map<String, dynamic>;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: GestureDetector(
-              onTap: () =>  RecepeUtils.showIngredientsBottomSheet(context, recipe),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Image.network(
-                              recipe['image'],
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            ),
+    return ListView.builder(
+      itemCount: recipes.length,
+      itemBuilder: (context, index) {
+        final recipe = recipes[index]['recipe'] as Map<String, dynamic>;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: GestureDetector(
+            onTap: () =>  RecepeUtils.showIngredientsBottomSheet(context, recipe),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Image.network(
+                            recipe['image'],
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
                           ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              recipe['label'],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          recipe['image'],
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
                         ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            recipe['label'],
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        recipe['image'],
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.timer),
-                              SizedBox(width: 4),
-                              Text('${recipe['totalTime']} min'),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.restaurant),
-                              SizedBox(width: 4),
-                              Text('${recipe['yield']} servings'),
-                            ],
-                          ),
-                        ],
-                      ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.timer),
+                            SizedBox(width: 4),
+                            Text('${recipe['totalTime']} min'),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.restaurant),
+                            SizedBox(width: 4),
+                            Text('${recipe['yield']} servings'),
+                          ],
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 8),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 16),
-                      child: Wrap(
-                        spacing: 4,
-                        runSpacing: 4,
-                        children: [
-                          ...List.generate(
-                            min(recipe['healthLabels'].length, 5),
-                                (index) {
-                              return Chip(
-                                label: Text(
-                                  recipe['healthLabels'][index],
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        ...List.generate(
+                          min(recipe['healthLabels'].length, 5),
+                              (index) {
+                            return Chip(
+                              label: Text(
+                                recipe['healthLabels'][index],
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

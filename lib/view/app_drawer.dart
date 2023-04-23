@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/messages.dart';
+import 'package:sapienpantry/view/analytics_view.dart';
 import 'package:sapienpantry/view/menue_view.dart';
+import 'package:sapienpantry/view/pantry_analytics.dart';
 import 'package:sapienpantry/view/settings_view.dart';
 import '../services/pantry_service.dart';
 
@@ -49,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                ListTile(
             leading: const Icon(Icons.set_meal_sharp),
             iconColor: Colors.deepOrangeAccent,
-            title: const Text('Recepes'),
+            title: const Text('Recipes'),
             onTap: () {
               Navigator.push(
                 context,
@@ -62,10 +64,10 @@ class AppDrawer extends StatelessWidget {
             iconColor: Colors.deepPurple,
             title: const Text('Analytics'),
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const MenuView()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  AnalyticsView()),
+              );
             },
           ),
           ListTile(
