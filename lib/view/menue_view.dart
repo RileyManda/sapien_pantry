@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../services/permission_services.dart';
 import '../services/secrets.dart';
 import '../utils/recepe_utils.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,6 +18,7 @@ class _MenuViewState extends State<MenuView>
     with SingleTickerProviderStateMixin {
   late Future<List<dynamic>> _recipesFuture;
   late TabController _tabController;
+  late PermissionService _permissionService = PermissionService();
 
   @override
   void initState() {
@@ -25,31 +26,14 @@ class _MenuViewState extends State<MenuView>
     _tabController = TabController(length: 3, vsync: this);
     _recipesFuture =
         _getRecipes('https://api.edamam.com/search');
-    _requestPermission();
+    _permissionService.requestPermission(context);
   }
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-  void _requestPermission() async {
-    var status = await Permission.storage.request();
-    if (status != PermissionStatus.granted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Permission Denied'),
-          content: Text('Loading Recipes requires access to local storage. Without this permission, recipes will not load.'),
-          actions: [
-            MaterialButton(
-              child: Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
-    }
-  }
+
 
   Future<List<dynamic>> _getRecipes(String url) async {
     final file = File('${(await getApplicationDocumentsDirectory()).path}/recipes.json');
@@ -84,10 +68,6 @@ class _MenuViewState extends State<MenuView>
       }
     }
   }
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

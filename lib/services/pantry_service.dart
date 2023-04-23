@@ -5,7 +5,6 @@ import '../controller/auth_controller.dart';
 import '../model/category.dart';
 import '../model/pantry.dart';
 import 'dart:core';
-
 import '../utils/messages.dart';
 
 class PantryService {
