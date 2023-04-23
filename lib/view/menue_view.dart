@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../services/menu_db_helper.dart';
 import '../services/secrets.dart';
 import '../utils/recepe_utils.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
 
 class MenuView extends StatefulWidget {
   @override
@@ -49,71 +51,41 @@ class _MenuViewState extends State<MenuView>
     }
   }
 
-
-
   Future<List<dynamic>> _getRecipes(String url) async {
-    final fishRecipesResponse = await http.get(Uri.parse(
-        '$url?q=fish&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
-    final chickenRecipesResponse = await http.get(Uri.parse(
-        '$url?q=chicken&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
-    final vegetarianRecipesResponse = await http.get(Uri.parse(
-        '$url?q=vegetarian&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
-    if (fishRecipesResponse.statusCode == 200 &&
-        chickenRecipesResponse.statusCode == 200 &&
-        vegetarianRecipesResponse.statusCode == 200) {
-      final fishRecipes = json.decode(fishRecipesResponse.body)['hits'];
-      final chickenRecipes = json.decode(chickenRecipesResponse.body)['hits'];
-      final vegetarianRecipes = json.decode(vegetarianRecipesResponse.body)['hits'];
+    final file = File('${(await getApplicationDocumentsDirectory()).path}/recipes.json');
+    if (file.existsSync()) {
+      // If the JSON file exists, read the data from the file
+      final jsonData = await file.readAsString();
+      final recipes = json.decode(jsonData);
+      return [recipes['fish'], recipes['chicken'], recipes['vegetarian']];
+    } else {
+      // If the JSON file doesn't exist, load the data from the API
+      final fishRecipesResponse = await http.get(Uri.parse(
+          '$url?q=fish&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
+      final chickenRecipesResponse = await http.get(Uri.parse(
+          '$url?q=chicken&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
+      final vegetarianRecipesResponse = await http.get(Uri.parse(
+          '$url?q=vegetarian&app_id=${secrets['appId']}&app_key=${secrets['appKey']}'));
+      if (fishRecipesResponse.statusCode == 200 &&
+          chickenRecipesResponse.statusCode == 200 &&
+          vegetarianRecipesResponse.statusCode == 200) {
+        final fishRecipes = json.decode(fishRecipesResponse.body)['hits'];
+        final chickenRecipes = json.decode(chickenRecipesResponse.body)['hits'];
+        final vegetarianRecipes = json.decode(vegetarianRecipesResponse.body)['hits'];
 
-      // Save the recipes to the database
-      // Save the recipes to the database
-      final menuDb = MenuDb();
-      try {
-        final database = await menuDb.database;
-        await database.transaction((txn) async {
-          for (var recipe in fishRecipes) {
-            final recipeMap = {
-              MenuDb.columnName: recipe['recipe']['label'],
-              MenuDb.columnImage: recipe['recipe']['image'],
-              MenuDb.columnTotalTime: recipe['recipe']['totalTime'],
-              MenuDb.columnYield: recipe['recipe']['yield'],
-              MenuDb.columnHealthLabels: recipe['recipe']['healthLabels'].join(', ')
-            };
-            await txn.insert(MenuDb.table, recipeMap);
-          }
-          for (var recipe in chickenRecipes) {
-            final recipeMap = {
-              MenuDb.columnName: recipe['recipe']['label'],
-              MenuDb.columnImage: recipe['recipe']['image'],
-              MenuDb.columnTotalTime: recipe['recipe']['totalTime'],
-              MenuDb.columnYield: recipe['recipe']['yield'],
-              MenuDb.columnHealthLabels: recipe['recipe']['healthLabels'].join(', ')
-            };
-            await txn.insert(MenuDb.table, recipeMap);
-          }
-          for (var recipe in vegetarianRecipes) {
-            final recipeMap = {
-              MenuDb.columnName: recipe['recipe']['label'],
-              MenuDb.columnImage: recipe['recipe']['image'],
-              MenuDb.columnTotalTime: recipe['recipe']['totalTime'],
-              MenuDb.columnYield: recipe['recipe']['yield'],
-              MenuDb.columnHealthLabels: recipe['recipe']['healthLabels'].join(', ')
-            };
-            await txn.insert(MenuDb.table, recipeMap);
-          }
-        });
+        // Save the recipes to a JSON file
+        final recipes = {'fish': fishRecipes, 'chicken': chickenRecipes, 'vegetarian': vegetarianRecipes};
+        await file.writeAsString(json.encode(recipes));
 
         // Return the recipes as a list
         return [fishRecipes, chickenRecipes, vegetarianRecipes];
-      } catch (e) {
-        throw Exception('Failed to save recipes to database');
+      } else {
+        throw Exception('Failed to load recipes');
       }
-
-    } else {
-      throw Exception('Failed to load recipes');
     }
-    return []; // return an empty list if no recipes are found
   }
+
+
 
 
   @override
@@ -195,7 +167,7 @@ class _MenuViewState extends State<MenuView>
                           Expanded(
                             child: Text(
                               recipe['label'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
