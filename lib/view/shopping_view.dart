@@ -53,13 +53,19 @@ class _ShoppingViewState extends State<ShoppingView>
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (snapshot.data == null || snapshot.data!.size == 0) {
+              if (snapshot.data == null) {
                 return const Center(
-                  child: Text('Your shopping List is empty'),
+                  child: Text('Unable to get data. Please try again later.'),
                 );
               }
               final shoppingList =
-                  snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+              snapshot.data!.docs.map((e) => Pantry.fromMap(e)).toList();
+
+              if (shoppingList.isEmpty) {
+                return const Center(
+                  child: Text('Your shopping list is empty'),
+                );
+              }
 
               return GroupedListView(
                 semanticChildCount: shoppingList.length,
@@ -94,9 +100,9 @@ class _ShoppingViewState extends State<ShoppingView>
                           color: Colors.white,
                           border: Border(
                               right: BorderSide(
-                            color: getCatColorForCategory(pantry.id),
-                            width: 10,
-                          )),
+                                color: getCatColorForCategory(pantry.id),
+                                width: 10,
+                              )),
                           boxShadow: const [
                             BoxShadow(
                               offset: Offset(4, 4),

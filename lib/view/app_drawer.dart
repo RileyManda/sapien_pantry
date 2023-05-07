@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/utils/messages.dart';
-import 'package:sapienpantry/view/analytics_view.dart';
+import 'package:sapienpantry/view/analytics/analytics_view.dart';
 import 'package:sapienpantry/view/menue_view.dart';
-import 'package:sapienpantry/view/pantry_analytics.dart';
+import 'package:sapienpantry/view/analytics/pantry_analytics.dart';
 import 'package:sapienpantry/view/settings_view.dart';
 import '../services/pantry_service.dart';
 

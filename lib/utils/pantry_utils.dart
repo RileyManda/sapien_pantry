@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sapienpantry/model/pantry.dart';
 import 'package:sapienpantry/services/pantry_service.dart';
+import 'package:sapienpantry/utils/constants.dart';
 import 'helper.dart';
 import 'messages.dart';
 
@@ -178,6 +179,7 @@ class PantryUtils {
         ));
   }
   static void showMoreDetails(BuildContext context, Pantry pantry) {
+    textController.text = pantry.time;
     textController.text = pantry.text;
     categoryController.text = pantry.category;
     final TextEditingController expiryDateController = TextEditingController(text: pantry.expiryDate?.toIso8601String() ?? '');
@@ -192,14 +194,70 @@ class PantryUtils {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text(
-                    pantry.text,
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  pantry.text,
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 8.0), // add desired space between title and label
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.access_time, color: pPrimaryColor),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          DateFormat.yMMMMd().format(DateTime.fromMillisecondsSinceEpoch(pantry.date)),
+                                          style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+
+
+
+
+
+                    ],
                   ),
                 ),
+
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
@@ -207,6 +265,7 @@ class PantryUtils {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+
                           TextFormField(
                             controller: textController,
                             decoration: const InputDecoration(

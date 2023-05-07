@@ -147,8 +147,6 @@ class PantryService {
         .collection('categories')
         .snapshots();
   }
-
-
   Stream<List<Pantry>> streamPantryList() async* {
     final collectionRef = FirebaseFirestore.instance
         .collection('users')
@@ -161,7 +159,6 @@ class PantryService {
     }
   }
 
-
   Stream<int> itemsDoneStream(String pantryId) {
     return firestore
         .collection('pantries')
@@ -171,7 +168,6 @@ class PantryService {
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
-
 
   Future<void> deleteUserData() async {
     final user = FirebaseAuth.instance.currentUser!;
@@ -197,6 +193,46 @@ class PantryService {
     await user.delete();
   }
 
+  Future<void> updatePantryItem(String id, Pantry pantry, BuildContext context) async {
+    try {
+      final pantryRef = FirebaseFirestore.instance.collection('pantry').doc(id);
+      final dateRef = FirebaseFirestore.instance.collection('date').doc(pantry.date.toString());
+      final dateDoc = await dateRef.get();
+
+      DateTime now = DateTime.now();
+      int timeDifference = 0;
+      if (dateDoc.exists) {
+        if (pantry.isDone) {
+          DateTime pantryDate = DateTime.fromMillisecondsSinceEpoch(pantry.date);
+          timeDifference = now.difference(pantryDate).inDays;
+        }
+        await pantryRef.update({
+          'isDone': pantry.isDone,
+          'timeDifference': timeDifference,
+        });
+      } else {
+        if (pantry.isDone) {
+          DateTime pantryDate = DateTime.fromMillisecondsSinceEpoch(pantry.date);
+          timeDifference = now.difference(pantryDate).inDays;
+        }
+        await pantryRef.set({
+          'text': pantry.text,
+          'category': pantry.category,
+          'catId': pantry.catId,
+          'isDone': pantry.isDone,
+          'time': pantry.time,
+          'date': pantry.date,
+          'quantity': pantry.quantity,
+          'expiryDate': pantry.expiryDate?.toIso8601String(),
+          'notes': pantry.notes,
+          'timeDifference': timeDifference,
+        });
+        await dateRef.set({});
+      }
+    } catch (e) {
+      debugPrint('Something went wrong(UpdateIsDone): $e');
+    }
+  }
 
 
 

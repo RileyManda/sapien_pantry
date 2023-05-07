@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sapienpantry/utils/constants.dart';
 import 'package:sapienpantry/view/app_drawer.dart';
-import 'package:sapienpantry/view/pantry_analytics.dart';
+import 'package:sapienpantry/view/analytics/pantry_analytics.dart';
+import 'package:sapienpantry/view/chat_view.dart';
 import 'package:sapienpantry/view/shopping_view.dart';
 import 'package:sapienpantry/view/pantry_view.dart';
 import 'package:sapienpantry/view/category_view.dart';
@@ -100,6 +101,42 @@ class _DashboardState extends State<Dashboard>
         title: const Text('Dashboard'),
         actions: <Widget>[
           Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.message),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChatView()),
+                  );
+                },
+              ),
+              if (_itemsDone > 0)
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      '$_itemsDone',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+
+            ],
+          ),
+          Stack(
             children: <Widget>[
               IconButton(
                   icon: const Icon(Icons.storage_outlined, size: 18),
@@ -172,8 +209,11 @@ class _DashboardState extends State<Dashboard>
                     ),
                   ),
                 ),
+
+
             ],
           ),
+
         ],
       ),
       drawer: const AppDrawer(),

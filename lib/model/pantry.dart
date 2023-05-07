@@ -13,6 +13,7 @@ class Pantry {
   final int? quantity;
   final DateTime? expiryDate;
   final String? notes;
+  int? timeDifference;
 
   Pantry({
     required this.id,
@@ -25,6 +26,7 @@ class Pantry {
     this.quantity,
     this.expiryDate,
     this.notes,
+    this.timeDifference = 0,
   });
 
   Pantry copyWith({
@@ -37,6 +39,7 @@ class Pantry {
     int? quantity,
     DateTime? expiryDate,
     String? notes,
+    int? timeDifference,
   }) =>
       Pantry(
         id: id,
@@ -49,6 +52,7 @@ class Pantry {
         quantity: quantity ?? this.quantity,
         expiryDate: expiryDate ?? this.expiryDate,
         notes: notes ?? this.notes,
+        timeDifference: timeDifference ?? this.timeDifference,
       );
 
   factory Pantry.fromMap(
@@ -67,6 +71,8 @@ class Pantry {
             ? DateTime.parse(documentSnapshot.data()!['expiryDate'])
             : null,
         notes: documentSnapshot.data()!['notes'],
+        timeDifference: documentSnapshot.data()!['timeDifference'],
+
 
         // populate info from the snapshot data, which may be null
       );
@@ -82,13 +88,14 @@ class Pantry {
     'quantity': quantity,
     'expiryDate': expiryDate?.toIso8601String(),
     'notes': notes,
+    'timeDifference': timeDifference,
 
     // include info in the map
   };
 
   @override
   String toString() {
-    return '$text - $category - $date - $time - $isDone - $quantity - $expiryDate - $notes';
+    return '$text - $category - $date - $time - $isDone - $quantity - $expiryDate - $notes - $timeDifference';
   }
 }
 

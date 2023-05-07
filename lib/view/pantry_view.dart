@@ -19,8 +19,6 @@ class PantryViewState extends State<PantryView> {
   late List<Pantry> _searchResults = [];
   List<Pantry> _pantryList = [];
 
-
-
   @override
   void initState() {
     super.initState();
@@ -178,18 +176,22 @@ class PantryViewState extends State<PantryView> {
                     title: Text(pantry.text),
                     trailing: InkWell(
                       borderRadius: BorderRadius.circular(30),
-                      onTap: () {
-                        _pantryService.updatePantry(
-                          pantry.id,
-                          pantry.copyWith(isDone: !pantry.isDone),
-                          context,
-                        );
+                      onTap: () async {
+                        int timeDifference = 0;
                         if (!pantry.isDone) {
                           showItemFinished(context);
                         } else {
                           showItemAdded(context);
                         }
+                        DateTime pantryDate = DateTime.fromMillisecondsSinceEpoch(pantry.date);
+                        timeDifference = DateTime.now().difference(pantryDate).inDays;
+                        await _pantryService.updatePantry(
+                          pantry.id,
+                          pantry.copyWith(isDone: !pantry.isDone, timeDifference: timeDifference),
+                          context,
+                        );
                       },
+
                       child: Container(
                         width: 30,
                         height: 30,
