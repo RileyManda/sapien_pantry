@@ -109,10 +109,12 @@ LinkedIn: rileymanda
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <!-- Contributing -->
 🤝 Contributing <a name="contributing"></a>
+
 Contributions, issues, and feature requests are welcome! Feel free to check the issues page for any existing issues or open a new one.
 
 <!-- Support -->
 ⭐️ Show Your Support <a name="support"></a>
+
 If you like this project, kindly leave a comment below and share it with someone who enjoys coding! Coding is all about continuous learning and allowing yourself to be a beginner. Keep going!
 
 <!-- Acknowledgements -->
@@ -121,6 +123,7 @@ I'm grateful to Microverse for giving me this opportunity to grow into my full p
 
 <!-- FAQ -->
 ❓ FAQ <a name="faq"></a>
+
 Question 1: Do I have to use Android Studio specifically?
 
 Answer 1: Yes, Android Studio is the recommended IDE for Flutter app development. However, you can use other code editors with Flutter support if you prefer.
