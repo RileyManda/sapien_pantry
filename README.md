@@ -94,12 +94,16 @@ Before running the app, make sure you have the following installed:
     This will install the app on the connected device or emulator and launch it.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- Authors -->
 👥 Authors <a name="authors"></a>
+
 👤 Riley Manda
 
 GitHub: @RileyManda
+
 Twitter: @rilecodez
+
 LinkedIn: rileymanda
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
